@@ -1,0 +1,438 @@
+1、删除索引product
+curl -X DELETE 'http://localhost:9200/product'
+
+2、创建索引product，设置settings和mappings
+curl -x PUT http://localhost:9200/product -H 'Content-Type: application/json' -d
+{
+    "settings": {
+        "number_of_shards": 5,
+        "number_of_replicas": 1
+    },
+    "mappings": {
+        "properties": {
+            "id": {
+                "type": "keyword"
+            },
+            "name": {
+                "type": "text",
+                "analyzer": "ik_max_word",
+                "search_analyzer": "ik_max_word",
+                "copy_to": "description"
+            },
+            "title": {
+                "type": "text",
+                "analyzer": "ik_max_word",
+                "search_analyzer": "ik_max_word",
+                "copy_to": "description"
+            },
+            "description": {
+                "type": "text",
+                "analyzer": "ik_max_word",
+                "search_analyzer": "ik_max_word"
+            },
+            "tags": {
+                "type": "text",
+                "analyzer": "whitespace" // 假如是新疆 哈密瓜，termQuery("tags", "哈密瓜")也能搜索到的
+            },
+            "price": {
+                "type": "double",
+                "index": true
+            },
+            "publish_time": {
+                "type": "date",
+                "format": "strict_date_optional_time||epoch_millis"
+            },
+            "modifier": {
+                "type": "keyword",
+                "index": true, // 5.x analyzed/not_analyzed, 7.2版本只能为true/false, 为false时不能用于query( "Cannot search on field [modifier] since it is not indexed.")
+            },
+            "my_join_field": {
+                "type": "join",
+                "relations": {
+                    "product": "sku"
+                }
+            }
+        }
+    }
+}
+
+修改mappings，比如：向product索引追加category_id和category_path_ids两个field，执行成功后GET_mappings命令查看
+curl -x PUT http://localhost:9200/product/_mapping -H 'Content-Type: application/json' -d {
+    "category_id": {
+        "type": "keyword"
+    },
+    "category_path_ids": {
+        "type": "keyword"
+    }
+}
+
+
+3、保存索引记录, join-field结构, parent和child的_routing值一致，否则查询不到
+curl -X POST http://localhost:9200/product/_doc/1?routing=1 Pro手机&pretty -H 'Content-type: application/json' \
+-d
+{
+    "id": 1,
+    "name": "华为Mate20 Pro手机",
+    "title": "年度新旗舰，Mate20 Pro手机",
+    "description": "年度新旗舰，Mate20 Pro手机，赶快预约订购吧！",
+    "tags": [
+        "华为",
+        "旗舰",
+        "手机",
+        "Mate20 Pro"
+    ],
+    "category_id": "11",
+    "category_path_ids": [
+        "1",
+        "11"
+    ],
+    "my_join_field": {
+        "name": "product"
+    }
+}
+
+curl -X POST http://localhost:9200/product/_doc/2?routing=1&pretty -H 'Content-type: application/json' -d
+{
+    "id": 2,
+    "name": "华为Mate20 Pro手机",
+    "title": "宝石蓝-浑然天成华为Mate20 Pro旗舰手机",
+    "description": "年度新旗舰，Mate20 Pro手机，赶快预约订购吧！",
+    "tags": [
+        "华为",
+        "旗舰",
+        "手机",
+        "Mate20 Pro",
+        "宝石蓝"
+    ],
+    "category_id": "11",
+    "category_path_ids": [
+        "1",
+        "11"
+    ],
+    "price": 5499,
+    "my_join_field": {
+        "name": "sku",
+        "parent": 1
+    }
+}
+
+curl -X POST http://localhost:9200/product/_doc/3?routing=1&pretty -H 'Content-type: application/json' -d
+{
+    "id": 3,
+    "name": "华为Mate20 Pro手机",
+    "title": "翡冷翠-浑然天成华为Mate20 Pro旗舰手机",
+    "description": "年度新旗舰，Mate20 Pro手机，赶快预约订购吧！",
+    "tags": [
+        "华为",
+        "旗舰",
+        "手机",
+        "Mate20 Pro",
+        "翡冷翠"
+    ],
+    "category_id": "11",
+    "category_path_ids": [
+        "1",
+        "11"
+    ],
+    "price": 5999,
+    "my_join_field": {
+        "name": "sku",
+        "parent": 1
+    }
+}
+
+// join-field替代之前的_parent
+4、查询有子document的记录
+curl -X GET http://localhost:9200/product/_search -H 'Content-type: application/json' \
+-d
+{
+    "query": {
+        "bool": {
+            "must": {
+                "has_child": {
+                    "type": "station",
+                    "query": {
+                        "match_all": {}
+                    }
+                }
+            }
+        }
+    }
+}
+
+查询有父document的记录
+{
+	"query": {
+		"bool": {
+			"must": {
+				"has_parent": {
+					"parent_type": "product",
+					"query": {
+						"match_all": {}
+					}
+				}
+			}
+		}
+	},
+	"sort": {
+		"price": "desc"
+	}
+}
+
+查询示例
+比如说搜mate20Pro，翡冷翠色卖的最好，把翡冷翠放到最前
+function_score_query简单示例:
+{
+    "query": {
+        "function_score": {
+            "query": {
+                "bool": {
+                    "must": {
+                        "has_parent": {
+                            "parent_type": "product",
+                            "query": {
+                                "bool": {
+                                    "must": [
+                                        {
+                                            "term": {
+                                                "tags": "Mate20"
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "boost": "1",
+            "functions": [
+                {
+                    "filter": {
+                        "term": {
+                            "tags": "翡冷翠"
+                        }
+                    },
+                    "random_score": {},
+                    "weight": 10
+                }
+            ]
+        }
+    },
+    "from": 0,
+    "size": 10,
+    "sort": [
+        {"id": "asc"},
+        {"price": "desc"}
+    ]
+}
+结果：
+sort: 没有sort时，翡冷翠的_score*10，由于_score较大排在了前列
+"track_total_hits":false // 每个segment获取topN个doc后就停止了，不再统计总数，arr聚合时忽略此参数，跟query平级'
+sort: 加上排序后，Hits里_score就为null，排序时不计算每个文档的评分情况；sort也是一个数组，可以多个条件放在一起符合排序
+
+用script排序，示例如下：
+{
+    "query": {
+        "function_score": {
+            "query": {
+                "bool": {
+                    "must": {
+                        "has_parent": {
+                            "parent_type": "product",
+                            "query": {
+                                "bool": {
+                                    "must": [
+                                        {
+                                            "term": {
+                                                "tags": "Mate20"
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "boost": "1",
+            "functions": [
+                {
+                    "filter": {
+                        "term": {
+                            "tags": "翡冷翠"
+                        }
+                    },
+                    "random_score": {},
+                    "weight": 10
+                }
+            ]
+        }
+    },
+    "from": 0,
+    "size": 10,
+    "sort": {
+        "_script" : {
+            "type" : "number",
+            "script" : {
+                "lang": "painless",
+                "source": "doc['price'].value - params.factor",
+                "params" : {
+                    "factor" : 6000
+                }
+            },
+            "order" : "asc"
+        }
+    }
+}
+测试结果：sort可以传对象，可以穿传[]，多个的时候跟sql的多列排序一样
+script_score示例：
+{
+    "query": {
+        "function_score": {
+            "query": {
+                "bool": {
+                    "must": {
+                        "has_parent": {
+                            "parent_type": "product",
+                            "query": {
+                                "bool": {
+                                    "must": [
+                                        {
+                                            "term": {
+                                                "tags": "Mate20"
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "boost": "1",
+            "script_score" : {
+                "script" : {
+                   "source": "params.factor - doc['price'].value",
+                   "params": {
+                       "factor" : 6000
+                   }
+                }
+            }
+        }
+    },
+    "from": 0,
+    "size": 10
+}
+结果：和query平级的script_score自定义_score
+
+
+{
+    "query": {
+        "function_score": {
+            "query": {
+                "bool": {
+                    "must": {
+                        "has_parent": {
+                            "parent_type": "product",
+                            "query": {
+                                "bool": {
+                                    "must": [
+                                        {
+                                            "term": {
+                                                "tags": "Mate20"
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "boost": "1",
+            "functions" : [
+                    {
+                      "filter" : {
+                        "has_child" : {
+                          "query" : {
+                            "bool" : {
+                              "must" : [
+                                {
+                                  "term" : {
+                                    "has_stock" : {
+                                      "value" : 0,
+                                      "boost" : 1.0
+                                    }
+                                  }
+                                },
+                                {
+                                  "term" : {
+                                    "station_id" : {
+                                      "value" : "551cb07c916edf65098d4c3f",
+                                      "boost" : 1.0
+                                    }
+                                  }
+                                }
+                              ],
+                              "disable_coord" : false,
+                              "adjust_pure_negative" : true,
+                              "boost" : 1.0
+                            }
+                          },
+                          "type" : "station_info",
+                          "score_mode" : "none",
+                          "min_children" : 0,
+                          "max_children" : 2147483647,
+                          "ignore_unmapped" : false,
+                          "boost" : 1.0
+                        }
+                      },
+                      "weight" : 0.01
+                    },
+                    {
+                      "filter" : {
+                        "match_all" : {
+                          "boost" : 1.0
+                        }
+                      },
+                      "script_score" : {
+                        "script" : {
+                          "inline" : "return params.ids[doc['_uid'].value.replace(doc['_type'].value+'#','')];",
+                          "lang" : "painless",
+                          "params" : {
+                            "ids" : {
+                              "5b2c990f01a6eaf41e8b4702" : 998,
+                              "58d4b9d4916edfd04cc5f899" : 999
+                            }
+                          }
+                        }
+                      }
+                    }
+                  ],
+        }
+    },
+    "from": 0,
+    "size": 10
+}
+
+
+
+
+
+5、聚合
+curl -X GET http://localhost:9200/product/_search -H 'Content-type: application/json' \
+-d
+{
+  "aggs": {
+    "messages": {
+      "terms": {
+        "field": "price"
+      }
+    }
+  }
+}
+对非text类型的字段聚合没有问题，如果是text类型，首先要考虑为什么这么做？
+text字段聚合Fielddata is disabled on text fields by default. Set fielddata=true on [name] in order to load fielddata in memory by uninverting the inverted index. Note that this can however use significant memory. Alternatively use a keyword field instead.
+
+

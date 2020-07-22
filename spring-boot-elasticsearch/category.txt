@@ -1,0 +1,134 @@
+1、删除索引category
+curl -X DELETE 'http://localhost:9200/category'
+
+2、创建索引category，设置settings和mappings
+curl -x PUT http://localhost:9200/category -H 'Content-Type: application/json' \
+   -d
+{
+	"settings": {
+		"number_of_shards": 5,
+		"number_of_replicas": 1
+	},
+	"mappings": {
+		"properties": {
+			"name": {
+				"type": "text",
+				"analyzer": "ik_max_word",
+				"search_analyzer": "ik_max_word"
+			},
+			"category_path_ids": {
+				"type": "keyword"
+			},
+			"relation": {
+				"type": "join",
+				"relations": {
+					"branch": "leaf"
+				}
+			}
+
+		}
+	}
+}
+3、创建一些层级类目数据
+curl -X POST http://localhost:9200/category/_doc/1?pretty -H 'Content-type: application/json' \
+-d
+{
+	"id": "1",
+	"name": "家禽肉类",
+	"category_path_ids": ["1"],
+	"relation": "branch"
+}
+
+{
+	"id": "11",
+	"name": "猪肉",
+	"category_path_ids": ["1", "11"],
+	"relation": {
+	    "name": "leaf",
+	    "parent": "1"
+	}
+}
+
+{
+	"id": "12",
+	"name": "牛肉",
+	"category_path_ids": ["1", "12"],
+	"relation": {
+	    "name": "leaf",
+	    "parent": "1"
+	}
+}
+
+{
+	"id": "13",
+ 	"name": "牛肉",
+ 	"category_path_ids": ["1", "13"],
+ 	"relation": {
+ 	    "name": "leaf",
+ 	    "parent": "1"
+ 	}
+ }
+
+//=============================================================================
+{
+	"id": "2",
+	"name": "水果",
+	"category_path_ids": ["2"],
+	"relation": "branch"
+}
+
+{
+	"id": "21",
+	"name": "本地水果",
+	"category_path_ids": ["2", "21"],
+	"relation": {
+	    "name": "leaf",
+	    "parent": "2"
+	}
+}
+
+{
+	"id": "22",
+	"name": "进口水果",
+	"category_path_ids": ["2", "22"],
+	"relation": {
+	    "name": "leaf",
+	    "parent": "2"
+	}
+}
+
+//==================================================================================
+住家一个没有parent记录的doc
+{
+	"id": "31",
+	"name": "进口水果",
+	"category_path_ids": ["3", "31"],
+	"relation": {
+	    "name": "leaf",
+	    "parent": "3"
+	}
+}
+4、查询示例
+{
+	"query": {
+		"bool": {
+			"must": [{
+					"parent_id": { // 查询当前子文档relation.name=leaf && relation.parent=1
+						"type": "leaf",
+						"id": "1"
+					}
+				},
+				{
+					"has_parent": { // 查询有relation=branch父文档的记录
+						"parent_type": "branch",
+						"query": {
+							"match_all": {}
+						}
+					}
+				}
+
+			]
+		}
+	}
+}
+

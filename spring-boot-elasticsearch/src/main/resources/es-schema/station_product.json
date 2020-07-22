@@ -1,0 +1,142 @@
+{
+  "settings": {
+    "number_of_shards": "10",
+    "number_of_replicas": "1",
+    "refresh_interval": "5s",
+    "similarity": {
+      "similarity_halfh": {
+        "type": "BM25",
+        "k1": 1.2,
+        "b": 0.2
+      }
+    }
+  },
+  "mappings": {
+    "properties": {
+      "name": {
+        "type": "keyword",
+        "index": true,
+        "store": false
+      },
+      "name_analyze": {
+        "type": "text",
+        "index": true,
+        "store": false,
+        "analyzer": "whitespace",
+        "search_analyzer": "whitespace",
+        "similarity": "similarity_halfh",
+        "copy_to": "description"
+      },
+      "base_name": {
+        "type": "keyword",
+        "index": true,
+        "store": false
+      },
+      "search_tags": {
+        "type": "text",
+        "analyzer": "whitespace",
+        "search_analyzer": "whitespace",
+        "similarity": "similarity_halfh",
+        "index": true,
+        "store": false
+      },
+      "search_tags_analyzer": {
+        "type": "text",
+        "index": true,
+        "store": false,
+        "analyzer": "whitespace",
+        "search_analyzer": "whitespace",
+        "similarity": "similarity_halfh",
+        "copy_to": "description"
+      },
+      "update_time": {
+        "type": "long",
+        "index": true
+      },
+      "category": {
+        "type": "keyword",
+        "index": true,
+        "store": false
+      },
+      "category_path": {
+        "type": "keyword",
+        "index": true,
+        "store": false
+      },
+      "is_delete": {
+        "type": "keyword",
+        "index": true
+      },
+      "property_search": {
+        "type": "keyword",
+        "index": true,
+        "store": false
+      },
+      "total_sales": {
+        "type": "integer",
+        "index": true
+      },
+      "oid": {
+        "type": "keyword",
+        "index": true
+      },
+      "manage_category": {
+        "type": "keyword",
+        "index": true,
+        "store": false
+      },
+      "manage_category_path": {
+        "type": "keyword",
+        "index": true,
+        "store": false
+      },
+      "brand_id": {
+        "type": "keyword",
+        "index": true
+      },
+      "description": {
+        "type": "text",
+        "index": true,
+        "store": false,
+        "analyzer": "whitespace",
+        "search_analyzer": "whitespace",
+        "similarity": "similarity_halfh"
+      },
+      "product_id": {
+        "type": "keyword",
+        "index": true
+      },
+      "station_id": {
+        "type": "keyword",
+        "index": true
+      },
+      "station_has_stock": {
+        "type": "keyword",
+        "index": true
+      },
+      "station_price": {
+        "type": "double",
+        "index": true
+      },
+      "station_status": {
+        "type": "keyword",
+        "index": true
+      },
+      "new_user": {
+        "type": "keyword",
+        "index": true,
+        "store": false
+      },
+      "new_user_version": {
+        "type": "keyword",
+        "index": true,
+        "store": false
+      },
+      "row_update_time": {
+        "format": "strict_date_optional_time||epoch_millis",
+        "type": "date",
+        "index": true
+      }
+    }
+  }
+}

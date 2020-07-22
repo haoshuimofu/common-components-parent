@@ -1,0 +1,12 @@
+curl -X POST "localhost:9200/_aliases?pretty" -H 'Content-Type: application/json' -d'
+{
+    "actions" : [
+        { "add" : { "index" : "product", "alias" : "goods" } }
+    ]
+}
+'
+
+
+curl -X GET "localhost:9200/_aliases?pretty"
+
+
