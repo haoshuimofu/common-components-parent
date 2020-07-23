@@ -118,13 +118,13 @@
     <!--发布管理：注意在maven的settings.xml添加servers配置，如上面的注释内容-->
     <distributionManagement>
         <repository>
-            <id>ddmc-releases</id>
-            <name>ddmc-releases</name>
+            <id>company-releases</id>
+            <name>company-releases</name>
             <url>http://nexus.xxx.mobile/repository/maven-releases/</url>
         </repository>
         <snapshotRepository>
-            <id>ddmc-snapshots</id>
-            <name>ddmc-snapshots</name>
+            <id>company-snapshots</id>
+            <name>company-snapshots</name>
             <url>http://nexus.xxx.mobile/repository/maven-snapshots/</url>
         </snapshotRepository>
     </distributionManagement>
@@ -142,9 +142,9 @@
             </snapshots>
         </repository>
         <repository>
-            <id>maven-ddmc</id>
-            <name>ddmc maven</name>
-            <url>http://nexus.ddxq.mobi/repository/maven-public/</url>
+            <id>maven-company</id>
+            <name>company maven</name>
+            <url>http://nexus.xxx.mobile/repository/maven-public/</url>
         </repository>
     </repositories>
     <pluginRepositories>
