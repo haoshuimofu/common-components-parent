@@ -120,12 +120,12 @@
         <repository>
             <id>ddmc-releases</id>
             <name>ddmc-releases</name>
-            <url>http://nexus.ddxq.mobi/repository/maven-releases/</url>
+            <url>http://nexus.xxx.mobile/repository/maven-releases/</url>
         </repository>
         <snapshotRepository>
             <id>ddmc-snapshots</id>
             <name>ddmc-snapshots</name>
-            <url>http://nexus.ddxq.mobi/repository/maven-snapshots/</url>
+            <url>http://nexus.xxx.mobile/repository/maven-snapshots/</url>
         </snapshotRepository>
     </distributionManagement>
 
