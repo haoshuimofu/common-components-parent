@@ -17,7 +17,6 @@
         <module>spring-boot-elasticsearch</module>
         <module>general-tests</module>
         <module>guava-caffeine</module>
-        <module>redisson</module>
     </modules>
 
     <properties>
