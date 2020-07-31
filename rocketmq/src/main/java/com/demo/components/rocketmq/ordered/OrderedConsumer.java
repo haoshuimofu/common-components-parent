@@ -40,7 +40,7 @@ public class OrderedConsumer {
                 }
 
                 if (true) {
-                    return ConsumeOrderlyStatus.COMMIT;
+                    return ConsumeOrderlyStatus.COMMIT; // todo COMMIT之后Consumer重启才不会重新消费，为什么过时了？
                 }
 
                 if ((this.consumeTimes.get() % 2) == 0) {
