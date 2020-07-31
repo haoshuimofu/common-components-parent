@@ -35,13 +35,14 @@ public class OrderedConsumer {
                 this.consumeTimes.incrementAndGet();
 
                 int queueId = msgs.get(0).getQueueId();
-                if (queueId == 1) {
-                    System.err.println(msgs.get(0).getQueueId() + " - "+ new String(msgs.get(0).getBody()));
+                for (MessageExt msg : msgs) {
+                    System.err.println("queueId = " + queueId + " , body=["+new String(msg.getBody()) + "]");
                 }
 
                 if (true) {
                     return ConsumeOrderlyStatus.COMMIT;
                 }
+
                 if ((this.consumeTimes.get() % 2) == 0) {
                     return ConsumeOrderlyStatus.SUCCESS;
                 } else if ((this.consumeTimes.get() % 3) == 0) {
