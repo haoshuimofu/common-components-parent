@@ -1,4 +1,4 @@
-package com.demo.components.rocketmq;
+package com.demo.components.rocketmq.simple;
 
 import org.apache.rocketmq.client.consumer.DefaultMQPushConsumer;
 import org.apache.rocketmq.client.consumer.listener.ConsumeConcurrentlyContext;
@@ -18,7 +18,7 @@ public class Consumer {
     public static void main(String[] args) throws InterruptedException, MQClientException {
 
         // Instantiate with specified consumer group name.
-        DefaultMQPushConsumer consumer = new DefaultMQPushConsumer("RocketMQTest");
+        DefaultMQPushConsumer consumer = new DefaultMQPushConsumer("ConsumerGroup");
 
         // Specify name server addresses.
         consumer.setNamesrvAddr("localhost:9876");
@@ -32,9 +32,13 @@ public class Consumer {
             public ConsumeConcurrentlyStatus consumeMessage(List<MessageExt> msgs,
                                                             ConsumeConcurrentlyContext context) {
 
-                System.err.println(Thread.currentThread().getName() + " ---> " + msgs.size());
-                System.err.println(new String(msgs.get(0).getBody()));
-                System.out.printf("%s Receive New Messages: %s %n", Thread.currentThread().getName(), msgs);
+                // System.out.printf("%s Receive New Messages: %s %n", Thread.currentThread().getName(), msgs);
+
+                for (MessageExt msg : msgs) {
+                    System.err.println("queueId = " + msg.getQueueId() + ", queueOffset = " + msg.getQueueOffset() + ", body = [" +
+                            new String(msg.getBody()) + "], thread = " +Thread.currentThread().getName());
+                }
+
                 return ConsumeConcurrentlyStatus.CONSUME_SUCCESS;
             }
         });

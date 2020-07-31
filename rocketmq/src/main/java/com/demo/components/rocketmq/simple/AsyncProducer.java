@@ -1,4 +1,4 @@
-package com.demo.components.rocketmq;
+package com.demo.components.rocketmq.simple;
 
 import org.apache.rocketmq.client.producer.DefaultMQProducer;
 import org.apache.rocketmq.client.producer.SendCallback;
