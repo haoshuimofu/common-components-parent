@@ -370,8 +370,8 @@ public abstract class AbstractElasticsearchRepository<T extends BaseIndexModel> 
             }
             return success;
         } catch (ElasticsearchStatusException e) {
-            // RESTful API, 当_id对应索引记录不存在时报错404, 这里针对这个异常处理一下
-            if (e.status() != null && e.status().getStatus() == 404) {
+            // restful api, 当索引记录不存在时测试发现抛404 ElasticsearchStatusException
+            if (e.status().getStatus() == 404) {
                 logger.info("### 更新索引记录失败! 索引记录不存在! _index=[{}], _id=[{}], _routing=[{}].", getIndex(), request.id(), request.routing());
                 return false;
             }

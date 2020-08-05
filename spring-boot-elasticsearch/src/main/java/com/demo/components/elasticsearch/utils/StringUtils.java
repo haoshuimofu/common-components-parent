@@ -7,7 +7,15 @@ package com.demo.components.elasticsearch.utils;
 public class StringUtils {
 
     public static boolean isBlank(String str) {
-        return str == null || str.trim().length() == 0;
+        int length;
+        if (str != null && (length = str.length()) > 0) {
+            for (int i = 0; i < length; i++) {
+                if (!Character.isWhitespace(str.charAt(i))) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     public static boolean isNotBlank(String str) {
@@ -21,4 +29,5 @@ public class StringUtils {
     public static boolean isNotEmpty(String str) {
         return !StringUtils.isEmpty(str);
     }
+
 }
