@@ -18,32 +18,9 @@
             <artifactId>spring-boot-autoconfigure</artifactId>
         </dependency>
 
-        <!-- 添加springboot对amqp的支持 -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-amqp</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.springframework.amqp</groupId>
-                    <artifactId>spring-rabbit</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.amqp</groupId>
-            <artifactId>spring-rabbit</artifactId>
-            <version>${version.spring-boot}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.springframework.amqp</groupId>
-                    <artifactId>spring-amqp</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.amqp</groupId>
-            <artifactId>spring-amqp</artifactId>
-            <version>${version.spring-boot}</version>
         </dependency>
 
         <dependency>
@@ -63,7 +40,6 @@
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>fastjson</artifactId>
-            <version>1.2.60</version>
         </dependency>
 
         <dependency>

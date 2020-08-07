@@ -22,10 +22,11 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <version.spring-boot>2.1.5.RELEASE</version.spring-boot>
-        <version.junit>4.12</version.junit>
+        <version.spring-boot>2.3.2.RELEASE</version.spring-boot>
+        <version.junit>4.13</version.junit>
         <version.slf4j-api>1.7.26</version.slf4j-api>
         <version.logback>1.2.3</version.logback>
+        <version.fastjson>1.2.73</version.fastjson>
     </properties>
 
     <dependencyManagement>
@@ -63,6 +64,13 @@
                 <artifactId>logback-classic</artifactId>
                 <version>${version.logback}</version>
             </dependency>
+
+            <dependency>
+                <groupId>com.alibaba</groupId>
+                <artifactId>fastjson</artifactId>
+                <version>${version.fastjson}</version>
+            </dependency>
+
         </dependencies>
     </dependencyManagement>
 

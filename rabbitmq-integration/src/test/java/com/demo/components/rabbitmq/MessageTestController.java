@@ -5,6 +5,7 @@ import com.demo.components.rabbitmq.messagebody.TopicMessageBBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.annotation.PostConstruct;
 import java.io.UnsupportedEncodingException;
 import java.util.UUID;
 
@@ -39,5 +40,17 @@ public class MessageTestController {
         }
         rabbitmqProducer.send(bBody);
         return bBody;
+    }
+
+    @PostConstruct
+    private void init() {
+        while (true) {
+            System.err.println(System.currentTimeMillis());
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }
