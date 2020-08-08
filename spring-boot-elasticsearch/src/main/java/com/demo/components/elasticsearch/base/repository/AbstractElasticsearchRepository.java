@@ -2,6 +2,7 @@ package com.demo.components.elasticsearch.base.repository;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.demo.components.elasticsearch.Pagation;
 import com.demo.components.elasticsearch.annotation.*;
 import com.demo.components.elasticsearch.base.model.BaseIndexModel;
 import com.demo.components.elasticsearch.config.ElasticsearchRestClient;
@@ -22,17 +23,22 @@ import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.action.search.SearchType;
 import org.elasticsearch.action.support.master.AcknowledgedResponse;
 import org.elasticsearch.action.update.UpdateRequest;
 import org.elasticsearch.action.update.UpdateResponse;
+import org.elasticsearch.client.RequestOptions;
+import org.elasticsearch.client.Requests;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.client.indices.CreateIndexRequest;
 import org.elasticsearch.client.indices.CreateIndexResponse;
 import org.elasticsearch.client.indices.GetIndexRequest;
+import org.elasticsearch.common.unit.TimeValue;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
+import org.elasticsearch.search.sort.SortOrder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -47,6 +53,8 @@ import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 import static org.elasticsearch.client.RequestOptions.DEFAULT;
 
@@ -443,6 +451,43 @@ public abstract class AbstractElasticsearchRepository<T extends BaseIndexModel> 
         });
     }
 
+    @Override
+    public Pagation<T> pageQuery(QueryBuilder query, int from, int size) throws Exception {
+        return pageQuery(query, from, size, null, null, 0, null);
+    }
+
+    @Override
+    public Pagation<T> pageQuery(QueryBuilder query, int from, int size, TreeMap<String, SortOrder> sort, SearchType searchType, int timeoutMillis, String... fields) throws Exception {
+        SearchSourceBuilder searchSourceBuilder = SearchSourceBuilder.searchSource()
+                .query(query)
+                .from(from).size(size);
+        if (fields != null && fields.length > 0) {
+            searchSourceBuilder.fetchSource(fields, null);
+        }
+        if (sort != null && sort.size() > 0) {
+            for (Map.Entry<String, SortOrder> entry : sort.entrySet()) {
+                searchSourceBuilder.sort(entry.getKey(), entry.getValue());
+            }
+        }
+        if (timeoutMillis > 0) {
+            searchSourceBuilder.timeout(TimeValue.timeValueMillis(timeoutMillis));
+        }
+        SearchRequest searchRequest = Requests.searchRequest(getIndex()).source(searchSourceBuilder);
+        if (searchType != null) {
+            searchRequest.searchType(SearchType.DFS_QUERY_THEN_FETCH);
+        }
+        SearchResponse searchResponse = getClient().search(searchRequest, RequestOptions.DEFAULT);
+        Pagation<T> pagation = new Pagation<>();
+        pagation.setTotal(searchResponse.getHits().getTotalHits().value);
+        List<T> data = new ArrayList<>();
+        if (pagation.getTotal() > 0) {
+            for (SearchHit hit : searchResponse.getHits().getHits()) {
+                data.add(convert(hit.getId(), hit.getSourceAsMap()));
+            }
+        }
+        pagation.setData(data);
+        return pagation;
+    }
 
     @SuppressWarnings("unchecked")
     @Override

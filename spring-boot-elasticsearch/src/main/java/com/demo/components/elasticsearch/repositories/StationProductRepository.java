@@ -6,6 +6,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
+import java.util.Map;
+
 /**
  * 服务站商品
  *
@@ -16,6 +18,11 @@ import org.springframework.stereotype.Repository;
 public class StationProductRepository extends AbstractElasticsearchRepository<StationProduct> {
 
     private static final Logger logger = LoggerFactory.getLogger(StationProductRepository.class);
+
+    @Override
+    public StationProduct convert(String id, Map<String, Object> sourceMap) {
+        return null;
+    }
 
 //    @Value("${elasticsearch.index.station_product}")
 //    private String index;

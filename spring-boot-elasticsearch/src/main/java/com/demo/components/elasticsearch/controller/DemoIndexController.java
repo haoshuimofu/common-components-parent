@@ -69,4 +69,10 @@ public class DemoIndexController {
         return JsonResult.success(demoService.searchByKeyword(keyword, from, size));
     }
 
+    @GetMapping("page")
+    public JsonResult page(@RequestParam(value = "from", defaultValue = "0") int from,
+                           @RequestParam(value = "size", defaultValue = "10") int size) throws Exception {
+        return JsonResult.success(demoService.page(from, size));
+    }
+
 }

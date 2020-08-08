@@ -1,5 +1,6 @@
 package com.demo.components.elasticsearch.repositories;
 
+import com.demo.components.elasticsearch.Pagation;
 import com.demo.components.elasticsearch.base.repository.AbstractElasticsearchRepository;
 import com.demo.components.elasticsearch.model.Demo;
 import org.elasticsearch.action.search.SearchRequest;
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Repository;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author wude
@@ -27,6 +29,7 @@ import java.util.List;
 public class DemoRepository extends AbstractElasticsearchRepository<Demo> {
 
     private static final Logger logger = LoggerFactory.getLogger(DemoRepository.class);
+
 
     public List<Demo> searchByKeyword(String keyword, int from, int size) {
         QueryBuilder queryBuilder = QueryBuilders.boolQuery()
@@ -58,4 +61,17 @@ public class DemoRepository extends AbstractElasticsearchRepository<Demo> {
     }
 
 
+    public Pagation<Demo> page(int from, int size) throws Exception {
+        QueryBuilder queryBuilder = QueryBuilders.boolQuery().filter(QueryBuilders.termQuery("status", 1));
+        return pageQuery(queryBuilder, from, size, null, null, 0, null);
+    }
+
+
+    @Override
+    public Demo convert(String id, Map<String, Object> sourceMap) {
+        Demo demo = new Demo();
+        demo.setId(id);
+        // todo
+        return demo;
+    }
 }

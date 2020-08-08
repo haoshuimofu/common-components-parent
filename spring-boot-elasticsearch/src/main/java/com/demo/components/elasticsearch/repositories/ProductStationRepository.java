@@ -4,6 +4,8 @@ import com.demo.components.elasticsearch.base.repository.AbstractElasticsearchRe
 import com.demo.components.elasticsearch.model.ProductStation;
 import org.springframework.stereotype.Repository;
 
+import java.util.Map;
+
 /**
  * 服务站商品
  *
@@ -12,6 +14,10 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public class ProductStationRepository extends AbstractElasticsearchRepository<ProductStation> {
+    @Override
+    public ProductStation convert(String id, Map<String, Object> sourceMap) {
+        return null;
+    }
 
 //    @Value("${elasticsearch.index.product_station}")
 //    private String index;

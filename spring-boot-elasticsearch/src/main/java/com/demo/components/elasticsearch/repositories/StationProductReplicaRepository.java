@@ -6,6 +6,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
+import java.util.Map;
+
 /**
  * 服务站商品
  *
@@ -18,4 +20,8 @@ public class StationProductReplicaRepository extends AbstractElasticsearchReposi
     private static final Logger logger = LoggerFactory.getLogger(StationProductReplicaRepository.class);
 
 
+    @Override
+    public StationProductReplica convert(String id, Map<String, Object> sourceMap) {
+        return null;
+    }
 }
