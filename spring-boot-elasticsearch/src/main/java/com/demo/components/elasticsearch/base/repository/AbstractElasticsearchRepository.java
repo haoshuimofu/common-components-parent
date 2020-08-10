@@ -7,6 +7,7 @@ import com.demo.components.elasticsearch.annotation.*;
 import com.demo.components.elasticsearch.base.model.BaseIndexModel;
 import com.demo.components.elasticsearch.config.ElasticsearchRestClient;
 import com.demo.components.elasticsearch.config.ElasticsearchRestDynamicConfig;
+import com.demo.components.elasticsearch.request.SearchOptions;
 import com.demo.components.elasticsearch.utils.LogUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.ElasticsearchStatusException;
@@ -452,15 +453,21 @@ public abstract class AbstractElasticsearchRepository<T extends BaseIndexModel> 
     }
 
     @Override
-    public Pagation<T> pageQuery(QueryBuilder query, int from, int size) throws Exception {
-        return pageQuery(query, from, size, null, null, 0, null);
+    public Pagation<T> pageQuery(QueryBuilder query, SearchOptions searchOptions) throws Exception {
+        if (searchOptions == null) {
+            searchOptions = SearchOptions.instance();
+        }
+        return this.pageQuery(query, searchOptions.getRouting(), searchOptions.getFrom(), searchOptions.getSize(),
+                searchOptions.getSort(), searchOptions.getSearchType(), searchOptions.getTimeoutMillis(), searchOptions.getFields());
     }
 
     @Override
-    public Pagation<T> pageQuery(QueryBuilder query, int from, int size, TreeMap<String, SortOrder> sort, SearchType searchType, int timeoutMillis, String... fields) throws Exception {
-        SearchSourceBuilder searchSourceBuilder = SearchSourceBuilder.searchSource()
-                .query(query)
-                .from(from).size(size);
+    public Pagation<T> pageQuery(QueryBuilder query, String routing, int from, int size,
+                                 TreeMap<String, SortOrder> sort, SearchType searchType, int timeoutMillis, String... fields) throws Exception {
+        SearchSourceBuilder searchSourceBuilder = SearchSourceBuilder.searchSource().query(query);
+        if (from >= 0 && size > 0) {
+            searchSourceBuilder.from(from).size(size);
+        }
         if (fields != null && fields.length > 0) {
             searchSourceBuilder.fetchSource(fields, null);
         }
@@ -473,6 +480,9 @@ public abstract class AbstractElasticsearchRepository<T extends BaseIndexModel> 
             searchSourceBuilder.timeout(TimeValue.timeValueMillis(timeoutMillis));
         }
         SearchRequest searchRequest = Requests.searchRequest(getIndex()).source(searchSourceBuilder);
+        if (routing != null) {
+            searchRequest.routing(routing);
+        }
         if (searchType != null) {
             searchRequest.searchType(SearchType.DFS_QUERY_THEN_FETCH);
         }

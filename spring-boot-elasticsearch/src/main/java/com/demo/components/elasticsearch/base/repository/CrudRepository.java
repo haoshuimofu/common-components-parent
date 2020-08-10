@@ -1,6 +1,7 @@
 package com.demo.components.elasticsearch.base.repository;
 
 import com.demo.components.elasticsearch.Pagation;
+import com.demo.components.elasticsearch.request.SearchOptions;
 import org.elasticsearch.action.search.SearchType;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.search.sort.SortOrder;
@@ -241,18 +242,18 @@ public interface CrudRepository<T> {
     /**
      * 简单分页查询
      *
-     * @param query 查询条件
-     * @param from  起始位置
-     * @param size  分页大小
+     * @param query         查询条件
+     * @param searchOptions 查询选项
      * @return
      * @throws
      */
-    Pagation<T> pageQuery(QueryBuilder query, int from, int size) throws Exception;
+    Pagation<T> pageQuery(QueryBuilder query, SearchOptions searchOptions) throws Exception;
 
     /**
      * 简单分页查询
      *
      * @param query         查询条件
+     * @param routing       路由键值
      * @param from          起始位置
      * @param size          分页大小
      * @param sort          排序条件
@@ -262,7 +263,8 @@ public interface CrudRepository<T> {
      * @return
      * @throws
      */
-    Pagation<T> pageQuery(QueryBuilder query, int from, int size, TreeMap<String, SortOrder> sort, SearchType searchType, int timeoutMillis, String... fields) throws Exception;
+    Pagation<T> pageQuery(QueryBuilder query, String routing, int from, int size,
+                          TreeMap<String, SortOrder> sort, SearchType searchType, int timeoutMillis, String... fields) throws Exception;
 
     /**
      * 自定义 sourceMap 转 索引模型实例
