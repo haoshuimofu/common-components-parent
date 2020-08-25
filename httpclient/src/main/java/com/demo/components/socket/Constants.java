@@ -1,4 +1,4 @@
-package com.demo.socket;
+package com.demo.components.socket;
 
 /**
  * @Author ddmc
@@ -6,6 +6,6 @@ package com.demo.socket;
  */
 public class Constants {
 
-    public static final String host = "10.192.72.21";
+    public static final String host = "10.193.249.164";
     public static final int port = 20006;
 }

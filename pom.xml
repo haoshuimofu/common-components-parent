@@ -18,6 +18,7 @@
         <module>general-tests</module>
         <module>guava-caffeine</module>
         <module>rocketmq</module>
+        <module>httpclient</module>
     </modules>
 
     <properties>

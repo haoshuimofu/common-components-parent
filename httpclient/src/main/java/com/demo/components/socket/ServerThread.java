@@ -1,4 +1,4 @@
-package com.demo.socket;
+package com.demo.components.socket;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -30,6 +30,14 @@ public class ServerThread implements Runnable {
             while (flag) {
                 String msg = buf.readLine();
                 System.err.println("接收到来自客户端的消息: " + msg);
+                if ("over".equalsIgnoreCase(msg)) {
+                    flag = false;
+                    buf.close();
+                    out.close();
+                    client.shutdownInput();
+                    client.shutdownOutput();
+                    client.close();
+                }
                 if ("ok".equalsIgnoreCase(msg)) {
                     out.println("我知道了");
                     System.out.println("回复我知道了");
