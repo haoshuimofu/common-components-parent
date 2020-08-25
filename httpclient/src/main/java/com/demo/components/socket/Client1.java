@@ -22,18 +22,18 @@ public class Client1 {
         // 获取Socket的输出流，用来发送数据到服务端
         PrintStream out = new PrintStream(client.getOutputStream());
         // 获取Socket的输入流，用来接收从服务端发送过来的数据
-        BufferedReader buf =  new BufferedReader(new InputStreamReader(client.getInputStream()));
+        BufferedReader buf = new BufferedReader(new InputStreamReader(client.getInputStream()));
         boolean flag = true;
-        while(flag){
+        while (flag) {
             System.out.print("键入信息: ");
             String msg = input.readLine();
             // 发送数据到服务端
             out.println(msg);
-            if("over".equals(msg)){
+            if ("over".equals(msg)) {
                 flag = false;
 //                client.shutdownOutput();
-            }else{
-                try{
+            } else {
+                try {
                     // 从服务器端接收数据有个时间限制（系统自设，也可以自己设置），超过了这个时间，便会抛出该异常
                     String replay = buf.readLine();
                     System.out.println("服务端回复: " + replay);
@@ -41,10 +41,10 @@ public class Client1 {
                         System.out.println("再次发送消息ok通知服务端关闭连接!");
                         out.println("ok");
                         out.flush();
-                    } else if (replay.contains("我知道了")){
+                    } else if (replay.contains("我知道了")) {
                         flag = false;
                     }
-                }catch(SocketTimeoutException e){
+                } catch (SocketTimeoutException e) {
                     System.out.println("Time out, No response");
                 }
             }
