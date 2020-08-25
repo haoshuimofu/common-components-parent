@@ -6,6 +6,6 @@ package com.demo.components.socket;
  */
 public class Constants {
 
-    public static final String host = "10.193.249.164";
+    public static final String host = "127.0.0.1";
     public static final int port = 20006;
 }

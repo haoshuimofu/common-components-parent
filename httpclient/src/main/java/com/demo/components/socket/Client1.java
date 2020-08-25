@@ -31,6 +31,7 @@ public class Client1 {
             out.println(msg);
             if("over".equals(msg)){
                 flag = false;
+//                client.shutdownOutput();
             }else{
                 try{
                     // 从服务器端接收数据有个时间限制（系统自设，也可以自己设置），超过了这个时间，便会抛出该异常
