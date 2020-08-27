@@ -28,6 +28,8 @@
         <version.slf4j-api>1.7.26</version.slf4j-api>
         <version.logback>1.2.3</version.logback>
         <version.fastjson>1.2.73</version.fastjson>
+        <version.httpclient>4.5.12</version.httpclient>
+        <version.httpasyncclient>4.1.4</version.httpasyncclient>
     </properties>
 
     <dependencyManagement>
@@ -70,6 +72,28 @@
                 <groupId>com.alibaba</groupId>
                 <artifactId>fastjson</artifactId>
                 <version>${version.fastjson}</version>
+            </dependency>
+
+            <!--httpclient-->
+            <dependency>
+                <groupId>org.apache.httpcomponents</groupId>
+                <artifactId>httpclient</artifactId>
+                <version>${version.httpclient}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.httpcomponents</groupId>
+                <artifactId>httpclient-cache</artifactId>
+                <version>${version.httpclient}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.httpcomponents</groupId>
+                <artifactId>fluent-hc</artifactId>
+                <version>${version.httpclient}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.httpcomponents</groupId>
+                <artifactId>httpasyncclient</artifactId>
+                <version>${version.httpasyncclient}</version>
             </dependency>
 
         </dependencies>
