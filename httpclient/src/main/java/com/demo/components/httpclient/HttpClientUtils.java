@@ -152,7 +152,8 @@ public class HttpClientUtils {
         httpPost.setConfig(requestConfig);
         HttpHelper.addHeaders(httpPost, headers);
         if (params != null && params.length() > 0) {
-            httpPost.setEntity(new StringEntity(params, charset));
+            httpPost.setEntity((charset == null || charset.trim().isEmpty()) ?
+                    new StringEntity(params) : new StringEntity(params, charset));
         }
         CloseableHttpResponse response = null;
         boolean responseClose = false;
