@@ -15,26 +15,48 @@ public class HttpClientTest {
 
     public static void main(String[] args) throws Exception {
 
+        String charset = "UTF-8";
+
         String msgServiceUrl = "http://msgsrv-service.te.test.srv.mc.dd/api/sms/notice/msgCode";
         Map<String, String> paramMap = new HashMap<>();
         paramMap.put("mobile", "17717929937");
         paramMap.put("content", "9937");
 
         Map<String, String> headerMap = new HashMap<>();
-        headerMap.put("Content-type", "application/x-www-form-urlencoded; charset=utf-8");
         headerMap.put("Content-type", "application/json; charset=utf-8");
         headerMap.put("Accept", "application/json");
         headerMap.put("X-APP", "app");
 
-        long start = System.currentTimeMillis();
-//        String data = HttpClientUtils.post(msgServiceUrl, headerMap, paramMap, 1000, 2000, "utf-8");
-        String data = HttpClientUtils.post("http://localhost:18081/test/stringEntity",
-                headerMap, JSON.toJSONString(paramMap), 1000, 2000, null);
 
-//        String data = HttpClientUtils.get("http://config-service.te.test.srv.mc.dd/config/station?" +
-//                "stationId=551cb07c916edf65098d4c3f&type=custom_telephone&key=custom_telephone", null, 100, 100);
+        // post StringEntity
+        String data = HttpClientUtils.post("http://localhost:8080/http/post/stringEntity",
+                headerMap, JSON.toJSONString(paramMap), 1000, 60000, charset);
+        System.err.println("post StringEntity: " + data);
 
-        long end = System.currentTimeMillis();
-        System.err.println((end - start) + " ~~~ " + data);
+        data = HttpClientUtils.post("http://localhost:8080/http/post/stringEntity1",
+                headerMap, JSON.toJSONString(paramMap), 1000, 60000, charset);
+        System.err.println("post StringEntity: " + data);
+
+        // POST FORM
+        headerMap.put("Content-type", "application/x-www-form-urlencoded; charset=utf-8");
+
+        data = HttpClientUtils.post("http://localhost:8080/http/post/form",
+                headerMap, JSON.toJSONString(paramMap), 1000, 60000, charset);
+        System.err.println("post form: " + data);
+
+        headerMap.put("Content-type", "application/form-data; charset=utf-8");
+
+        data = HttpClientUtils.post("http://localhost:8080/http/post/form",
+                headerMap, JSON.toJSONString(paramMap), 1000, 60000, charset);
+        System.err.println("post form: " + data);
+
+
+//        data = HttpClientUtils.post("http://localhost:8080/http/post/stringEntity",
+//                headerMap, JSON.toJSONString(paramMap), 1000, 60000, charset);
+//        System.err.println("post form StringEntity: " + data);
+
+        data = HttpClientUtils.post("http://localhost:8080/http/post/stringEntity1",
+                headerMap, JSON.toJSONString(paramMap), 1000, 60000, charset);
+        System.err.println("post form StringEntity: " + data);
     }
 }

@@ -1,5 +1,6 @@
 package com.demo.components.httpclient;
 
+import com.alibaba.fastjson.JSON;
 import com.demo.components.httpclient.exception.HttpException;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.NameValuePair;
@@ -87,7 +88,20 @@ public class HttpClientUtils {
         return null;
     }
 
-    public static String post(String url, Map<String, String> headers, Map<String, String> params, int connectTimeout, int socketTimeout, String charset) throws Exception {
+    /**
+     * POST 提交表单
+     *
+     * @param url            请求URL
+     * @param headers        Header
+     * @param params         提交参数KV, V只接收String, 请先做好数据格式和类型转换
+     * @param connectTimeout 连接超时时间
+     * @param socketTimeout  数据读取超时时间
+     * @param charset        字符集
+     * @return ResponseString
+     * @throws Exception
+     */
+    public static String postForm(String url, Map<String, String> headers, Map<String, String> params,
+                                  int connectTimeout, int socketTimeout, String charset) throws Exception {
         CloseableHttpClient httpclient = HttpClients.custom().build();
         HttpPost httpPost = new HttpPost(url);
         RequestConfig requestConfig = RequestConfig.custom()
@@ -142,7 +156,25 @@ public class HttpClientUtils {
         return null;
     }
 
-    public static String post(String url, Map<String, String> headers, String params, int connectTimeout, int socketTimeout, String charset) throws Exception {
+    /**
+     * POST请求
+     *
+     * @param url            请求URL
+     * @param headers        Header
+     * @param params         请求参数, 实际请求时会转换成String
+     * @param connectTimeout 连接超时时间
+     * @param socketTimeout  数据读取超时时间
+     * @param charset        字符集
+     * @return Response String
+     * @throws Exception
+     */
+    public static String post(String url, Map<String, String> headers, Object params,
+                              int connectTimeout, int socketTimeout, String charset) throws Exception {
+        return post(url, headers, params == null ? null : JSON.toJSONString(params), connectTimeout, socketTimeout, charset);
+    }
+
+    public static String post(String url, Map<String, String> headers, String params,
+                              int connectTimeout, int socketTimeout, String charset) throws Exception {
         CloseableHttpClient httpclient = HttpClients.custom().build();
         HttpPost httpPost = new HttpPost(url);
         RequestConfig requestConfig = RequestConfig.custom()
@@ -189,6 +221,5 @@ public class HttpClientUtils {
         }
         return null;
     }
-
 
 }
