@@ -19,13 +19,14 @@ public class HttpController {
 
     @PostMapping("/post/stringEntity")
     public JsonResult<String> stringEntity(@RequestBody String requestBody) {
-        LOGGER.info("/http/post/stringEntity request is: {}", requestBody);
+        LOGGER.info("/http/post/stringEntity requestBody String is: {}", requestBody);
         SmsRequestVO requestVO = JSON.parseObject(requestBody, SmsRequestVO.class);
         return JsonResult.success(requestVO.toString());
     }
 
     @PostMapping("/post/stringEntity1")
     public JsonResult<String> stringEntity(@RequestBody SmsRequestVO requestBody) {
+        LOGGER.info("/http/post/stringEntity requestBody Object is: {}", requestBody);
         return JsonResult.success(requestBody.toString());
     }
 
