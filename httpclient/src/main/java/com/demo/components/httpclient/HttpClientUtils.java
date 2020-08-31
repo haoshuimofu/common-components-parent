@@ -10,6 +10,7 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
@@ -44,6 +45,16 @@ public class HttpClientUtils {
         return get(url, null, connectionTimeout, socketTimeout);
     }
 
+    /**
+     * GET请求
+     *
+     * @param url            请求URL
+     * @param headers        Headers
+     * @param connectTimeout 连接超时时间
+     * @param socketTimeout  数据读取阻塞超时时间
+     * @return
+     * @throws Exception
+     */
     public static String get(String url, Map<String, String> headers, int connectTimeout, int socketTimeout) throws Exception {
         CloseableHttpClient httpClient = HttpClients.custom().build();
         HttpGet httpGet = new HttpGet(url);
@@ -53,39 +64,7 @@ public class HttpClientUtils {
                 .build();
         httpGet.setConfig(requestConfig);
         HttpHelper.addHeaders(httpGet, headers);
-        CloseableHttpResponse response = null;
-        boolean responseClose = false;
-        try {
-            response = httpClient.execute(httpGet);
-            if (response == null) {
-                throw new HttpException("Http response is null");
-            }
-            StatusLine statusLine = response.getStatusLine();
-            if (statusLine.getStatusCode() != HttpStatus.OK.getValue()) {
-                LOGGER.error("### http get request error! httpStatus=[{}], reasonPhrase=[{}].",
-                        statusLine.getStatusCode(), statusLine.getReasonPhrase());
-                throw new HttpException(statusLine.getStatusCode(), statusLine.getReasonPhrase());
-            }
-            if (response.getStatusLine().getStatusCode() == HttpStatus.OK.getValue()) {
-                String responseStr = EntityUtils.toString(response.getEntity());
-                responseClose = true;
-                return responseStr;
-            }
-        } finally {
-            if (response != null && !responseClose) {
-                try {
-                    response.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-            try {
-                httpClient.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-        return null;
+        return HttpClientUtils.executeHttpRequest(httpClient, httpGet);
     }
 
     /**
@@ -121,39 +100,7 @@ public class HttpClientUtils {
                 httpPost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
             }
         }
-        CloseableHttpResponse response = null;
-        boolean responseClose = false;
-        try {
-            response = httpclient.execute(httpPost);
-            if (response == null) {
-                throw new HttpException("Http response is null");
-            }
-            StatusLine statusLine = response.getStatusLine();
-            if (statusLine.getStatusCode() != HttpStatus.OK.getValue()) {
-                LOGGER.error("### http post request error! httpStatus=[{}], reasonPhrase=[{}].",
-                        statusLine.getStatusCode(), statusLine.getReasonPhrase());
-                throw new HttpException(statusLine.getStatusCode(), statusLine.getReasonPhrase());
-            }
-            if (response.getStatusLine().getStatusCode() == HttpStatus.OK.getValue()) {
-                String responseStr = EntityUtils.toString(response.getEntity());
-                responseClose = true;
-                return responseStr;
-            }
-        } finally {
-            if (response != null && !responseClose) {
-                try {
-                    response.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-            try {
-                httpclient.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-        return null;
+        return HttpClientUtils.executeHttpRequest(httpclient, httpPost);
     }
 
     /**
@@ -187,17 +134,29 @@ public class HttpClientUtils {
             httpPost.setEntity((charset == null || charset.trim().isEmpty()) ?
                     new StringEntity(params) : new StringEntity(params, charset));
         }
+        return HttpClientUtils.executeHttpRequest(httpclient, httpPost);
+    }
+
+    /**
+     * 执行Http请求
+     *
+     * @param httpClient
+     * @param httpRequest
+     * @return
+     * @throws Exception
+     */
+    private static String executeHttpRequest(CloseableHttpClient httpClient, HttpUriRequest httpRequest) throws Exception {
         CloseableHttpResponse response = null;
         boolean responseClose = false;
         try {
-            response = httpclient.execute(httpPost);
+            response = httpClient.execute(httpRequest);
             if (response == null) {
                 throw new HttpException("Http response is null");
             }
             StatusLine statusLine = response.getStatusLine();
             if (statusLine.getStatusCode() != HttpStatus.OK.getValue()) {
-                LOGGER.error("### http post request error! httpStatus=[{}], reasonPhrase=[{}].",
-                        statusLine.getStatusCode(), statusLine.getReasonPhrase());
+                LOGGER.error("### Http {} request error! httpStatus=[{}], reasonPhrase=[{}].",
+                        httpRequest.getMethod(), statusLine.getStatusCode(), statusLine.getReasonPhrase());
                 throw new HttpException(statusLine.getStatusCode(), statusLine.getReasonPhrase());
             }
             if (response.getStatusLine().getStatusCode() == HttpStatus.OK.getValue()) {
@@ -214,7 +173,7 @@ public class HttpClientUtils {
                 }
             }
             try {
-                httpclient.close();
+                httpClient.close();
             } catch (IOException e) {
                 e.printStackTrace();
             }
