@@ -68,5 +68,6 @@ public class HttpClientTest {
         } catch (Exception e) {
             System.err.println("post form to StringEntity1 error!");
         }
+
     }
 }
