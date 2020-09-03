@@ -1,4 +1,4 @@
-package com.demo.components.httpclient;
+package com.demo.components;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

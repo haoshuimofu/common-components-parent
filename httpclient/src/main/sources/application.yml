@@ -1,0 +1,13 @@
+httpclient.pooling.connectionRequestTimeout = 1000
+httpclient.pooling.connectTimeout = 1000
+httpclient.pooling.socketTimeout = 1000
+httpclient.pooling.maxPerRoute = 10
+httpclient.pooling.matTotal = 100
+
+httpclient.custom.pooling.connectionRequestTimeout = 1000
+httpclient.custom.pooling.connectTimeout = 1000
+httpclient.custom.pooling.socketTimeout = 1000
+httpclient.custom.pooling.maxPerRoute = 10
+httpclient.custom.pooling.matTotal = 100
+
+spring.data.redis.xxx = xxx

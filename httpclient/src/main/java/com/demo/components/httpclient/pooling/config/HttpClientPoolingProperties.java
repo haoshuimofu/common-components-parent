@@ -1,10 +1,10 @@
-package com.demo.components.httpclient.config;
+package com.demo.components.httpclient.pooling.config;
 
 /**
  * @author wude
  * @date 2020/8/31 19:55
  */
-public class HttpClientProperties {
+public class HttpClientPoolingProperties {
 
     private int matTotal;
     private int maxPerRoute;

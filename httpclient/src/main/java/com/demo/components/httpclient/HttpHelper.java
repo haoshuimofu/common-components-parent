@@ -1,12 +1,15 @@
 package com.demo.components.httpclient;
 
-import com.demo.components.httpclient.config.HttpClientProperties;
+import com.demo.components.httpclient.pooling.config.HttpClientPoolingProperties;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.config.Registry;
 import org.apache.http.config.RegistryBuilder;
 import org.apache.http.conn.socket.ConnectionSocketFactory;
 import org.apache.http.conn.socket.PlainConnectionSocketFactory;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.ssl.SSLContexts;
 
@@ -36,12 +39,12 @@ public class HttpHelper {
     }
 
     /**
-     * 初始化一个PoolingHttpClientConnectionManager实例
+     * 初始化PoolingHttpClientConnectionManager实例
      *
      * @param properties
      * @return
      */
-    public static PoolingHttpClientConnectionManager connectionManager(HttpClientProperties properties) {
+    public static PoolingHttpClientConnectionManager connectionManager(HttpClientPoolingProperties properties) {
         // SSL context for secure connections can be created either based on
         // system or application specific properties.
         SSLContext sslcontext = SSLContexts.createSystemDefault();
@@ -58,6 +61,48 @@ public class HttpHelper {
         connManager.setDefaultMaxPerRoute(properties.getMaxPerRoute());
         connManager.setMaxTotal(properties.getMatTotal());
         return connManager;
+    }
+
+    /**
+     * Http连接池获取HttpClient实例
+     *
+     * @param connectionManager
+     * @return
+     */
+    public static CloseableHttpClient get(PoolingHttpClientConnectionManager connectionManager) {
+        return HttpClients.custom()
+                .setConnectionManager(connectionManager)
+                .build();
+    }
+
+    public static RequestConfig requestConfig(HttpClientPoolingProperties properties) {
+        RequestConfig.Builder requestConfigBuilder = RequestConfig.custom()
+                .setConnectionRequestTimeout(properties.getConnectionRequestTimeout())
+                .setConnectTimeout(properties.getConnectTimeout())
+                .setRedirectsEnabled(true);
+        if (properties.getSocketTimeout() > 0) {
+            requestConfigBuilder.setSocketTimeout(properties.getSocketTimeout());
+        }
+        return requestConfigBuilder.build();
+    }
+
+    /**
+     * 构建Http请求设置
+     *
+     * @param properties          连接池配置
+     * @param customSocketTimeout 自定义socketTimeout
+     * @return
+     */
+    public static RequestConfig requestConfig(HttpClientPoolingProperties properties, int customSocketTimeout) {
+        int timeout = customSocketTimeout > 0 ? customSocketTimeout : properties.getSocketTimeout();
+        RequestConfig.Builder requestConfigBuilder = RequestConfig.custom()
+                .setConnectionRequestTimeout(properties.getConnectionRequestTimeout())
+                .setConnectTimeout(properties.getConnectTimeout())
+                .setRedirectsEnabled(true);
+        if (timeout > 0) {
+            requestConfigBuilder.setSocketTimeout(timeout);
+        }
+        return requestConfigBuilder.build();
     }
 
 }
