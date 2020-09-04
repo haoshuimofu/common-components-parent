@@ -74,4 +74,5 @@ spring:
             content-type: application/json
             producer:
               delayed-exchange: false
+      default-binder: rabbit1
 
