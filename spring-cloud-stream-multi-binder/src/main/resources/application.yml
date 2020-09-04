@@ -1,0 +1,77 @@
+spring:
+  rabbitmq:
+    host: 192.168.40.161
+    port: 5672
+    username: admin
+    password: admin
+    virtual-host: /stream
+  ######
+  cloud:
+    stream:
+      binders:
+        rabbit1:
+          type: rabbit
+          environment:
+            spring:
+              rabbitmq:
+                addresses: 192.168.40.161
+                port: 5672
+                username: admin
+                password: admin
+                virtual-host: /ddmc
+        rabbit2:
+          type: rabbit
+          environment:
+            spring:
+              rabbitmq:
+                addresses: 192.168.40.161
+                port: 5672
+                username: admin
+                password: admin
+                virtual-host: /search-service
+      bindings:
+        inputDemo:
+          destination: demoExchange
+          group: demoGroup
+          cousumer:
+            max-attempts: 2
+            concurrency: 2
+      rabbit:
+        bindings:
+          inputDemo_1:
+            binder: rabbit1
+            cousumer:
+              max-concurrency: 3
+              auto-bind-dlq: true
+              republish-to-dlq: true
+              binding-routing-key: demoExchange_1
+              dead-letter-exchange: demoExchange_1.DLX
+              dlq-dead-letter-exchange: demoExchange_1.DLX
+              dead-letter-exchange-type: direct
+              dead-letter-routing-key: demoGroup_1
+              dead-letter-queue-name: demoGroup_1.DLQ
+          inputDemo_2:
+            binder: rabbit2
+            cousumer:
+              max-concurrency: 3
+              auto-bind-dlq: true
+              republish-to-dlq: true
+              binding-routing-key: demoExchange_2
+              dead-letter-exchange: demoExchange_2.DLX
+              dlq-dead-letter-exchange: demoExchange_2.DLX
+              dead-letter-exchange-type: direct
+              dead-letter-routing-key: demoGroup_2
+              dead-letter-queue-name: demoGroup_2.DLQ
+          outputDemo_1:
+            binder: rabbit1
+            destination: demoExchange_1
+            content-type: application/json
+            producer:
+              delayed-exchange: false
+          outputDemo_2:
+            binder: rabbit2
+            destination: demoExchange_2
+            content-type: application/json
+            producer:
+              delayed-exchange: false
+

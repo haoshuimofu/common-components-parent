@@ -19,6 +19,7 @@
         <module>guava-caffeine</module>
         <module>rocketmq</module>
         <module>httpclient</module>
+        <module>spring-cloud-stream-multi-binder</module>
     </modules>
 
     <properties>
