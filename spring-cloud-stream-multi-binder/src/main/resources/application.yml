@@ -1,3 +1,4 @@
+# https://cloud.spring.io/spring-cloud-static/spring-cloud-stream/current/reference/html/spring-cloud-stream.html#multiple-systems
 spring:
   #  rabbitmq:
   #    host: 192.168.40.161
