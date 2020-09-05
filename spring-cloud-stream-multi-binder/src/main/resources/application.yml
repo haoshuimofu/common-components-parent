@@ -70,7 +70,7 @@ spring:
               dead-letter-routing-key: demoGroup_1
               dead-letter-queue-name: demoExchange_1.demoGroup_1.DLQ
           inputDemo_2:
-            cousumer:
+            consumer:
               max-concurrency: 3
               republish-to-dlq: true
               auto-bind-dlq: true

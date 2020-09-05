@@ -19,8 +19,6 @@ public class DemoMessageConsumer1 {
 
     @StreamListener(DemoMessageProcessor1.INPUT)
     public void handleDemoMessage(DemoMessage1 message) {
-        String da = null;
-        System.err.println(da.trim());
         logger.error("### demoInput Received: " + JSON.toJSONString(message));
     }
 
