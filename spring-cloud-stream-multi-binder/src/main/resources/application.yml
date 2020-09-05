@@ -72,8 +72,8 @@ spring:
           inputDemo_2:
             cousumer:
               max-concurrency: 3
-              auto-bind-dlq: true
               republish-to-dlq: true
+              auto-bind-dlq: true
               binding-routing-key: demoExchange_2
               dead-letter-exchange: demoExchange_2.DLX
               dlq-dead-letter-exchange: demoExchange_2.DLX
