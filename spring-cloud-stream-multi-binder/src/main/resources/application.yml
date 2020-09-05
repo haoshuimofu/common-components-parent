@@ -14,7 +14,7 @@ spring:
           environment:
             spring:
               rabbitmq:
-                addresses: 192.168.40.161
+                host: 192.168.40.161
                 port: 5672
                 username: admin
                 password: admin
@@ -24,7 +24,7 @@ spring:
           environment:
             spring:
               rabbitmq:
-                addresses: 192.168.40.161
+                host: 192.168.40.161
                 port: 5672
                 username: admin
                 password: admin
@@ -59,27 +59,26 @@ spring:
       rabbit:
         bindings:
           inputDemo_1:
-            cousumer:
+            consumer:
               max-concurrency: 3
-              autoBindDlq: true
-              #              auto-bind-dlq: true
               republish-to-dlq: true
+              auto-bind-dlq: true
               binding-routing-key: demoExchange_1
               dead-letter-exchange: demoExchange_1.DLX
               dlq-dead-letter-exchange: demoExchange_1.DLX
               dead-letter-exchange-type: direct
               dead-letter-routing-key: demoGroup_1
               dead-letter-queue-name: demoExchange_1.demoGroup_1.DLQ
-          inputDemo_2:
-            cousumer:
-              max-concurrency: 3
-              auto-bind-dlq: true
-              republish-to-dlq: true
-              binding-routing-key: demoExchange_2
-              dead-letter-exchange: demoExchange_2.DLX
-              dlq-dead-letter-exchange: demoExchange_2.DLX
-              dead-letter-exchange-type: direct
-              dead-letter-routing-key: demoGroup_2
-              dead-letter-queue-name: demoExchange_2.demoGroup_2.DLQ
+            inputDemo_2:
+              cousumer:
+                max-concurrency: 3
+                auto-bind-dlq: true
+                republish-to-dlq: true
+                binding-routing-key: demoExchange_2
+                dead-letter-exchange: demoExchange_2.DLX
+                dlq-dead-letter-exchange: demoExchange_2.DLX
+                dead-letter-exchange-type: direct
+                dead-letter-routing-key: demoGroup_2
+                dead-letter-queue-name: demoExchange_2.demoGroup_2.DLQ
       default-binder: rabbit1
 

@@ -34,7 +34,7 @@ public class MultiBinderMessageController {
         demoMessageProcessor1.outputDemo().send(message);
 
         Message<DemoMessage2> message2 = MessageBuilder.withPayload(new DemoMessage2("rabbit2", "wude")).build();
-        demoMessageProcessor2.outputDemo().send(message2);
+//        demoMessageProcessor2.outputDemo().send(message2);
         return "send demo message success";
 //        return demoMessageConsumer.handle(new DemoMessage("spring-cloud-stream", "wude"));
     }

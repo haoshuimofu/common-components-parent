@@ -4,4 +4,4 @@ spring:
     port: 5672
     username: admin
     password: admin
-    virtual-host: /ddmc
+    virtual-host: /demo
