@@ -145,7 +145,7 @@ public class HttpClientUtils {
      * @return
      * @throws Exception
      */
-    private static String executeHttpRequest(CloseableHttpClient httpClient, HttpUriRequest httpRequest) throws Exception {
+    public static String executeHttpRequest(CloseableHttpClient httpClient, HttpUriRequest httpRequest) throws Exception {
         CloseableHttpResponse response = null;
         boolean responseClose = false;
         try {
