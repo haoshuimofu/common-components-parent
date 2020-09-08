@@ -485,7 +485,9 @@ public abstract class AbstractElasticsearchRepository<T extends BaseIndexModel> 
         }
         SearchResponse searchResponse = getClient().search(searchRequest, RequestOptions.DEFAULT);
         Pagation<T> pagation = new Pagation<>();
-        pagation.setTotal(searchResponse.getHits().getTotalHits().value);
+        pagation.setTotal(searchResponse.getHits() != null
+                && searchResponse.getHits().getTotalHits() != null ?
+                searchResponse.getHits().getTotalHits().value : 0);
         List<T> data = new ArrayList<>();
         if (pagation.getTotal() > 0) {
             for (SearchHit hit : searchResponse.getHits().getHits()) {

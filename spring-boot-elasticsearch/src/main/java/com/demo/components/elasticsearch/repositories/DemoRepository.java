@@ -63,7 +63,7 @@ public class DemoRepository extends AbstractElasticsearchRepository<Demo> {
 
     public Pagation<Demo> page(int from, int size) throws Exception {
         QueryBuilder queryBuilder = QueryBuilders.boolQuery().filter(QueryBuilders.termQuery("status", 1));
-        return pageQuery(queryBuilder, null, from, size, null, null, 0, null);
+        return search(queryBuilder, null, from, size, null, null, 0, null);
     }
 
 

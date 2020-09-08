@@ -108,15 +108,17 @@ public class SearchOptions {
         return explain;
     }
 
-    public void setExplain(boolean explain) {
+    public SearchOptions setExplain(boolean explain) {
         this.explain = explain;
+        return this;
     }
 
     public boolean isProfile() {
         return profile;
     }
 
-    public void setProfile(boolean profile) {
+    public SearchOptions setProfile(boolean profile) {
         this.profile = profile;
+        return this;
     }
 }
