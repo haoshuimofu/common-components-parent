@@ -20,6 +20,9 @@ public class SearchOptions {
     private String routing;
     private int timeoutMillis;
     private SearchType searchType;
+    private boolean trackTotalHits; // 跟踪总记录数
+    private boolean explain;        // 评分计算分析
+    private boolean profile;        // 查询性能分析
 
     private SearchOptions() {
 
@@ -92,4 +95,28 @@ public class SearchOptions {
         return this;
     }
 
+    public boolean isTrackTotalHits() {
+        return trackTotalHits;
+    }
+
+    public SearchOptions setTrackTotalHits(boolean trackTotalHits) {
+        this.trackTotalHits = trackTotalHits;
+        return this;
+    }
+
+    public boolean isExplain() {
+        return explain;
+    }
+
+    public void setExplain(boolean explain) {
+        this.explain = explain;
+    }
+
+    public boolean isProfile() {
+        return profile;
+    }
+
+    public void setProfile(boolean profile) {
+        this.profile = profile;
+    }
 }

@@ -453,38 +453,35 @@ public abstract class AbstractElasticsearchRepository<T extends BaseIndexModel> 
     }
 
     @Override
-    public Pagation<T> pageQuery(QueryBuilder query, SearchOptions searchOptions) throws Exception {
-        if (searchOptions == null) {
-            searchOptions = SearchOptions.instance();
-        }
-        return this.pageQuery(query, searchOptions.getRouting(), searchOptions.getFrom(), searchOptions.getSize(),
-                searchOptions.getSort(), searchOptions.getSearchType(), searchOptions.getTimeoutMillis(), searchOptions.getFields());
-    }
-
-    @Override
-    public Pagation<T> pageQuery(QueryBuilder query, String routing, int from, int size,
-                                 TreeMap<String, SortOrder> sort, SearchType searchType, int timeoutMillis, String... fields) throws Exception {
+    public Pagation<T> search(QueryBuilder query, SearchOptions searchOptions) throws Exception {
         SearchSourceBuilder searchSourceBuilder = SearchSourceBuilder.searchSource().query(query);
-        if (from >= 0 && size > 0) {
-            searchSourceBuilder.from(from).size(size);
-        }
-        if (fields != null && fields.length > 0) {
-            searchSourceBuilder.fetchSource(fields, null);
-        }
-        if (sort != null && sort.size() > 0) {
-            for (Map.Entry<String, SortOrder> entry : sort.entrySet()) {
-                searchSourceBuilder.sort(entry.getKey(), entry.getValue());
+        if (searchOptions != null) {
+            if (searchOptions.getFrom() >= 0 && searchOptions.getSize() > 0) {
+                searchSourceBuilder.from(searchOptions.getFrom()).size(searchOptions.getSize());
             }
-        }
-        if (timeoutMillis > 0) {
-            searchSourceBuilder.timeout(TimeValue.timeValueMillis(timeoutMillis));
+            if (searchOptions.getFields() != null && searchOptions.getFields().length > 0) {
+                searchSourceBuilder.fetchSource(searchOptions.getFields(), null);
+            }
+            if (searchOptions.getSort() != null && searchOptions.getSort().size() > 0) {
+                for (Map.Entry<String, SortOrder> entry : searchOptions.getSort().entrySet()) {
+                    searchSourceBuilder.sort(entry.getKey(), entry.getValue());
+                }
+            }
+            if (searchOptions.getTimeoutMillis() > 0) {
+                searchSourceBuilder.timeout(TimeValue.timeValueMillis(searchOptions.getTimeoutMillis()));
+            }
+            searchSourceBuilder.trackTotalHits(searchOptions.isTrackTotalHits());
+            searchSourceBuilder.explain(searchOptions.isExplain());
+            searchSourceBuilder.profile(searchOptions.isProfile());
         }
         SearchRequest searchRequest = Requests.searchRequest(getIndex()).source(searchSourceBuilder);
-        if (routing != null) {
-            searchRequest.routing(routing);
-        }
-        if (searchType != null) {
-            searchRequest.searchType(SearchType.DFS_QUERY_THEN_FETCH);
+        if (searchOptions != null) {
+            if (searchOptions.getRouting() != null) {
+                searchRequest.routing(searchOptions.getRouting());
+            }
+            if (searchOptions.getSearchType() != null) {
+                searchRequest.searchType(searchOptions.getSearchType());
+            }
         }
         SearchResponse searchResponse = getClient().search(searchRequest, RequestOptions.DEFAULT);
         Pagation<T> pagation = new Pagation<>();
@@ -492,11 +489,24 @@ public abstract class AbstractElasticsearchRepository<T extends BaseIndexModel> 
         List<T> data = new ArrayList<>();
         if (pagation.getTotal() > 0) {
             for (SearchHit hit : searchResponse.getHits().getHits()) {
-                data.add(convert(hit.getId(), hit.getSourceAsMap()));
+                data.add(this.convert(hit.getId(), hit.getSourceAsMap()));
             }
         }
         pagation.setData(data);
         return pagation;
+    }
+
+    @Override
+    public Pagation<T> search(QueryBuilder query, String routing, int from, int size,
+                              TreeMap<String, SortOrder> sort, SearchType searchType, int timeoutMillis, String... fields) throws Exception {
+        SearchOptions searchOptions = SearchOptions.instance()
+                .setRouting(routing)
+                .setFrom(from).setSize(size)
+                .setSort(sort)
+                .setSearchType(searchType)
+                .setTimeoutMillis(timeoutMillis)
+                .setFields(fields);
+        return search(query, searchOptions);
     }
 
     @SuppressWarnings("unchecked")

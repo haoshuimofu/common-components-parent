@@ -247,7 +247,7 @@ public interface CrudRepository<T> {
      * @return
      * @throws
      */
-    Pagation<T> pageQuery(QueryBuilder query, SearchOptions searchOptions) throws Exception;
+    Pagation<T> search(QueryBuilder query, SearchOptions searchOptions) throws Exception;
 
     /**
      * 简单分页查询
@@ -263,8 +263,8 @@ public interface CrudRepository<T> {
      * @return
      * @throws
      */
-    Pagation<T> pageQuery(QueryBuilder query, String routing, int from, int size,
-                          TreeMap<String, SortOrder> sort, SearchType searchType, int timeoutMillis, String... fields) throws Exception;
+    Pagation<T> search(QueryBuilder query, String routing, int from, int size,
+                       TreeMap<String, SortOrder> sort, SearchType searchType, int timeoutMillis, String... fields) throws Exception;
 
     /**
      * 自定义 sourceMap 转 索引模型实例
