@@ -2,6 +2,7 @@ package com.demo.components.elasticsearch.base.repository;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.demo.components.elasticsearch.DebugHelper;
 import com.demo.components.elasticsearch.Pagation;
 import com.demo.components.elasticsearch.annotation.*;
 import com.demo.components.elasticsearch.base.model.BaseIndexModel;
@@ -78,6 +79,8 @@ public abstract class AbstractElasticsearchRepository<T extends BaseIndexModel> 
     private ElasticsearchRestClient restClient;
     @Autowired
     private ElasticsearchRestDynamicConfig restDynamicConfig;
+    @Autowired
+    private DebugHelper debugHelper;
 
     public RestHighLevelClient getClient() {
         return restClient.getRestClient();
@@ -470,9 +473,15 @@ public abstract class AbstractElasticsearchRepository<T extends BaseIndexModel> 
             if (searchOptions.getTimeoutMillis() > 0) {
                 searchSourceBuilder.timeout(TimeValue.timeValueMillis(searchOptions.getTimeoutMillis()));
             }
-            searchSourceBuilder.trackTotalHits(searchOptions.isTrackTotalHits());
-            searchSourceBuilder.explain(searchOptions.isExplain());
-            searchSourceBuilder.profile(searchOptions.isProfile());
+            if (searchOptions.isTrackTotalHits()) {
+                searchSourceBuilder.trackTotalHits(searchOptions.isTrackTotalHits());
+            }
+            if (searchOptions.isExplain()) {
+                searchSourceBuilder.explain(searchOptions.isExplain());
+            }
+            if (searchOptions.isProfile()) {
+                searchSourceBuilder.profile(searchOptions.isProfile());
+            }
         }
         SearchRequest searchRequest = Requests.searchRequest(getIndex()).source(searchSourceBuilder);
         if (searchOptions != null) {
@@ -484,6 +493,7 @@ public abstract class AbstractElasticsearchRepository<T extends BaseIndexModel> 
             }
         }
         SearchResponse searchResponse = getClient().search(searchRequest, RequestOptions.DEFAULT);
+        debugHelper.debugESQuery(searchSourceBuilder, searchResponse, logger);
         Pagation<T> pagation = new Pagation<>();
         pagation.setTotal(searchResponse.getHits() != null
                 && searchResponse.getHits().getTotalHits() != null ?
