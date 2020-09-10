@@ -2,11 +2,10 @@ package com.demo.components.elasticsearch.repositories;
 
 import com.demo.components.elasticsearch.base.repository.AbstractElasticsearchRepository;
 import com.demo.components.elasticsearch.model.StationProduct;
+import org.elasticsearch.search.SearchHit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
-
-import java.util.Map;
 
 /**
  * 服务站商品
@@ -20,11 +19,11 @@ public class StationProductRepository extends AbstractElasticsearchRepository<St
     private static final Logger logger = LoggerFactory.getLogger(StationProductRepository.class);
 
     @Override
-    public StationProduct convert(String id, Map<String, Object> sourceMap) {
+    public StationProduct convert(SearchHit hit) {
         return null;
     }
 
-//    @Value("${elasticsearch.index.station_product}")
+    //    @Value("${elasticsearch.index.station_product}")
 //    private String index;
 //    @Value("${elasticsearch.index.station_product.max.boost:1}")
 //    private int max_word_boost;

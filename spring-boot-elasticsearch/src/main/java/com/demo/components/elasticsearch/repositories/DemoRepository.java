@@ -1,5 +1,6 @@
 package com.demo.components.elasticsearch.repositories;
 
+import com.alibaba.fastjson.JSON;
 import com.demo.components.elasticsearch.Pagation;
 import com.demo.components.elasticsearch.base.repository.AbstractElasticsearchRepository;
 import com.demo.components.elasticsearch.model.Demo;
@@ -19,7 +20,6 @@ import org.springframework.stereotype.Repository;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author wude
@@ -68,10 +68,10 @@ public class DemoRepository extends AbstractElasticsearchRepository<Demo> {
 
 
     @Override
-    public Demo convert(String id, Map<String, Object> sourceMap) {
-        Demo demo = new Demo();
-        demo.setId(id);
-        // todo
+    public Demo convert(SearchHit hit) {
+        Demo demo = JSON.parseObject(hit.getSourceAsString(), Demo.class);
+        demo.set_id(hit.getId());
+        demo.setId(hit.getId());
         return demo;
     }
 }

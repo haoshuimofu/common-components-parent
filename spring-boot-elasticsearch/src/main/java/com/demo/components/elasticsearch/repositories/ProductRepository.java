@@ -2,9 +2,8 @@ package com.demo.components.elasticsearch.repositories;
 
 import com.demo.components.elasticsearch.base.repository.AbstractElasticsearchRepository;
 import com.demo.components.elasticsearch.model.Product;
+import org.elasticsearch.search.SearchHit;
 import org.springframework.stereotype.Repository;
-
-import java.util.Map;
 
 /**
  * @author wude
@@ -13,11 +12,11 @@ import java.util.Map;
 @Repository
 public class ProductRepository extends AbstractElasticsearchRepository<Product> {
     @Override
-    public Product convert(String id, Map<String, Object> sourceMap) {
+    public Product convert(SearchHit hit) {
         return null;
     }
 
-//    @Value("${elasticsearch.index.product}")
+    //    @Value("${elasticsearch.index.product}")
 //    private String index;
 //    @Value("${elasticsearch.index.product.max.boost:1}")
 //    private int max_word_boost;

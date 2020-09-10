@@ -501,7 +501,7 @@ public abstract class AbstractElasticsearchRepository<T extends BaseIndexModel> 
         List<T> data = new ArrayList<>();
         if (pagation.getTotal() > 0) {
             for (SearchHit hit : searchResponse.getHits().getHits()) {
-                data.add(this.convert(hit.getId(), hit.getSourceAsMap()));
+                data.add(this.convert(hit));
             }
         }
         pagation.setData(data);

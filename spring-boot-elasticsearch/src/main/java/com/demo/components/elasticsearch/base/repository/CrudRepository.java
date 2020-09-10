@@ -4,11 +4,11 @@ import com.demo.components.elasticsearch.Pagation;
 import com.demo.components.elasticsearch.request.SearchOptions;
 import org.elasticsearch.action.search.SearchType;
 import org.elasticsearch.index.query.QueryBuilder;
+import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.sort.SortOrder;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Map;
 import java.util.TreeMap;
 
 /**
@@ -267,12 +267,11 @@ public interface CrudRepository<T> {
                        TreeMap<String, SortOrder> sort, SearchType searchType, int timeoutMillis, String... fields) throws Exception;
 
     /**
-     * 自定义 sourceMap 转 索引模型实例
+     * 搜索命中结果转索引模型对象实例
      *
-     * @param id
-     * @param sourceMap
+     * @param hit
      * @return
      */
-    T convert(String id, Map<String, Object> sourceMap);
+    T convert(SearchHit hit);
 
 }
