@@ -50,6 +50,12 @@ public class DemoIndexController {
         return JsonResult.success(demoService.getById(id, routing));
     }
 
+    @GetMapping("getByIds")
+    public JsonResult getByIds(@RequestParam("ids") String ids,
+                               @RequestParam(value = "routing", required = false) String routing) throws Exception {
+        return JsonResult.success(demoService.getByIds(Arrays.asList(ids.split(",")), routing));
+    }
+
     @GetMapping("deleteById")
     public JsonResult deleteById(@RequestParam("id") String id,
                                  @RequestParam(value = "routing", defaultValue = "") String routing) {

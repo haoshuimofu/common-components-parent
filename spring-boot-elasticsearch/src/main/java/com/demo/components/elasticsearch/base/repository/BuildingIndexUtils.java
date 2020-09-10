@@ -56,11 +56,11 @@ public class BuildingIndexUtils {
 
             // 构建source
             if (field.getAnnotation(ESTransient.class) != null) {
-                continue; // 忽略，被此注解标注的属性不参与索引构建
+                continue;
             }
             Object fieldValue = field.get(model);
             if (fieldValue == null) {
-                continue; // 属性值为null跳过
+                continue;
             }
             ESField esField = field.getAnnotation(ESField.class);
             String fieldName = getMappingFieldName(field, esField);
@@ -70,7 +70,7 @@ public class BuildingIndexUtils {
                         xb.field(fieldName, parseObjectField(fieldValue));
                         break;
                     }
-                    case NESETED: {
+                    case NESTED: {
                         xb.field(fieldName, parseNestedField((List<Object>) fieldValue));
                     }
                     default:
@@ -316,31 +316,45 @@ public class BuildingIndexUtils {
         return bulkRequest;
     }
 
+    /**
+     * Build Index时解析Object属性值
+     *
+     * @param fieldValue
+     * @return
+     * @throws Exception
+     */
     private static Map<String, Object> parseObjectField(Object fieldValue) throws Exception {
-        if (fieldValue == null) return null;
         Map<String, Object> objMap = new HashMap<>();
         for (Field field : fieldValue.getClass().getDeclaredFields()) {
             field.setAccessible(true);
             Object value = field.get(fieldValue);
-            if (value == null) continue;
-            ESField esField = field.getAnnotation(ESField.class);
-            String nestedFieldName = (esField == null || esField.name().trim().length() == 0) ?
-                    field.getName() : esField.name();
-            objMap.put(nestedFieldName, value);
+            if (value == null) {
+                continue;
+            }
+            objMap.put(getMappingFieldName(field, field.getAnnotation(ESField.class)), value);
         }
         return objMap.isEmpty() ? null : objMap;
     }
 
+    /**
+     * Build Index时解析List<Object>属性值
+     *
+     * @param fieldValue
+     * @return
+     * @throws Exception
+     */
     private static List<Map<String, Object>> parseNestedField(List<Object> fieldValue) throws Exception {
-        if (fieldValue == null || fieldValue.isEmpty()) return null;
-        List<Map<String, Object>> nestedMap = new ArrayList<>();
+        if (fieldValue == null || fieldValue.isEmpty()) {
+            return null;
+        }
+        List<Map<String, Object>> nestedObjMap = new ArrayList<>();
         for (Object element : fieldValue) {
-            Map<String, Object> elementMap = parseObjectField(element);
-            if (elementMap != null && !elementMap.isEmpty()) {
-                nestedMap.add(elementMap);
+            Map<String, Object> objMap = parseObjectField(element);
+            if (objMap != null && !objMap.isEmpty()) {
+                nestedObjMap.add(objMap);
             }
         }
-        return nestedMap.isEmpty() ? null : nestedMap;
+        return nestedObjMap.isEmpty() ? null : nestedObjMap;
     }
 
 }

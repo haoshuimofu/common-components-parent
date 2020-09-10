@@ -21,10 +21,10 @@ public class Demo extends BaseIndexModel {
     private Integer status;
     private Date timestamp;
 
-    @ESField(name = "demo_sub", datatype = DataTypeEnum.OBJECT)
-    private DemoSub sub;
+    @ESField(name = "detail", datatype = DataTypeEnum.OBJECT)
+    private DemoDetail detail;
 
-    @ESField(datatype = DataTypeEnum.NESETED)
+    @ESField(datatype = DataTypeEnum.NESTED)
     private List<DemoItem> items;
 
     public String getId() {
@@ -67,12 +67,12 @@ public class Demo extends BaseIndexModel {
         this.timestamp = timestamp;
     }
 
-    public DemoSub getSub() {
-        return sub;
+    public DemoDetail getDetail() {
+        return detail;
     }
 
-    public void setSub(DemoSub sub) {
-        this.sub = sub;
+    public void setDetail(DemoDetail detail) {
+        this.detail = detail;
     }
 
     public List<DemoItem> getItems() {

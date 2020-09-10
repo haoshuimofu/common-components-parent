@@ -35,10 +35,10 @@
         "format": "strict_date_optional_time||epoch_millis",
         "index": true
       },
-      "demo_sub": {
+      "detail": {
         "type": "object",
         "properties": {
-          "id": {
+          "title": {
             "type": "keyword",
             "index": true,
             "store": false
@@ -53,12 +53,12 @@
       "items": {
         "type": "nested",
         "properties": {
-          "id": {
+          "item_name": {
             "type": "keyword",
             "index": true,
             "store": false
           },
-          "name": {
+          "item_title": {
             "type": "text",
             "index": true,
             "store": false

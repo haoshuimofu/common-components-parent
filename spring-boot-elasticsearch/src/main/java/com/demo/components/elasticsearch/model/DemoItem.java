@@ -1,27 +1,31 @@
 package com.demo.components.elasticsearch.model;
 
+import com.demo.components.elasticsearch.annotation.ESField;
+
 /**
  * @author wude
  * @date 2020/7/11 10:10
  */
 public class DemoItem {
 
-    private String id;
-    private String name;
+    @ESField(name = "item_name")
+    private String itemName;
+    @ESField(name = "item_title")
+    private String itemTitle;
 
-    public String getId() {
-        return id;
+    public String getItemName() {
+        return itemName;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public void setItemName(String itemName) {
+        this.itemName = itemName;
     }
 
-    public String getName() {
-        return name;
+    public String getItemTitle() {
+        return itemTitle;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setItemTitle(String itemTitle) {
+        this.itemTitle = itemTitle;
     }
 }

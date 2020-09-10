@@ -2,8 +2,8 @@ package com.demo.components.elasticsearch.service;
 
 import com.demo.components.elasticsearch.Pagation;
 import com.demo.components.elasticsearch.model.Demo;
+import com.demo.components.elasticsearch.model.DemoDetail;
 import com.demo.components.elasticsearch.model.DemoItem;
-import com.demo.components.elasticsearch.model.DemoSub;
 import com.demo.components.elasticsearch.repositories.DemoRepository;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -28,17 +28,17 @@ public class DemoService {
     private DemoRepository demoRepository;
 
     public boolean saveDemoIndex(Demo demo, boolean async) {
-        DemoSub sub = new DemoSub();
-        sub.setId("0");
-        sub.setName("Master");
-        demo.setSub(sub);
+        DemoDetail demoDetail = new DemoDetail();
+        demoDetail.setTitle("Demo-Detail-Title");
+        demoDetail.setDetail("Demo-Detail-Detail");
+        demo.setDetail(demoDetail);
 
         DemoItem item1 = new DemoItem();
-        item1.setId("1");
-        item1.setName("zhangsan");
+        item1.setItemName("items-item1-name");
+        item1.setItemTitle("items-item1-title");
         DemoItem item2 = new DemoItem();
-        item2.setId("2");
-        item2.setName("lisi");
+        item2.setItemName("items-item2-name");
+        item2.setItemTitle("items-item2-title");
         demo.setItems(Arrays.asList(item1, item2));
         try {
             if (async) {
@@ -97,6 +97,10 @@ public class DemoService {
 
     public Demo getById(String id, String routing) throws Exception {
         return demoRepository.getById(id, StringUtils.trimToNull(routing));
+    }
+
+    public List<Demo> getByIds(List<String> ids, String routing) throws Exception {
+        return demoRepository.getByIds(ids, StringUtils.trimToNull(routing));
     }
 
     public boolean deleteById(String id, String routing) {

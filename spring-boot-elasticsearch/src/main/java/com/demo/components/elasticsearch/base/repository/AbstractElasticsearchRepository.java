@@ -332,7 +332,13 @@ public abstract class AbstractElasticsearchRepository<T extends BaseIndexModel> 
                     getIndex(), id, routing, response.toString());
             return null;
         }
-        return BuildingIndexUtils.convertSourceMapToModel(id, response.getSourceAsMap(), entityClass);
+        T model = JSON.parseObject(response.getSourceAsString(), entityClass);
+        if (model != null) {
+            model.set_id(id);
+            model.set_routing(routing);
+        }
+        return model;
+        //return BuildingIndexUtils.convertSourceMapToModel(id, response.getSourceAsMap(), entityClass);
     }
 
 
@@ -353,16 +359,23 @@ public abstract class AbstractElasticsearchRepository<T extends BaseIndexModel> 
         request.source(searchSourceBuilder);
         SearchResponse response = getClient().search(request, DEFAULT);
         long totalHits = 0;
-        List<T> modelList = new ArrayList<>();
-        if (response.getHits() != null && response.getHits().getTotalHits() != null && response.getHits().getTotalHits().value > 0) {
-            totalHits = response.getHits().getTotalHits().value;
+        List<T> models = new ArrayList<>();
+        if (response.getHits() != null
+                && response.getHits().getTotalHits() != null
+                && (totalHits = response.getHits().getTotalHits().value) > 0) {
+            T model;
             for (SearchHit hit : response.getHits().getHits()) {
-                modelList.add(BuildingIndexUtils.convertSearchHit2Model(hit, entityClass));
+                model = JSON.parseObject(hit.getSourceAsString(), entityClass);
+                if (model != null) {
+                    model.set_id(hit.getId());
+                }
+                models.add(model);
+                // modelList.add(BuildingIndexUtils.convertSearchHit2Model(hit, entityClass));
             }
         }
         logger.info("### 批量查询索引记录: _index=[{}], _id=[{}], _routing=[{}], totalHits=[{}], response=[{}].",
                 getIndex(), StringUtils.join(ids, ","), globalRouting, totalHits, LogUtils.obj2PrettyString(response));
-        return modelList;
+        return models;
     }
 
     @Override
