@@ -115,7 +115,7 @@ public abstract class AbstractElasticsearchRepository<T extends BaseIndexModel> 
     @Override
     public boolean createIndex() throws IOException {
         InputStream is = null;
-        if (StringUtils.isBlank(schema)) {
+        if (StringUtils.isNotBlank(schema)) {
             is = this.getClass().getResourceAsStream(schema.startsWith("/") ? schema : "/" + schema);
         }
         if (is == null) {
@@ -549,16 +549,16 @@ public abstract class AbstractElasticsearchRepository<T extends BaseIndexModel> 
             try {
                 boolean success = createIndex();
                 if (!success) {
-                    logger.info("### 索引创建失败! index=[{}]", getIndex());
+                    logger.info("### 索引创建失败! index=[{}].", getIndex());
                 } else {
-                    logger.info("### 索引创建成功! index=[{}]", getIndex());
+                    logger.info("### 索引创建成功! index=[{}].", getIndex());
                 }
             } catch (ElasticsearchStatusException e) {
                 // Elasticsearch exception [type=resource_already_exists_exception, reason=index [sku/ZjgQSrf_Tc-67QezUosOug] already exists]
                 // 从meta里判断索引已存在
                 List<String> indexUUIDs = e.getMetadata("es.index_uuid");
                 if (indexUUIDs != null && indexUUIDs.size() > 0) {
-                    logger.warn("### 索引创建失败！可能已存在！index=[{}], detailMessage=[{}]", getIndex(), e.getDetailedMessage());
+                    logger.warn("### 索引创建失败! 可能已存在! index=[{}], detailMessage=[{}].", getIndex(), e.getDetailedMessage());
                 } else {
                     throw e;
                 }
