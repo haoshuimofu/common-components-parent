@@ -3,6 +3,7 @@ package com.demo.components.elasticsearch.base.repository;
 import com.demo.components.elasticsearch.Pagation;
 import com.demo.components.elasticsearch.request.SearchOptions;
 import org.elasticsearch.action.search.SearchType;
+import org.elasticsearch.client.core.CountRequest;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.search.sort.SortOrder;
 
@@ -240,6 +241,15 @@ public interface CrudRepository<T> {
      * @throws Exception
      */
     void bulkUpdateAsync(List<T> models) throws Exception;
+
+    /**
+     * 统计索引记录数
+     *
+     * @param request 统计请求
+     * @return
+     * @throws IOException
+     */
+    long count(CountRequest request) throws IOException;
 
     /**
      * 简单分页查询

@@ -31,6 +31,8 @@ import org.elasticsearch.action.update.UpdateResponse;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.Requests;
 import org.elasticsearch.client.RestHighLevelClient;
+import org.elasticsearch.client.core.CountRequest;
+import org.elasticsearch.client.core.CountResponse;
 import org.elasticsearch.client.indices.CreateIndexRequest;
 import org.elasticsearch.client.indices.CreateIndexResponse;
 import org.elasticsearch.client.indices.GetIndexRequest;
@@ -442,6 +444,16 @@ public abstract class AbstractElasticsearchRepository<T extends BaseIndexModel> 
             }
 
         });
+    }
+
+    @Override
+    public long count(CountRequest request) throws IOException {
+        request.indices(getIndex());
+        CountResponse countResponse = getClient().count(request, DEFAULT);
+        if (countResponse.getSuccessfulShards() != countResponse.getTotalShards()) {
+            logger.warn("### 统计索引记录数失败! index=[{}], response=[{}].", getIndex(), countResponse.toString());
+        }
+        return countResponse.getCount();
     }
 
     @Override
