@@ -9,7 +9,6 @@ import com.demo.components.elasticsearch.base.model.BaseIndexModel;
 import com.demo.components.elasticsearch.config.ElasticsearchRestClient;
 import com.demo.components.elasticsearch.config.ElasticsearchRestDynamicConfig;
 import com.demo.components.elasticsearch.request.SearchOptions;
-import com.demo.components.elasticsearch.utils.LogUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.ElasticsearchStatusException;
 import org.elasticsearch.action.ActionListener;
@@ -333,54 +332,25 @@ public abstract class AbstractElasticsearchRepository<T extends BaseIndexModel> 
         }
         GetResponse response = getClient().get(request, DEFAULT);
         if (!response.isExists()) {
-            logger.warn("### 查询索引记录不存在! _index=[{}], _id=[{}], _routing=[{}], response=[{}].",
-                    getIndex(), id, routing, response.toString());
             return null;
         }
-        T model = JSON.parseObject(response.getSourceAsString(), entityClass);
-        if (model != null) {
-            model.set_id(id);
-            model.set_routing(routing);
-        }
-        return model;
-        //return BuildingIndexUtils.convertSourceMapToModel(id, response.getSourceAsMap(), entityClass);
+        return convert(response.getId(), response.getSourceAsMap(), response.getSourceAsString());
     }
 
 
     @Override
-    public List<T> getByIds(List<String> ids) throws IOException {
+    public List<T> getByIds(List<String> ids) throws Exception {
         return getByIds(ids, null);
     }
 
     @Override
-    public List<T> getByIds(List<String> ids, String globalRouting) throws IOException {
-        QueryBuilder queryBuilder = QueryBuilders.idsQuery().addIds(ids.toArray(new String[]{}));
-        SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
-        searchSourceBuilder.query(queryBuilder);
-        SearchRequest request = new SearchRequest(getIndex());
-        if (globalRouting != null) {
-            request.routing(globalRouting);
-        }
-        request.source(searchSourceBuilder);
-        SearchResponse response = getClient().search(request, DEFAULT);
-        long totalHits = 0;
-        List<T> models = new ArrayList<>();
-        if (response.getHits() != null
-                && response.getHits().getTotalHits() != null
-                && (totalHits = response.getHits().getTotalHits().value) > 0) {
-            T model;
-            for (SearchHit hit : response.getHits().getHits()) {
-                model = JSON.parseObject(hit.getSourceAsString(), entityClass);
-                if (model != null) {
-                    model.set_id(hit.getId());
-                }
-                models.add(model);
-                // modelList.add(BuildingIndexUtils.convertSearchHit2Model(hit, entityClass));
-            }
-        }
-        logger.info("### 批量查询索引记录: _index=[{}], _id=[{}], _routing=[{}], totalHits=[{}], response=[{}].",
-                getIndex(), StringUtils.join(ids, ","), globalRouting, totalHits, LogUtils.obj2PrettyString(response));
-        return models;
+    public List<T> getByIds(List<String> ids, String globalRouting) throws Exception {
+        return search(
+                QueryBuilders.idsQuery().addIds(ids.toArray(new String[]{})),
+                SearchOptions.instance()
+                        .setRouting(globalRouting)
+                        .setFrom(0).setSize(ids.size())
+        ).getData();
     }
 
     @Override
@@ -470,6 +440,7 @@ public abstract class AbstractElasticsearchRepository<T extends BaseIndexModel> 
             public void onFailure(Exception e) {
                 logger.error("### 批量异步更新索引记录失败! _index=[{}], bulkSize=[{}].", getIndex(), bulkRequest.requests().size(), e);
             }
+
         });
     }
 
@@ -519,7 +490,7 @@ public abstract class AbstractElasticsearchRepository<T extends BaseIndexModel> 
         List<T> data = new ArrayList<>();
         if (pagation.getTotal() > 0) {
             for (SearchHit hit : searchResponse.getHits().getHits()) {
-                data.add(this.convert(hit));
+                data.add(convert(hit.getId(), hit.getSourceAsMap(), hit.getSourceAsString()));
             }
         }
         pagation.setData(data);

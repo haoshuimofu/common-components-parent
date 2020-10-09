@@ -20,6 +20,7 @@ import org.springframework.stereotype.Repository;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author wude
@@ -68,10 +69,10 @@ public class DemoRepository extends AbstractElasticsearchRepository<Demo> {
 
 
     @Override
-    public Demo convert(SearchHit hit) {
-        Demo demo = JSON.parseObject(hit.getSourceAsString(), Demo.class);
-        demo.set_id(hit.getId());
-        demo.setId(hit.getId());
+    public Demo convert(String id, Map<String, Object> sourceAsMap, String sourceAsString) {
+        Demo demo = JSON.parseObject(sourceAsString, Demo.class);
+        demo.set_id(id);
         return demo;
     }
+
 }

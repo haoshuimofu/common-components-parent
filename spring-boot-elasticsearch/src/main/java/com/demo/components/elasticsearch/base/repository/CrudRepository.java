@@ -4,11 +4,11 @@ import com.demo.components.elasticsearch.Pagation;
 import com.demo.components.elasticsearch.request.SearchOptions;
 import org.elasticsearch.action.search.SearchType;
 import org.elasticsearch.index.query.QueryBuilder;
-import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.sort.SortOrder;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.TreeMap;
 
 /**
@@ -123,19 +123,19 @@ public interface CrudRepository<T> {
     void bulkSaveAsync(List<T> models, boolean create) throws Exception;
 
     /**
-     * 根据_id删除索引记录
+     * 删除索引记录
      *
-     * @param id
+     * @param id 索引记录_id
      * @return
      * @throws IOException
      */
     boolean deleteById(String id) throws IOException;
 
     /**
-     * 根据_id 和_routing删除索引记录
+     * 删除索引记录
      *
-     * @param id
-     * @param routing
+     * @param id      索引记录_id
+     * @param routing _routing值
      * @return
      * @throws IOException
      */
@@ -144,67 +144,69 @@ public interface CrudRepository<T> {
     /**
      * 批量删除索引记录
      *
-     * @param ids
+     * @param ids 索引记录_id集合
      * @return
      * @throws IOException
      */
     boolean deleteByIds(List<String> ids) throws IOException;
 
     /**
-     * 根据_id集合和统一_routing批量删除索引记录
+     * 批量删除索引记录
      *
-     * @param ids
-     * @param globalRouting
+     * @param ids           索引记录_id集合
+     * @param globalRouting 统一_routing
      * @return
      * @throws IOException
      */
     boolean deleteByIds(List<String> ids, String globalRouting) throws IOException;
 
     /**
-     * 根据_id集合和等长度_routing集合批量删除索引记录
+     * 批量删除索引记录
      *
-     * @param ids
-     * @param routings
+     * @param ids      索引记录_id集合
+     * @param routings 索引记录对应_routing集合
      * @return
+     * @throws IOException
      */
     boolean deleteByIds(List<String> ids, List<String> routings) throws IOException;
 
     /**
-     * 根据_id查找索引记录
+     * 查询索引记录
      *
-     * @param id
+     * @param id 索引记录_id
      * @return
      * @throws IOException
      */
     T getById(String id) throws IOException;
 
     /**
-     * 根据_id和_routing查找索引记录
+     * 查询索引记录
      *
-     * @param id
+     * @param id      索引记录_id
+     * @param routing _routing值
      * @return
      * @throws IOException
      */
     T getById(String id, String routing) throws IOException;
 
     /**
-     * 根据_id集合查找索引记录
+     * 批量查询索引记录
      *
-     * @param ids
+     * @param ids 索引记录_id集合
      * @return
-     * @throws IOException
+     * @throws Exception
      */
-    List<T> getByIds(List<String> ids) throws IOException;
+    List<T> getByIds(List<String> ids) throws Exception;
 
     /**
-     * 根据_id集合和统一的_routing查找索引记录
+     * 批量查询索引记录
      *
-     * @param ids
-     * @param globalRouting
+     * @param ids           索引记录_id集合
+     * @param globalRouting 统一_routing值
      * @return
-     * @throws IOException
+     * @throws Exception
      */
-    List<T> getByIds(List<String> ids, String globalRouting) throws IOException;
+    List<T> getByIds(List<String> ids, String globalRouting) throws Exception;
 
     /**
      * 更新索引记录
@@ -267,11 +269,13 @@ public interface CrudRepository<T> {
                        TreeMap<String, SortOrder> sort, SearchType searchType, int timeoutMillis, String... fields) throws Exception;
 
     /**
-     * 搜索命中结果转索引模型对象实例
+     * 搜索结果source转索引模型实例
      *
-     * @param hit
+     * @param id             索引记录ID
+     * @param sourceAsMap
+     * @param sourceAsString
      * @return
      */
-    T convert(SearchHit hit);
+    T convert(String id, Map<String, Object> sourceAsMap, String sourceAsString);
 
 }
