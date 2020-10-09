@@ -101,24 +101,29 @@ public abstract class AbstractElasticsearchRepository<T extends BaseIndexModel> 
 
     @Override
     public boolean isIndexExists() throws IOException {
-        return getClient().indices().exists(new GetIndexRequest(getIndex()), DEFAULT);
+        return getClient().indices()
+                .exists(new GetIndexRequest(getIndex()), DEFAULT);
     }
 
     @Override
     public boolean deleteIndex() throws IOException {
-        AcknowledgedResponse response = getClient().indices().delete(new DeleteIndexRequest(getIndex()), DEFAULT);
+        AcknowledgedResponse response = getClient().indices().
+                delete(new DeleteIndexRequest(getIndex()), DEFAULT);
         return response != null && response.isAcknowledged();
     }
 
     @Override
     public boolean createIndex() throws IOException {
-        InputStream is;
-        if (StringUtils.isBlank(schema)
-                || (is = this.getClass().getResourceAsStream(schema.startsWith("/") ? schema : "/" + schema)) == null) {
-            throw new RuntimeException(String.format("索引schema文件无效! index=[%s], schema=[%s]!", getIndex(), schema));
+        InputStream is = null;
+        if (StringUtils.isBlank(schema)) {
+            is = this.getClass().getResourceAsStream(schema.startsWith("/") ? schema : "/" + schema);
+        }
+        if (is == null) {
+            logger.error("### 索引创建失败! schema文件无效! index=[{}], schema=[{}].", getIndex(), schema);
+            throw new RuntimeException("索引创建失败! schema文件无效!");
         }
         BufferedReader br = new BufferedReader(new InputStreamReader(is));
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         String line;
         while ((line = br.readLine()) != null) {
             sb.append(line);
@@ -127,7 +132,8 @@ public abstract class AbstractElasticsearchRepository<T extends BaseIndexModel> 
         try {
             schemaJson = JSON.parseObject(sb.toString());
         } catch (Exception e) {
-            throw new RuntimeException(String.format("索引schema文件内容格式错误! index=[%s], schema=[%s]!", getIndex(), schema), e);
+            logger.error("### 索引创建失败! schema文件格式错误! index=[{}], schema=[{}].", getIndex(), schema, e);
+            throw new RuntimeException("索引创建失败! schema文件内容格式错误!", e);
         }
         CreateIndexRequest request = new CreateIndexRequest(getIndex());
         if (schemaJson.containsKey("settings")) {
@@ -135,8 +141,7 @@ public abstract class AbstractElasticsearchRepository<T extends BaseIndexModel> 
         }
         request.mapping(schemaJson.getJSONObject("mappings"));
         CreateIndexResponse response = getClient().indices().create(request, DEFAULT);
-        boolean success = response != null && response.isAcknowledged();
-        return success;
+        return response.isAcknowledged();
     }
 
     @Override

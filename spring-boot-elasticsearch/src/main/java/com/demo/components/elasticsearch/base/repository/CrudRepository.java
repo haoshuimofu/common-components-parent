@@ -22,22 +22,22 @@ public interface CrudRepository<T> {
     /**
      * 获取索引名称
      *
-     * @return
+     * @return T对应index
      */
     String getIndex();
 
     /**
-     * 索引模型类对应索引在ES集群中是否已存在
+     * 索引是否已存在
      *
-     * @return
+     * @return true/false 索引已/不存在
      * @throws IOException
      */
     boolean isIndexExists() throws IOException;
 
     /**
-     * 删除索引模型类对应索引
+     * 删除索引
      *
-     * @return
+     * @return true/false删除索引成功/失败
      * @throws IOException
      */
     boolean deleteIndex() throws IOException;
