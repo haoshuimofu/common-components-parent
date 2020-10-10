@@ -9,7 +9,7 @@ import com.demo.components.elasticsearch.base.model.BaseIndexModel;
 import com.demo.components.elasticsearch.config.ElasticsearchRestClient;
 import com.demo.components.elasticsearch.config.ElasticsearchRestDynamicConfig;
 import com.demo.components.elasticsearch.request.SearchOptions;
-import org.apache.commons.lang3.StringUtils;
+import com.demo.components.elasticsearch.utils.StringUtils;
 import org.elasticsearch.ElasticsearchStatusException;
 import org.elasticsearch.action.ActionListener;
 import org.elasticsearch.action.DocWriteResponse;

@@ -5,7 +5,7 @@ import com.demo.components.elasticsearch.model.Demo;
 import com.demo.components.elasticsearch.model.DemoDetail;
 import com.demo.components.elasticsearch.model.DemoItem;
 import com.demo.components.elasticsearch.repositories.DemoRepository;
-import org.apache.commons.lang3.StringUtils;
+import com.demo.components.elasticsearch.utils.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
