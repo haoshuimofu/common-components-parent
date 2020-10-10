@@ -438,17 +438,17 @@ public abstract class AbstractElasticsearchRepository<T extends BaseIndexModel> 
             public void onResponse(BulkResponse bulkResponse) {
                 boolean success = !bulkResponse.hasFailures();
                 if (success) {
-                    logger.info("### 批量异步更新索引记录成功! _index=[{}], bulkSize=[{}], hasFailure=[{}].",
+                    logger.info("### 异步批量更新索引记录成功! _index=[{}], bulkSize=[{}], hasFailure=[{}].",
                             getIndex(), bulkRequest.requests().size(), bulkResponse.hasFailures());
                 } else {
-                    logger.error("### 批量异步更新索引记录失败! _index=[{}], bulkSize=[{}], hasFailure=[{}], failureMessage=[{}].",
+                    logger.error("### 异步批量更新索引记录失败! _index=[{}], bulkSize=[{}], hasFailure=[{}], failureMessage=[{}].",
                             getIndex(), bulkRequest.requests().size(), bulkResponse.hasFailures(), bulkResponse.buildFailureMessage());
                 }
             }
 
             @Override
             public void onFailure(Exception e) {
-                logger.error("### 批量异步更新索引记录失败! _index=[{}], bulkSize=[{}].", getIndex(), bulkRequest.requests().size(), e);
+                logger.error("### 异步批量更新索引记录失败! _index=[{}], bulkSize=[{}].", getIndex(), bulkRequest.requests().size(), e);
             }
 
         });
