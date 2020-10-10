@@ -1,9 +1,11 @@
 {
   "settings": {
-    "number_of_shards": "5",
-    "number_of_replicas": "1",
-    "refresh_interval": "5s",
-    "index.max_result_window": "100000"
+    "index": {
+      "number_of_shards": "5",
+      "number_of_replicas": "1",
+      "refresh_interval": "5s",
+      "max_result_window": "100000"
+    }
   },
   "mappings": {
     "properties": {
