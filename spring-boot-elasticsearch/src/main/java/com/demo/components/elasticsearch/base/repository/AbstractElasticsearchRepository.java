@@ -357,7 +357,7 @@ public abstract class AbstractElasticsearchRepository<T extends BaseIndexModel> 
 
     @Override
     public boolean update(T model) throws Exception {
-        UpdateRequest request = BuildingIndexUtils.buildUpdateRequest(model, entityClass, index, restDynamicConfig.getRetryOnConflict());
+        UpdateRequest request = BuildingIndexUtils.buildUpdateRequest(model, entityClass, getIndex(), restDynamicConfig.getRetryOnConflict());
         try {
             UpdateResponse response = getClient().update(request, DEFAULT);
             DocWriteResponse.Result result = response.getResult();
@@ -374,7 +374,7 @@ public abstract class AbstractElasticsearchRepository<T extends BaseIndexModel> 
         } catch (ElasticsearchStatusException e) {
             // restful api, 当索引记录不存在时测试发现抛404 ElasticsearchStatusException
             if (e.status().getStatus() == 404) {
-                logger.info("### 更新索引记录失败! 索引记录不存在! _index=[{}], _id=[{}], _routing=[{}].", getIndex(), request.id(), request.routing());
+                logger.warn("### 更新索引记录失败! 索引记录不存在! _index=[{}], _id=[{}], _routing=[{}].", getIndex(), request.id(), request.routing());
                 return false;
             }
             throw e;
@@ -401,6 +401,14 @@ public abstract class AbstractElasticsearchRepository<T extends BaseIndexModel> 
 
             @Override
             public void onFailure(Exception e) {
+                if (e instanceof ElasticsearchStatusException) {
+                    ElasticsearchStatusException ee = (ElasticsearchStatusException) e;
+                    if (ee.status().getStatus() == 404) {
+                        logger.warn("### 异步更新索引记录失败! 索引记录不存在! _index=[{}], _id=[{}], _routing=[{}].",
+                                getIndex(), updateRequest.id(), updateRequest.routing());
+                        return;
+                    }
+                }
                 logger.error("### 异步更新索引记录失败! _index=[{}], _id=[{}], _routing=[{}].",
                         getIndex(), updateRequest.id(), updateRequest.routing(), e);
             }
