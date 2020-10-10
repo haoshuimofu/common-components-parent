@@ -1,15 +1,13 @@
 package com.demo.components.elasticsearch.base.repository;
 
-import com.alibaba.fastjson.JSON;
 import com.demo.components.elasticsearch.annotation.*;
 import com.demo.components.elasticsearch.base.model.BaseIndexModel;
-import org.apache.commons.lang3.StringUtils;
+import com.demo.components.elasticsearch.utils.StringUtils;
 import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.update.UpdateRequest;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.common.xcontent.XContentFactory;
-import org.elasticsearch.search.SearchHit;
 import org.springframework.util.Assert;
 
 import java.lang.reflect.Field;
@@ -29,7 +27,7 @@ public class BuildingIndexUtils {
      * @param model  索引模型实例对象
      * @param clazz  索引模型类
      * @param <T>    模型模型类泛型
-     * @param autoId 当传入_id值为空时是否允许elasticsearch自动为其生成_id
+     * @param autoId 当传入_id值为空时是否允许自动生成_id值
      * @return 索引构建时用对象
      * @throws Exception
      */
@@ -128,7 +126,7 @@ public class BuildingIndexUtils {
     }
 
     /**
-     * 获取索引映射名
+     * 获取索引模型类属性在索引mappings中的映射属性名
      *
      * @param field
      * @param esField
@@ -137,68 +135,13 @@ public class BuildingIndexUtils {
     private static String getMappingFieldName(Field field, ESField esField) {
         String fieldName = null;
         if (esField != null) {
-            fieldName = esField.name().trim();
+            fieldName = StringUtils.trimToNull(esField.name());
         }
-        if (fieldName == null || fieldName.length() == 0) {
+        if (fieldName == null) {
             fieldName = field.getName();
         }
         return fieldName;
     }
-
-    /**
-     * 将查询记录记录的sourceMap转成Model类实例
-     *
-     * @param sourceMap
-     * @param id
-     * @return
-     */
-    public static <T extends BaseIndexModel> T convertSourceMapToModel(String id, Map<String, Object> sourceMap, Class<T> entityClass) {
-        Map<String, Object> jsonMap = new HashMap<>();
-        jsonMap.put("_id", id);
-        if (sourceMap != null && sourceMap.size() > 0) {
-            Map<String, String> fieldsNameMapping = getFieldNameMapping(entityClass);
-            for (Map.Entry<String, Object> entry : sourceMap.entrySet()) {
-                jsonMap.put(fieldsNameMapping.get(entry.getKey()), entry.getValue());
-            }
-        }
-        // sourceMap并不一定包含_id，判断并处理
-        for (Field field : entityClass.getDeclaredFields()) {
-            field.setAccessible(true);
-            if (field.getAnnotation(ESID.class) != null) {
-                ESField esField = field.getAnnotation(ESField.class);
-                jsonMap.put(esField == null ? field.getName() : esField.name(), id);
-                break;
-            }
-        }
-        return JSON.parseObject(JSON.toJSONString(jsonMap), entityClass);
-    }
-
-    /**
-     * 获取索引文档字段和模型属性名的映射关系
-     *
-     * @return
-     */
-    private static <T extends BaseIndexModel> Map<String, String> getFieldNameMapping(Class<T> entityClass) {
-        Map<String, String> fieldsNameMap = new HashMap<>();
-        Field[] fields = entityClass.getDeclaredFields();
-        for (Field field : fields) {
-            field.setAccessible(true);
-            ESField esField = field.getAnnotation(ESField.class);
-            fieldsNameMap.put(esField == null ? field.getName() : esField.name(), field.getName());
-        }
-        return fieldsNameMap;
-    }
-
-    /**
-     * 将SearchHit转换成索引模型对象
-     *
-     * @param searchHit
-     * @return
-     */
-    public static <T extends BaseIndexModel> T convertSearchHit2Model(SearchHit searchHit, Class<T> entityClass) {
-        return convertSourceMapToModel(searchHit.getId(), searchHit.getSourceAsMap(), entityClass);
-    }
-
 
     /**
      * 构造IndexRequest实例
@@ -287,12 +230,12 @@ public class BuildingIndexUtils {
     /**
      * 构建UpdateRequest BulkRequest实例
      *
-     * @param models
-     * @param clazz
-     * @param index
-     * @param retryOnConflict
-     * @param <T>
-     * @return
+     * @param models          索引模型对象集合
+     * @param clazz           索引模型类信息
+     * @param index           索引名称
+     * @param retryOnConflict 更新冲突时重试次数
+     * @param <T>             索引模型类泛型参数
+     * @return BulkRequest实例
      * @throws Exception
      */
     public static <T extends BaseIndexModel> BulkRequest buildBulkUpdateRequest(List<T> models, Class<T> clazz, String index, int retryOnConflict) throws Exception {

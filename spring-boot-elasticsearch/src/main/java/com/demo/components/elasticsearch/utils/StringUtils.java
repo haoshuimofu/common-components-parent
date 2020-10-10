@@ -6,6 +6,9 @@ package com.demo.components.elasticsearch.utils;
  */
 public class StringUtils {
 
+    private static final String EMPTY = "";
+    private static final String BLANK = " ";
+
     public static boolean isBlank(String str) {
         int length;
         if (str != null && (length = str.length()) > 0) {
@@ -28,6 +31,20 @@ public class StringUtils {
 
     public static boolean isNotEmpty(String str) {
         return !StringUtils.isEmpty(str);
+    }
+
+    public static String trimToEmpty(String str) {
+        return str == null ? EMPTY : str.trim();
+    }
+
+    public static String trimToNull(String str) {
+        if (str != null) {
+            str = str.trim();
+            if (EMPTY.equals(str)) {
+                return null;
+            }
+        }
+        return null;
     }
 
 }
