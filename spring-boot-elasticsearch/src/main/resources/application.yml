@@ -5,7 +5,7 @@ elasticsearch:
     servers: es2search.te.test.srv.mc.dd:9200
     connectTimeout: 1
     socketTimeout: 1
-    connectPoolingEnabled: false
+    connectPoolingEnabled: true
     connectionRequestTimeout: 1
     maxTotal: 5
     defaultMaxPerRoute: 5

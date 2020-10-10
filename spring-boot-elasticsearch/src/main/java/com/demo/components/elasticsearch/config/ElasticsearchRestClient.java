@@ -5,6 +5,8 @@ import com.demo.components.elasticsearch.utils.StringUtils;
 import org.apache.http.HeaderElement;
 import org.apache.http.HeaderElementIterator;
 import org.apache.http.HttpHost;
+import org.apache.http.client.config.RequestConfig;
+import org.apache.http.impl.nio.client.HttpAsyncClientBuilder;
 import org.apache.http.impl.nio.conn.PoolingNHttpClientConnectionManager;
 import org.apache.http.impl.nio.reactor.DefaultConnectingIOReactor;
 import org.apache.http.impl.nio.reactor.IOReactorConfig;
@@ -74,6 +76,30 @@ public class ElasticsearchRestClient implements DisposableBean {
             String[] hostAndPort = server.split(HOST_PORT_SPLIT_CHAR);
             httpHosts[i] = new HttpHost(hostAndPort[0], Integer.parseInt(hostAndPort[1]), restProperties.getSchema());
         }
+
+        // =======================
+        RestClientBuilder builder1 = RestClient.builder(httpHosts);
+        builder1.setRequestConfigCallback(
+                new RestClientBuilder.RequestConfigCallback() {
+                    @Override
+                    public RequestConfig.Builder customizeRequestConfig(
+                            RequestConfig.Builder requestConfigBuilder) {
+                        return requestConfigBuilder.setSocketTimeout(1)
+                                .setConnectionRequestTimeout(1)
+                                .setConnectTimeout(1);
+                    }
+                });
+
+        builder1.setHttpClientConfigCallback(new RestClientBuilder.HttpClientConfigCallback() {
+            @Override
+            public HttpAsyncClientBuilder customizeHttpClient(
+                    HttpAsyncClientBuilder httpClientBuilder) {
+                return httpClientBuilder.setProxy(
+                        new HttpHost("proxy", 9000, "http"));
+            }
+        });
+
+        //=========================
         System.err.println(JSON.toJSONString(restProperties, true));
         System.err.println("http pool开启否: " + restProperties.isConnectPoolingEnabled());
         RestClientBuilder builder;
@@ -128,7 +154,7 @@ public class ElasticsearchRestClient implements DisposableBean {
                                     .setSocketTimeout(restProperties.getSocketTimeout() > 0 ? restProperties.getSocketTimeout() : -1)
                     );
         }
-        return new RestHighLevelClient(builder);
+        return new RestHighLevelClient(builder1);
     }
 
     @Override
