@@ -4,7 +4,6 @@ import com.demo.components.elasticsearch.base.repository.AbstractElasticsearchRe
 import com.demo.components.elasticsearch.model.StationProduct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Repository;
 
 import java.util.Map;
 
@@ -14,7 +13,7 @@ import java.util.Map;
  * @author wude
  * @date 2020/2/27 17:33
  */
-@Repository
+//@Repository
 public class StationProductRepository extends AbstractElasticsearchRepository<StationProduct> {
 
     private static final Logger logger = LoggerFactory.getLogger(StationProductRepository.class);

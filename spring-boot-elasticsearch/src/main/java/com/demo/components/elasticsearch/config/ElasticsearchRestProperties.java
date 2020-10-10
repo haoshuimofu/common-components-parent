@@ -13,9 +13,10 @@ public class ElasticsearchRestProperties {
 
     private String schema;
     private String servers;
-    private int connectionRequestTimeout;
     private int connectTimeout;
     private int socketTimeout;
+    private boolean connectPoolingEnabled = true;
+    private int connectionRequestTimeout;
     private int maxTotal;
     private int defaultMaxPerRoute;
 
@@ -35,14 +36,6 @@ public class ElasticsearchRestProperties {
         this.servers = servers;
     }
 
-    public int getConnectionRequestTimeout() {
-        return connectionRequestTimeout;
-    }
-
-    public void setConnectionRequestTimeout(int connectionRequestTimeout) {
-        this.connectionRequestTimeout = connectionRequestTimeout;
-    }
-
     public int getConnectTimeout() {
         return connectTimeout;
     }
@@ -57,6 +50,22 @@ public class ElasticsearchRestProperties {
 
     public void setSocketTimeout(int socketTimeout) {
         this.socketTimeout = socketTimeout;
+    }
+
+    public boolean isConnectPoolingEnabled() {
+        return connectPoolingEnabled;
+    }
+
+    public void setConnectPoolingEnabled(boolean connectPoolingEnabled) {
+        this.connectPoolingEnabled = connectPoolingEnabled;
+    }
+
+    public int getConnectionRequestTimeout() {
+        return connectionRequestTimeout;
+    }
+
+    public void setConnectionRequestTimeout(int connectionRequestTimeout) {
+        this.connectionRequestTimeout = connectionRequestTimeout;
     }
 
     public int getMaxTotal() {

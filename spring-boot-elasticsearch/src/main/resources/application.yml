@@ -1,12 +1,14 @@
 elasticsearch:
   rest:
     schema: http
-    servers: 127.0.0.1:9201;127.0.0.1:9202
-    maxTotal: 1000
-    defaultMaxPerRoute: 1000
-
-    replicaServers: 10.192.232.86:9800
-
+    #    servers: 127.0.0.1:9201;127.0.0.1:9202
+    servers: es2search.te.test.srv.mc.dd:9200
+    connectTimeout: 1
+    socketTimeout: 1
+    connectPoolingEnabled: false
+    connectionRequestTimeout: 1
+    maxTotal: 5
+    defaultMaxPerRoute: 5
 
 server:
   port: 9898

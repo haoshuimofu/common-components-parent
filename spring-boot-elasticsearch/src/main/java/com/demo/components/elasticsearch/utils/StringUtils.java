@@ -43,6 +43,7 @@ public class StringUtils {
             if (EMPTY.equals(str)) {
                 return null;
             }
+            return str;
         }
         return null;
     }

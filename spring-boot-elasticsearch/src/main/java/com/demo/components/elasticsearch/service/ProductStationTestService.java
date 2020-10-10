@@ -50,13 +50,13 @@ public class ProductStationTestService implements InitializingBean {
 
     private static final Logger logger = LoggerFactory.getLogger(ProductStationTestService.class);
 
-    @Autowired
+    @Autowired(required = false)
     private ProductRepository productRepository;
-    @Autowired
+    @Autowired(required = false)
     private ProductStationRepository productStationRepository;
-    @Autowired
+    @Autowired(required = false)
     private StationProductRepository stationProductRepository;
-    @Autowired
+    @Autowired(required = false)
     private StationProductReplicaRepository stationProductReplicaRepository;
 
     /**

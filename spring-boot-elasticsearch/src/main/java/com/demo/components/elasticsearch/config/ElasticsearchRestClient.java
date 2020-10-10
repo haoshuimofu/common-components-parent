@@ -1,5 +1,6 @@
 package com.demo.components.elasticsearch.config;
 
+import com.alibaba.fastjson.JSON;
 import com.demo.components.elasticsearch.utils.StringUtils;
 import org.apache.http.HeaderElement;
 import org.apache.http.HeaderElementIterator;
@@ -73,42 +74,60 @@ public class ElasticsearchRestClient implements DisposableBean {
             String[] hostAndPort = server.split(HOST_PORT_SPLIT_CHAR);
             httpHosts[i] = new HttpHost(hostAndPort[0], Integer.parseInt(hostAndPort[1]), restProperties.getSchema());
         }
-
-        final IOReactorConfig ioReactorConfig = IOReactorConfig.custom()
-                .setConnectTimeout(Math.max(restProperties.getConnectTimeout(), 0))
-                .setSoKeepAlive(true)
-                .build();
-        final PoolingNHttpClientConnectionManager connManager = new PoolingNHttpClientConnectionManager(
-                new DefaultConnectingIOReactor(ioReactorConfig));
-        connManager.setMaxTotal(1000);
-        connManager.setDefaultMaxPerRoute(1000);
-
-        RestClientBuilder builder = RestClient.builder(httpHosts).setHttpClientConfigCallback(callback -> {
-            callback.disableAuthCaching();
-            return callback.setKeepAliveStrategy((response, context) -> {
-                Args.notNull(response, "HTTP response");
-                final HeaderElementIterator it = new BasicHeaderElementIterator(
-                        response.headerIterator(HTTP.CONN_KEEP_ALIVE));
-                while (it.hasNext()) {
-                    final HeaderElement he = it.nextElement();
-                    final String param = he.getName();
-                    final String value = he.getValue();
-                    if (value != null && param.equalsIgnoreCase("timeout")) {
-                        try {
-                            return Long.parseLong(value) * 1000;
-                        } catch (final NumberFormatException ignore) {
-                        }
-                    }
-                }
-                return 60 * 1000;
-            }).setConnectionManager(connManager);
-        }).setRequestConfigCallback(requestConfigBuilder ->
-                requestConfigBuilder
-                        .setConnectTimeout(restProperties.getConnectTimeout() > 0 ? restProperties.getConnectTimeout() : -1)
-                        .setSocketTimeout(restProperties.getSocketTimeout() > 0 ? restProperties.getSocketTimeout() : -1)
-                        .setConnectionRequestTimeout(restProperties.getConnectionRequestTimeout() > 0 ?
-                                restProperties.getConnectionRequestTimeout() : -1)
-        );
+        System.err.println(JSON.toJSONString(restProperties, true));
+        System.err.println("http pool开启否: " + restProperties.isConnectPoolingEnabled());
+        RestClientBuilder builder;
+        if (restProperties.isConnectPoolingEnabled()) {
+            final IOReactorConfig ioReactorConfig = IOReactorConfig.custom()
+                    .setConnectTimeout(Math.max(restProperties.getConnectTimeout(), 0))
+                    .setSoTimeout(Math.max(restProperties.getSocketTimeout(), 0))
+                    .setSoKeepAlive(true)
+                    .build();
+            final PoolingNHttpClientConnectionManager connManager =
+                    new PoolingNHttpClientConnectionManager(new DefaultConnectingIOReactor(ioReactorConfig));
+            if (restProperties.getDefaultMaxPerRoute() > 0) {
+                connManager.setDefaultMaxPerRoute(1000);
+            }
+            if (restProperties.getMaxTotal() > 0) {
+                connManager.setMaxTotal(1000);
+            }
+            builder = RestClient.builder(httpHosts)
+                    .setHttpClientConfigCallback(callback -> {
+                        callback.disableAuthCaching();
+                        return callback.setKeepAliveStrategy((response, context) -> {
+                            Args.notNull(response, "HTTP response must not be null.");
+                            final HeaderElementIterator it = new BasicHeaderElementIterator(
+                                    response.headerIterator(HTTP.CONN_KEEP_ALIVE));
+                            while (it.hasNext()) {
+                                final HeaderElement he = it.nextElement();
+                                final String param = he.getName();
+                                final String value = he.getValue();
+                                if (value != null && param.equalsIgnoreCase("timeout")) {
+                                    try {
+                                        return Long.parseLong(value) * 1000;
+                                    } catch (final NumberFormatException ignore) {
+                                    }
+                                }
+                            }
+                            return 30 * 1000;
+                        }).setConnectionManager(connManager);
+                    })
+                    .setRequestConfigCallback(requestConfigBuilder ->
+                            requestConfigBuilder
+                                    .setConnectTimeout(restProperties.getConnectTimeout() > 0 ? restProperties.getConnectTimeout() : -1)
+                                    .setSocketTimeout(restProperties.getSocketTimeout() > 0 ? restProperties.getSocketTimeout() : -1)
+                                    .setConnectionRequestTimeout(
+                                            restProperties.getConnectionRequestTimeout() > 0 ?
+                                                    restProperties.getConnectionRequestTimeout() : -1)
+                    );
+        } else {
+            builder = RestClient.builder(httpHosts)
+                    .setRequestConfigCallback(requestConfigBuilder ->
+                            requestConfigBuilder
+                                    .setConnectTimeout(restProperties.getConnectTimeout() > 0 ? restProperties.getConnectTimeout() : -1)
+                                    .setSocketTimeout(restProperties.getSocketTimeout() > 0 ? restProperties.getSocketTimeout() : -1)
+                    );
+        }
         return new RestHighLevelClient(builder);
     }
 

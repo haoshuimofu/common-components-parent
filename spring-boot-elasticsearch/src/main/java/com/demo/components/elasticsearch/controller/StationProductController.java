@@ -18,7 +18,7 @@ import java.io.IOException;
 @RequestMapping("/station/product/")
 public class StationProductController {
 
-    @Autowired
+    @Autowired(required = false)
     private StationProductRepository stationProductRepository;
 
     @RequestMapping("count")
