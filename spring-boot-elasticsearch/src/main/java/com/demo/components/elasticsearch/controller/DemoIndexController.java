@@ -6,6 +6,7 @@ import com.demo.components.elasticsearch.service.DemoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -79,6 +80,11 @@ public class DemoIndexController {
     public JsonResult page(@RequestParam(value = "from", defaultValue = "0") int from,
                            @RequestParam(value = "size", defaultValue = "10") int size) throws Exception {
         return JsonResult.success(demoService.page(from, size));
+    }
+
+    @RequestMapping("count")
+    public JsonResult count() throws IOException {
+        return JsonResult.success(demoService.count());
     }
 
 }

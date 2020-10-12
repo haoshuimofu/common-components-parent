@@ -13,12 +13,11 @@ public class ElasticsearchRestProperties {
 
     private String schema;
     private String servers;
+    private int connectionRequestTimeout;
     private int connectTimeout;
     private int socketTimeout;
-    private boolean connectPoolingEnabled = true;
-    private int connectionRequestTimeout;
-    private int maxTotal;
     private int defaultMaxPerRoute;
+    private int maxTotal;
 
     public String getSchema() {
         return schema;
@@ -34,6 +33,14 @@ public class ElasticsearchRestProperties {
 
     public void setServers(String servers) {
         this.servers = servers;
+    }
+
+    public int getConnectionRequestTimeout() {
+        return connectionRequestTimeout;
+    }
+
+    public void setConnectionRequestTimeout(int connectionRequestTimeout) {
+        this.connectionRequestTimeout = connectionRequestTimeout;
     }
 
     public int getConnectTimeout() {
@@ -52,20 +59,12 @@ public class ElasticsearchRestProperties {
         this.socketTimeout = socketTimeout;
     }
 
-    public boolean isConnectPoolingEnabled() {
-        return connectPoolingEnabled;
+    public int getDefaultMaxPerRoute() {
+        return defaultMaxPerRoute;
     }
 
-    public void setConnectPoolingEnabled(boolean connectPoolingEnabled) {
-        this.connectPoolingEnabled = connectPoolingEnabled;
-    }
-
-    public int getConnectionRequestTimeout() {
-        return connectionRequestTimeout;
-    }
-
-    public void setConnectionRequestTimeout(int connectionRequestTimeout) {
-        this.connectionRequestTimeout = connectionRequestTimeout;
+    public void setDefaultMaxPerRoute(int defaultMaxPerRoute) {
+        this.defaultMaxPerRoute = defaultMaxPerRoute;
     }
 
     public int getMaxTotal() {
@@ -74,13 +73,5 @@ public class ElasticsearchRestProperties {
 
     public void setMaxTotal(int maxTotal) {
         this.maxTotal = maxTotal;
-    }
-
-    public int getDefaultMaxPerRoute() {
-        return defaultMaxPerRoute;
-    }
-
-    public void setDefaultMaxPerRoute(int defaultMaxPerRoute) {
-        this.defaultMaxPerRoute = defaultMaxPerRoute;
     }
 }

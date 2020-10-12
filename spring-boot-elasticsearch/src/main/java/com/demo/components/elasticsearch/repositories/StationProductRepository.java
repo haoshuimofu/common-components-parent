@@ -1,9 +1,11 @@
 package com.demo.components.elasticsearch.repositories;
 
+import com.alibaba.fastjson.JSONObject;
 import com.demo.components.elasticsearch.base.repository.AbstractElasticsearchRepository;
 import com.demo.components.elasticsearch.model.StationProduct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Repository;
 
 import java.util.Map;
 
@@ -13,14 +15,14 @@ import java.util.Map;
  * @author wude
  * @date 2020/2/27 17:33
  */
-//@Repository
+@Repository
 public class StationProductRepository extends AbstractElasticsearchRepository<StationProduct> {
 
     private static final Logger logger = LoggerFactory.getLogger(StationProductRepository.class);
 
     @Override
     public StationProduct convert(String id, Map<String, Object> sourceAsMap, String sourceAsString) {
-        return null;
+        return JSONObject.parseObject(sourceAsString, StationProduct.class);
     }
 
 }

@@ -6,6 +6,8 @@ import com.demo.components.elasticsearch.model.DemoDetail;
 import com.demo.components.elasticsearch.model.DemoItem;
 import com.demo.components.elasticsearch.repositories.DemoRepository;
 import com.demo.components.elasticsearch.utils.StringUtils;
+import org.elasticsearch.client.core.CountRequest;
+import org.elasticsearch.index.query.QueryBuilders;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -127,6 +129,12 @@ public class DemoService {
 
     public Pagation<Demo> page(int from, int size) throws Exception {
         return demoRepository.page(from, size);
+    }
+
+    public long count() throws IOException {
+        CountRequest request = new CountRequest();
+        request.query(QueryBuilders.matchAllQuery());
+        return demoRepository.count(request);
     }
 
 }

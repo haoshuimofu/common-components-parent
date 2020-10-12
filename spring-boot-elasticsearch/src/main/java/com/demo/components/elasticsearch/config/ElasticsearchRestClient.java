@@ -1,12 +1,9 @@
 package com.demo.components.elasticsearch.config;
 
-import com.alibaba.fastjson.JSON;
 import com.demo.components.elasticsearch.utils.StringUtils;
 import org.apache.http.HeaderElement;
 import org.apache.http.HeaderElementIterator;
 import org.apache.http.HttpHost;
-import org.apache.http.client.config.RequestConfig;
-import org.apache.http.impl.nio.client.HttpAsyncClientBuilder;
 import org.apache.http.impl.nio.conn.PoolingNHttpClientConnectionManager;
 import org.apache.http.impl.nio.reactor.DefaultConnectingIOReactor;
 import org.apache.http.impl.nio.reactor.IOReactorConfig;
@@ -77,84 +74,61 @@ public class ElasticsearchRestClient implements DisposableBean {
             httpHosts[i] = new HttpHost(hostAndPort[0], Integer.parseInt(hostAndPort[1]), restProperties.getSchema());
         }
 
-        // =======================
-        RestClientBuilder builder1 = RestClient.builder(httpHosts);
-        builder1.setRequestConfigCallback(
-                new RestClientBuilder.RequestConfigCallback() {
-                    @Override
-                    public RequestConfig.Builder customizeRequestConfig(
-                            RequestConfig.Builder requestConfigBuilder) {
-                        return requestConfigBuilder.setSocketTimeout(1)
-                                .setConnectionRequestTimeout(1)
-                                .setConnectTimeout(1);
-                    }
-                });
+        RestClientBuilder builder = RestClient.builder(httpHosts);
+        builder.setRequestConfigCallback(
+                requestConfigBuilder -> requestConfigBuilder
+                        .setConnectTimeout(restProperties.getConnectTimeout() > 0 ?
+                                restProperties.getConnectTimeout() : RestClientBuilder.DEFAULT_CONNECT_TIMEOUT_MILLIS)
+                        .setSocketTimeout(restProperties.getSocketTimeout() > 0 ?
+                                restProperties.getSocketTimeout() : RestClientBuilder.DEFAULT_SOCKET_TIMEOUT_MILLIS)
+                        .setConnectionRequestTimeout(restProperties.getConnectionRequestTimeout() > 0 ?
+                                restProperties.getConnectionRequestTimeout() : RestClientBuilder.DEFAULT_CONNECT_TIMEOUT_MILLIS));
 
-        builder1.setHttpClientConfigCallback(new RestClientBuilder.HttpClientConfigCallback() {
-            @Override
-            public HttpAsyncClientBuilder customizeHttpClient(
-                    HttpAsyncClientBuilder httpClientBuilder) {
-                return httpClientBuilder.setProxy(
-                        new HttpHost("proxy", 9000, "http"));
-            }
+        final IOReactorConfig ioReactorConfig = IOReactorConfig.custom()
+                .setConnectTimeout(Math.max(restProperties.getConnectTimeout(), 0))
+                .setSoTimeout(Math.max(restProperties.getSocketTimeout(), 0))
+                .setSoKeepAlive(true)
+                .build();
+        final PoolingNHttpClientConnectionManager connManager =
+                new PoolingNHttpClientConnectionManager(new DefaultConnectingIOReactor(ioReactorConfig));
+        connManager.setDefaultMaxPerRoute(restProperties.getDefaultMaxPerRoute() > 0 ?
+                restProperties.getDefaultMaxPerRoute() : RestClientBuilder.DEFAULT_MAX_CONN_PER_ROUTE);
+        connManager.setMaxTotal(restProperties.getMaxTotal() > 0 ?
+                restProperties.getMaxTotal() : RestClientBuilder.DEFAULT_MAX_CONN_TOTAL);
+
+        // 设置HttpClientConfigCallback
+        builder.setHttpClientConfigCallback(httpClientBuilder -> {
+            httpClientBuilder.disableAuthCaching();
+            return httpClientBuilder.setKeepAliveStrategy((response, context) -> {
+                Args.notNull(response, "HTTP response");
+                final HeaderElementIterator it = new BasicHeaderElementIterator(
+                        response.headerIterator(HTTP.CONN_KEEP_ALIVE));
+                while (it.hasNext()) {
+                    final HeaderElement he = it.nextElement();
+                    final String param = he.getName();
+                    final String value = he.getValue();
+                    if (value != null && param.equalsIgnoreCase("timeout")) {
+                        try {
+                            return Long.parseLong(value) * 1000;
+                        } catch (final NumberFormatException ignore) {
+                        }
+                    }
+                }
+                return 30 * 1000;
+            }).setConnectionManager(connManager);
+            // return httpClientBuilder.setConnectionManager(connManager);
+            // 如果没有自定义ConnectionManager则内部实现还是会创建一个, 并发数用一下两个参数
+            //.setMaxConnPerRoute(restProperties.getDefaultMaxPerRoute())
+            //.setMaxConnTotal(restProperties.getMaxTotal())
+            // 实测这里的DefaultRequestConfig会覆盖RequestConfigCallback
+            //.setDefaultRequestConfig(RequestConfig.custom()
+            //        .setConnectionRequestTimeout(connectionRequestTimeout)
+            //        .setConnectTimeout(connectTimeout)
+            //        .setSocketTimeout(socketTimeout)
+            //       .build());
         });
 
-        //=========================
-        System.err.println(JSON.toJSONString(restProperties, true));
-        System.err.println("http pool开启否: " + restProperties.isConnectPoolingEnabled());
-        RestClientBuilder builder;
-        if (restProperties.isConnectPoolingEnabled()) {
-            final IOReactorConfig ioReactorConfig = IOReactorConfig.custom()
-                    .setConnectTimeout(Math.max(restProperties.getConnectTimeout(), 0))
-                    .setSoTimeout(Math.max(restProperties.getSocketTimeout(), 0))
-                    .setSoKeepAlive(true)
-                    .build();
-            final PoolingNHttpClientConnectionManager connManager =
-                    new PoolingNHttpClientConnectionManager(new DefaultConnectingIOReactor(ioReactorConfig));
-            if (restProperties.getDefaultMaxPerRoute() > 0) {
-                connManager.setDefaultMaxPerRoute(1000);
-            }
-            if (restProperties.getMaxTotal() > 0) {
-                connManager.setMaxTotal(1000);
-            }
-            builder = RestClient.builder(httpHosts)
-                    .setHttpClientConfigCallback(callback -> {
-                        callback.disableAuthCaching();
-                        return callback.setKeepAliveStrategy((response, context) -> {
-                            Args.notNull(response, "HTTP response must not be null.");
-                            final HeaderElementIterator it = new BasicHeaderElementIterator(
-                                    response.headerIterator(HTTP.CONN_KEEP_ALIVE));
-                            while (it.hasNext()) {
-                                final HeaderElement he = it.nextElement();
-                                final String param = he.getName();
-                                final String value = he.getValue();
-                                if (value != null && param.equalsIgnoreCase("timeout")) {
-                                    try {
-                                        return Long.parseLong(value) * 1000;
-                                    } catch (final NumberFormatException ignore) {
-                                    }
-                                }
-                            }
-                            return 30 * 1000;
-                        }).setConnectionManager(connManager);
-                    })
-                    .setRequestConfigCallback(requestConfigBuilder ->
-                            requestConfigBuilder
-                                    .setConnectTimeout(restProperties.getConnectTimeout() > 0 ? restProperties.getConnectTimeout() : -1)
-                                    .setSocketTimeout(restProperties.getSocketTimeout() > 0 ? restProperties.getSocketTimeout() : -1)
-                                    .setConnectionRequestTimeout(
-                                            restProperties.getConnectionRequestTimeout() > 0 ?
-                                                    restProperties.getConnectionRequestTimeout() : -1)
-                    );
-        } else {
-            builder = RestClient.builder(httpHosts)
-                    .setRequestConfigCallback(requestConfigBuilder ->
-                            requestConfigBuilder
-                                    .setConnectTimeout(restProperties.getConnectTimeout() > 0 ? restProperties.getConnectTimeout() : -1)
-                                    .setSocketTimeout(restProperties.getSocketTimeout() > 0 ? restProperties.getSocketTimeout() : -1)
-                    );
-        }
-        return new RestHighLevelClient(builder1);
+        return new RestHighLevelClient(builder);
     }
 
     @Override
