@@ -2,6 +2,7 @@ package com.demo.components.httpclient;
 
 import com.alibaba.fastjson.JSON;
 import com.demo.components.httpclient.exception.HttpException;
+import com.demo.components.httpclient.exception.HttpStatusException;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.NameValuePair;
 import org.apache.http.StatusLine;
@@ -41,28 +42,27 @@ public class HttpClientUtils {
         return get(url, headers, 0, 0);
     }
 
-    public static String get(String url, int connectionTimeout, int socketTimeout) throws Exception {
-        return get(url, null, connectionTimeout, socketTimeout);
+    public static String get(String url, int connectTimeout, int socketTimeout) throws Exception {
+        return get(url, null, connectTimeout, socketTimeout);
     }
 
     /**
-     * GET请求
+     * Get请求
      *
-     * @param url            请求URL
-     * @param headers        Headers
-     * @param connectTimeout 连接超时时间
-     * @param socketTimeout  数据读取阻塞超时时间
+     * @param url
+     * @param headers
+     * @param connectTimeout
+     * @param socketTimeout
      * @return
      * @throws Exception
      */
     public static String get(String url, Map<String, String> headers, int connectTimeout, int socketTimeout) throws Exception {
         CloseableHttpClient httpClient = HttpClients.custom().build();
         HttpGet httpGet = new HttpGet(url);
-        RequestConfig requestConfig = RequestConfig.custom()
-                .setConnectTimeout(connectTimeout < 0 ? -1 : connectTimeout)
-                .setSocketTimeout(socketTimeout < 0 ? -1 : socketTimeout)
-                .build();
-        httpGet.setConfig(requestConfig);
+        RequestConfig.Builder requestConfigBuilder = RequestConfig.custom()
+                .setConnectTimeout(connectTimeout > 0 ? connectTimeout : -1)
+                .setSocketTimeout(socketTimeout > 0 ? socketTimeout : -1);
+        httpGet.setConfig(requestConfigBuilder.build());
         HttpHelper.addHeaders(httpGet, headers);
         return HttpClientUtils.executeHttpRequest(httpClient, httpGet);
     }
@@ -157,13 +157,11 @@ public class HttpClientUtils {
             if (statusLine.getStatusCode() != HttpStatus.OK.getValue()) {
                 LOGGER.error("### Http {} request error! httpStatus=[{}], reasonPhrase=[{}].",
                         httpRequest.getMethod(), statusLine.getStatusCode(), statusLine.getReasonPhrase());
-                throw new HttpException(statusLine.getStatusCode(), statusLine.getReasonPhrase());
+                throw new HttpStatusException(statusLine.getStatusCode(), statusLine.getReasonPhrase());
             }
-            if (response.getStatusLine().getStatusCode() == HttpStatus.OK.getValue()) {
-                String responseStr = EntityUtils.toString(response.getEntity());
-                responseClose = true;
-                return responseStr;
-            }
+            String responseStr = EntityUtils.toString(response.getEntity());
+            responseClose = true;
+            return responseStr;
         } finally {
             if (response != null && !responseClose) {
                 try {
@@ -174,13 +172,12 @@ public class HttpClientUtils {
             }
             // 使用连接池, 连接交给ConnectionManager管理, 如果httpCleint.close会直接关闭连接, 重复使用时会导致报错
             // Connection pool shut down
-//            try {
-//                httpClient.close();
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
+            /*try {
+                httpClient.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }*/
         }
-        return null;
     }
 
 }

@@ -1,38 +1,32 @@
 package com.demo.components.httpclient.exception;
 
 /**
+ * Http异常
+ *
  * @author wude
- * @date 2020/8/26 13:32
+ * @date 2020/10/13 14:15
  */
 public class HttpException extends RuntimeException {
 
-    private int statusCode;
-    private String reasonPhrase;
+    private String message;
+
+    public HttpException() {
+        super();
+    }
 
     public HttpException(String message) {
         super(message);
     }
 
-    public HttpException(int statusCode, String reasonPhrase) {
-        super("HTTP Status Code = " + statusCode + ", ReasonPhrase = " + reasonPhrase);
-        this.statusCode = statusCode;
-        this.reasonPhrase = reasonPhrase;
-
+    public HttpException(String message, Throwable cause) {
+        super(message, cause);
     }
 
-    public int getStatusCode() {
-        return statusCode;
+    public HttpException(Throwable cause) {
+        super(cause);
     }
 
-    public void setStatusCode(int statusCode) {
-        this.statusCode = statusCode;
-    }
-
-    public String getReasonPhrase() {
-        return reasonPhrase;
-    }
-
-    public void setReasonPhrase(String reasonPhrase) {
-        this.reasonPhrase = reasonPhrase;
+    public HttpException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+        super(message, cause, enableSuppression, writableStackTrace);
     }
 }

@@ -12,16 +12,7 @@ import org.springframework.context.annotation.Configuration;
  * @date 2020/9/1 10:14
  */
 @Configuration
-//@EnableConfigurationProperties(value = {HttpClientProperties.class})
 public class HttpClientPoolingConfig {
-
-    // @Autowired
-    // @Qualifier("httpClientProperties")
-    // private HttpClientProperties httpClientProperties;
-
-    // public PoolingHttpClientConnectionManager connectionManager(HttpClientPoolingProperties properties) {
-    //    return HttpHelper.connectionManager(properties);
-    // }
 
     @Bean("customHttpClientProperties")
     @ConfigurationProperties(prefix = "httpclient.custom.pooling")
