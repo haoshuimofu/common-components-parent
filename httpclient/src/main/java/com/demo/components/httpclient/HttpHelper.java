@@ -1,5 +1,6 @@
 package com.demo.components.httpclient;
 
+import com.alibaba.fastjson.JSON;
 import com.demo.components.httpclient.pooling.config.HttpClientPoolingProperties;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpRequestBase;
@@ -60,6 +61,7 @@ public class HttpHelper {
         PoolingHttpClientConnectionManager connManager = new PoolingHttpClientConnectionManager(socketFactoryRegistry);
         connManager.setDefaultMaxPerRoute(properties.getMaxPerRoute());
         connManager.setMaxTotal(properties.getMatTotal());
+        System.err.println("###初始化连接管理器: " + JSON.toJSONString(properties, true));
         return connManager;
     }
 
@@ -78,8 +80,7 @@ public class HttpHelper {
     public static RequestConfig requestConfig(HttpClientPoolingProperties properties) {
         RequestConfig.Builder requestConfigBuilder = RequestConfig.custom()
                 .setConnectionRequestTimeout(properties.getConnectionRequestTimeout())
-                .setConnectTimeout(properties.getConnectTimeout())
-                .setRedirectsEnabled(true);
+                .setConnectTimeout(properties.getConnectTimeout());
         if (properties.getSocketTimeout() > 0) {
             requestConfigBuilder.setSocketTimeout(properties.getSocketTimeout());
         }
@@ -97,8 +98,7 @@ public class HttpHelper {
         int timeout = customSocketTimeout > 0 ? customSocketTimeout : properties.getSocketTimeout();
         RequestConfig.Builder requestConfigBuilder = RequestConfig.custom()
                 .setConnectionRequestTimeout(properties.getConnectionRequestTimeout())
-                .setConnectTimeout(properties.getConnectTimeout())
-                .setRedirectsEnabled(true);
+                .setConnectTimeout(properties.getConnectTimeout());
         if (timeout > 0) {
             requestConfigBuilder.setSocketTimeout(timeout);
         }

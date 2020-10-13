@@ -24,7 +24,7 @@ public class HttpClientPoolingConfig {
     // }
 
     @Bean("customHttpClientProperties")
-    @ConfigurationProperties(prefix = "httpclient.custom.polling")
+    @ConfigurationProperties(prefix = "httpclient.custom.pooling")
     public HttpClientPoolingProperties customHttpClientProperties() {
         return new HttpClientPoolingProperties();
     }

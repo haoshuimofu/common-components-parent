@@ -172,11 +172,13 @@ public class HttpClientUtils {
                     e.printStackTrace();
                 }
             }
-            try {
-                httpClient.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            // 使用连接池, 连接交给ConnectionManager管理, 如果httpCleint.close会直接关闭连接, 重复使用时会导致报错
+            // Connection pool shut down
+//            try {
+//                httpClient.close();
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
         }
         return null;
     }

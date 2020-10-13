@@ -25,7 +25,7 @@
  *
  */
 
-package org.apache.http.examples.client;
+package com.demo.components.httpclient;
 
 import org.apache.http.*;
 import org.apache.http.client.CookieStore;
