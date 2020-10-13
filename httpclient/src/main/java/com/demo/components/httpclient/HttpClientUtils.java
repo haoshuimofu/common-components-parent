@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * @author wude
@@ -46,16 +47,6 @@ public class HttpClientUtils {
         return get(url, null, connectTimeout, socketTimeout);
     }
 
-    /**
-     * Get请求
-     *
-     * @param url
-     * @param headers
-     * @param connectTimeout
-     * @param socketTimeout
-     * @return
-     * @throws Exception
-     */
     public static String get(String url, Map<String, String> headers, int connectTimeout, int socketTimeout) throws Exception {
         CloseableHttpClient httpClient = HttpClients.custom().build();
         HttpGet httpGet = new HttpGet(url);
@@ -67,32 +58,41 @@ public class HttpClientUtils {
         return HttpClientUtils.executeHttpRequest(httpClient, httpGet);
     }
 
-    /**
-     * POST 提交表单
-     *
-     * @param url            请求URL
-     * @param headers        Header
-     * @param params         提交参数KV, V只接收String, 请先做好数据格式和类型转换
-     * @param connectTimeout 连接超时时间
-     * @param socketTimeout  数据读取超时时间
-     * @param charset        字符集
-     * @return ResponseString
-     * @throws Exception
-     */
-    public static String postForm(String url, Map<String, String> headers, Map<String, String> params,
+    public static String post(String url, Map<String, String> headers, Object params,
+                              int connectTimeout, int socketTimeout, String charset) throws Exception {
+        return post(url, headers, params == null ? null : JSON.toJSONString(params), connectTimeout, socketTimeout, charset);
+    }
+
+    public static String post(String url, Map<String, String> headers, String params,
+                              int connectTimeout, int socketTimeout, String charset) throws Exception {
+        CloseableHttpClient httpclient = HttpClients.custom().build();
+        HttpPost httpPost = new HttpPost(url);
+        RequestConfig.Builder requestConfigBuilder = RequestConfig.custom()
+                .setConnectTimeout(connectTimeout > 0 ? connectTimeout : -1)
+                .setSocketTimeout(socketTimeout > 0 ? socketTimeout : -1);
+        httpPost.setConfig(requestConfigBuilder.build());
+        HttpHelper.addHeaders(httpPost, headers);
+        if (params != null) {
+            httpPost.setEntity((charset == null || charset.trim().isEmpty()) ?
+                    new StringEntity(params) : new StringEntity(params, charset));
+        }
+        return HttpClientUtils.executeHttpRequest(httpclient, httpPost);
+    }
+
+    public static String postForm(String url, Map<String, String> headers, Map<String, Object> params,
                                   int connectTimeout, int socketTimeout, String charset) throws Exception {
         CloseableHttpClient httpclient = HttpClients.custom().build();
         HttpPost httpPost = new HttpPost(url);
-        RequestConfig requestConfig = RequestConfig.custom()
-                .setConnectTimeout(connectTimeout < 0 ? -1 : connectTimeout)
-                .setSocketTimeout(socketTimeout < 0 ? -1 : socketTimeout)
-                .build();
-        httpPost.setConfig(requestConfig);
+        RequestConfig.Builder requestConfigBuilder = RequestConfig.custom()
+                .setConnectTimeout(connectTimeout > 0 ? connectTimeout : -1)
+                .setSocketTimeout(socketTimeout > 0 ? socketTimeout : -1);
+        httpPost.setConfig(requestConfigBuilder.build());
         HttpHelper.addHeaders(httpPost, headers);
         if (params != null && params.size() > 0) {
             List<NameValuePair> nameValuePairs = new ArrayList<>(params.size());
-            for (Map.Entry<String, String> entry : params.entrySet()) {
-                nameValuePairs.add(new BasicNameValuePair(entry.getKey(), entry.getValue()));
+            for (Map.Entry<String, Object> entry : params.entrySet()) {
+                nameValuePairs.add(new BasicNameValuePair(entry.getKey(),
+                        Optional.ofNullable(entry.getValue()).orElse("").toString()));
             }
             if (StringUtils.isNotBlank(charset)) {
                 httpPost.setEntity(new UrlEncodedFormEntity(nameValuePairs, charset));
@@ -103,49 +103,14 @@ public class HttpClientUtils {
         return HttpClientUtils.executeHttpRequest(httpclient, httpPost);
     }
 
-    /**
-     * POST请求
-     *
-     * @param url            请求URL
-     * @param headers        Header
-     * @param params         请求参数, 实际请求时会转换成String
-     * @param connectTimeout 连接超时时间
-     * @param socketTimeout  数据读取超时时间
-     * @param charset        字符集
-     * @return Response String
-     * @throws Exception
-     */
-    public static String post(String url, Map<String, String> headers, Object params,
-                              int connectTimeout, int socketTimeout, String charset) throws Exception {
-        return post(url, headers, params == null ? null : JSON.toJSONString(params), connectTimeout, socketTimeout, charset);
+    public static String executeHttpRequest(CloseableHttpClient httpClient,
+                                            HttpUriRequest httpRequest) throws Exception {
+        return executeHttpRequest(httpClient, httpRequest, true);
     }
 
-    public static String post(String url, Map<String, String> headers, String params,
-                              int connectTimeout, int socketTimeout, String charset) throws Exception {
-        CloseableHttpClient httpclient = HttpClients.custom().build();
-        HttpPost httpPost = new HttpPost(url);
-        RequestConfig requestConfig = RequestConfig.custom()
-                .setConnectTimeout(connectTimeout < 0 ? -1 : connectTimeout)
-                .setSocketTimeout(socketTimeout < 0 ? -1 : socketTimeout)
-                .build();
-        httpPost.setConfig(requestConfig);
-        HttpHelper.addHeaders(httpPost, headers);
-        if (params != null && params.length() > 0) {
-            httpPost.setEntity((charset == null || charset.trim().isEmpty()) ?
-                    new StringEntity(params) : new StringEntity(params, charset));
-        }
-        return HttpClientUtils.executeHttpRequest(httpclient, httpPost);
-    }
-
-    /**
-     * 执行Http请求
-     *
-     * @param httpClient
-     * @param httpRequest
-     * @return
-     * @throws Exception
-     */
-    public static String executeHttpRequest(CloseableHttpClient httpClient, HttpUriRequest httpRequest) throws Exception {
+    public static String executeHttpRequest(CloseableHttpClient httpClient,
+                                            HttpUriRequest httpRequest,
+                                            boolean closeHttpClient) throws Exception {
         CloseableHttpResponse response = null;
         boolean responseClose = false;
         try {
@@ -170,13 +135,15 @@ public class HttpClientUtils {
                     e.printStackTrace();
                 }
             }
-            // 使用连接池, 连接交给ConnectionManager管理, 如果httpCleint.close会直接关闭连接, 重复使用时会导致报错
-            // Connection pool shut down
-            /*try {
-                httpClient.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }*/
+            if (closeHttpClient) {
+                // 使用连接池, 连接交给ConnectionManager管理, 如果httpCleint.close会直接关闭连接, 重复使用时会导致报错
+                // Connection pool shut down
+                try {
+                    httpClient.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 
