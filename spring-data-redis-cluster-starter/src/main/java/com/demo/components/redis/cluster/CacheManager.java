@@ -23,13 +23,13 @@ public class CacheManager {
     private final static long lock_thread_sleep_time = 100;
     private static final String RELEASE_LOCK_LUA_SCRIPT = "if redis.call('get', KEYS[1]) == ARGV[1] then return redis.call('del', KEYS[1]) else return 0 end";
     private static final Long RELEASE_LOCK_SUCCESS_RESULT = 1L;
-    private final RedisTemplate<String, String> stringRedisTemplate;
-    private final RedisTemplate redisTemplate;
 
-    public CacheManager(RedisTemplate<String, String> stringRedisTemplate,
-                        RedisTemplate redisTemplate) {
-        this.stringRedisTemplate = stringRedisTemplate;
+    private final RedisTemplate redisTemplate;
+    private final RedisTemplate<String, String> stringRedisTemplate;
+
+    public CacheManager(RedisTemplate redisTemplate, RedisTemplate<String, String> stringRedisTemplate) {
         this.redisTemplate = redisTemplate;
+        this.stringRedisTemplate = stringRedisTemplate;
     }
 
     /**

@@ -1,5 +1,6 @@
 package com.demo.components.redis.cluster;
 
+import com.alibaba.fastjson.support.spring.FastJsonRedisSerializer;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -23,7 +24,6 @@ import redis.clients.jedis.JedisPoolConfig;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * RedisCluster配置
@@ -35,40 +35,41 @@ import java.util.stream.Stream;
 @EnableConfigurationProperties(RedisProperties.class)
 public class RedisClusterConfig {
 
-    @Bean
-    @ConfigurationProperties(prefix = "spring.redis")
-    public RedisClusterConfigurationProperties redisClusterConfigurationProperties() {
-        return new RedisClusterConfigurationProperties();
+    @Bean("customRedisProperties")
+    @ConfigurationProperties(prefix = "spring.redis.custom")
+    public RedisProperties customRedisProperties() {
+        return new RedisProperties();
     }
 
-    @Bean
-    public RedisClusterConfiguration redisClusterConfiguration(RedisClusterConfigurationProperties properties) {
+    @Bean("customRedisClusterConfiguration")
+    public RedisClusterConfiguration redisClusterConfiguration(@Qualifier("customRedisProperties") RedisProperties redisProperties) {
         RedisClusterConfiguration redisClusterConfiguration = new RedisClusterConfiguration();
-        List<RedisNode> redisNodes = Stream.of(properties.getClusterNodes().split(",")).map(hostAndPort -> {
-            String[] redisNodeInfo = hostAndPort.split(":");
-            return new RedisNode(redisNodeInfo[0], Integer.parseInt(redisNodeInfo[1]));
+        List<RedisNode> redisNodes = redisProperties.getCluster().getNodes().stream().map(node -> {
+            String[] nodeInfo = node.split(":");
+            return new RedisNode(nodeInfo[0], Integer.parseInt(nodeInfo[1]));
         }).collect(Collectors.toList());
         redisClusterConfiguration.setClusterNodes(redisNodes);
-        if (properties.getMaxRedirects() > 0) {
-            redisClusterConfiguration.setMaxRedirects(properties.getMaxRedirects());
+        if (redisProperties.getCluster().getMaxRedirects() != null && redisProperties.getCluster().getMaxRedirects() > 0) {
+            redisClusterConfiguration.setMaxRedirects(redisProperties.getCluster().getMaxRedirects());
         }
         return redisClusterConfiguration;
     }
 
-    @Bean
-    @ConfigurationProperties(prefix = "jedis.pool")
-    public JedisPoolConfig jedisPoolConfig() {
-        return new JedisPoolConfig();
-    }
-
-    public @Bean
-    RedisConnectionFactory connectionFactory(RedisClusterConfiguration redisClusterConfiguration, JedisPoolConfig jedisPoolConfig) {
+    @Bean("customRedisConnectionFactory")
+    public RedisConnectionFactory connectionFactory(@Qualifier("customRedisClusterConfiguration") RedisClusterConfiguration redisClusterConfiguration,
+                                                    @Qualifier("customRedisProperties") RedisProperties redisProperties) {
+        JedisPoolConfig jedisPoolConfig = new JedisPoolConfig();
+        RedisProperties.Pool jedisPool = redisProperties.getJedis().getPool();
+        jedisPoolConfig.setMaxTotal(jedisPool.getMaxActive());
+        jedisPoolConfig.setMaxIdle(jedisPool.getMaxIdle());
+        jedisPoolConfig.setMinIdle(jedisPool.getMinIdle());
+        jedisPoolConfig.setMaxWaitMillis(jedisPool.getMaxWait().toMillis());
         return new JedisConnectionFactory(redisClusterConfiguration, jedisPoolConfig);
     }
 
     @Bean
     @Primary
-    public RedisTemplate redisTemplate(RedisConnectionFactory redisConnectionFactory) {
+    public RedisTemplate redisTemplate(@Qualifier("customRedisConnectionFactory") RedisConnectionFactory redisConnectionFactory) {
         RedisTemplate redisTemplate = new RedisTemplate();
         redisTemplate.setConnectionFactory(redisConnectionFactory);
         redisTemplate.setKeySerializer(new StringRedisSerializer());
@@ -82,7 +83,10 @@ public class RedisClusterConfig {
         objectMapper.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.ANY);
         objectMapper.enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL);
         jackson2JsonRedisSerializer.setObjectMapper(objectMapper);
-        redisTemplate.setValueSerializer(jackson2JsonRedisSerializer);
+
+
+        FastJsonRedisSerializer fastJsonRedisSerializer = new FastJsonRedisSerializer(Object.class);
+        redisTemplate.setValueSerializer(fastJsonRedisSerializer);
         return redisTemplate;
     }
 
