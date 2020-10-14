@@ -1,4 +1,4 @@
-package com.demo.components.redis.cluster;
+package com.demo.components;
 
 import java.io.Serializable;
 
