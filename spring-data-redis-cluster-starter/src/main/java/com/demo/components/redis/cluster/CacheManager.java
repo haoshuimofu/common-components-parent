@@ -32,6 +32,14 @@ public class CacheManager {
         this.stringRedisTemplate = stringRedisTemplate;
     }
 
+    public RedisTemplate getRedisTemplate() {
+        return redisTemplate;
+    }
+
+    public RedisTemplate<String, String> getStringRedisTemplate() {
+        return stringRedisTemplate;
+    }
+
     /**
      * 缓存String
      *
