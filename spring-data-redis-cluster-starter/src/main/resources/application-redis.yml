@@ -1,7 +1,5 @@
 spring:
   redis:
-    clusterNodes: 127.0.0.1:6000,127.0.0.1:7000,127.0.0.1:8000
-    maxRedirects: 3
     # spring-data-redis默认配置格式
     cluster:
       nodes: 127.0.0.1:6000,127.0.0.1:7000,127.0.0.1:8000
@@ -16,24 +14,11 @@ spring:
     custom:
       cluster:
         nodes: 127.0.0.1:6000,127.0.0.1:7000,127.0.0.1:8000
-        max-redirects: 5
+        max-redirects: 1
       jedis:
         pool:
-          max-active: 5
-          max-idle: 5
-          min-idle: 3
-          max-wait: 3000
-jedis:
-  pool:
-    maxTotal: 1000
-    maxIdle: 100
-    minIdle: 10
-    maxWaitMillis: 1000
-#    blockWhenExhausted: true
-#    maxWaitMillis: 60000
-#    testOnBorrow: true
-#    testOnReturn: false
-
-
-###
+          max-active: 1
+          max-idle: 1
+          min-idle: 1
+          max-wait: 10
 
