@@ -30,21 +30,21 @@ public class CacheManager {
     private static final String RELEASE_LOCK_LUA_SCRIPT = "if redis.call('get', KEYS[1]) == ARGV[1] then return redis.call('del', KEYS[1]) else return 0 end";
     private static final Long RELEASE_LOCK_SUCCESS_RESULT = 1L;
 
-    private final RedisTemplate redisTemplate;
+    private final RedisTemplate<String, Object> redisTemplate;
     private final StringRedisTemplate stringRedisTemplate;
 
-    public CacheManager(RedisTemplate redisTemplate, StringRedisTemplate stringRedisTemplate) {
+    public CacheManager(RedisTemplate<String, Object> redisTemplate, StringRedisTemplate stringRedisTemplate) {
         Assert.notNull(redisTemplate, "redisTemplate is null");
         Assert.notNull(stringRedisTemplate, "stringRedisTemplate is null");
         this.redisTemplate = redisTemplate;
         this.stringRedisTemplate = stringRedisTemplate;
     }
 
-    public RedisTemplate getRedisTemplate() {
+    public RedisTemplate<String, Object> getRedisTemplate() {
         return redisTemplate;
     }
 
-    public RedisTemplate<String, String> getStringRedisTemplate() {
+    public StringRedisTemplate getStringRedisTemplate() {
         return stringRedisTemplate;
     }
 

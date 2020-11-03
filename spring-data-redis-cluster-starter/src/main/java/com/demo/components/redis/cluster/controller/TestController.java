@@ -2,6 +2,7 @@ package com.demo.components.redis.cluster.controller;
 
 import com.demo.components.JsonResult;
 import com.demo.components.redis.cluster.CacheManager;
+import com.demo.components.redis.cluster.CacheObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,8 +25,8 @@ public class TestController {
     @Autowired
     private CacheManager cacheManager;
 
-    @RequestMapping("setget")
-    public Object test() {
+    @RequestMapping("lock")
+    public Object lock() {
         String key = "test_key";
         String uuid = UUID.randomUUID().toString();
         cacheManager.getStringRedisTemplate().opsForValue().set(key, uuid, 600, TimeUnit.SECONDS);
@@ -41,5 +42,15 @@ public class TestController {
         logger.error("### 正确value释放锁: key=[{}], value=[{}], success=[{}]", key, uuid, releaseResult);
 
         return JsonResult.success(lockResult);
+    }
+
+    @RequestMapping("cache")
+    public Object cache() {
+        String cacheKey = "cache_key";
+        CacheObject cacheObj = new CacheObject("王博", 18);
+        cacheManager.getRedisTemplate().opsForValue().set(cacheKey, cacheObj, 600, TimeUnit.SECONDS);
+
+        CacheObject obj = (CacheObject) cacheManager.getRedisTemplate().opsForValue().get(cacheKey);
+        return JsonResult.success(obj);
     }
 }
