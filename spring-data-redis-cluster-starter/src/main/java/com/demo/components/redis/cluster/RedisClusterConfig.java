@@ -99,7 +99,7 @@ public class RedisClusterConfig {
     @Bean
     @ConditionalOnBean(RedisTemplate.class)
     public CacheManager redisCacheManager(RedisTemplate redisTemplate,
-                                          @Qualifier("stringRedisTemplate") RedisTemplate stringRedisTemplate) {
+                                          @Qualifier("stringRedisTemplate") StringRedisTemplate stringRedisTemplate) {
         return new CacheManager(redisTemplate, stringRedisTemplate);
     }
 
