@@ -70,6 +70,8 @@ public class RedisClusterConfig {
         redisTemplate.setConnectionFactory(redisConnectionFactory);
         redisTemplate.setKeySerializer(new StringRedisSerializer());
         redisTemplate.setValueSerializer(new FastJsonRedisSerializer(Object.class));
+        redisTemplate.setHashKeySerializer(redisTemplate.getKeySerializer());
+        redisTemplate.setHashValueSerializer(redisTemplate.getValueSerializer());
         return redisTemplate;
     }
 

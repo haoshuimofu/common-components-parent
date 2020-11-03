@@ -1,5 +1,6 @@
 package com.demo.components.redis.cluster.controller;
 
+import com.alibaba.fastjson.JSONObject;
 import com.demo.components.JsonResult;
 import com.demo.components.redis.cluster.CacheManager;
 import com.demo.components.redis.cluster.CacheObject;
@@ -9,7 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -50,7 +51,29 @@ public class TestController {
         CacheObject cacheObj = new CacheObject("王博", 18);
         cacheManager.getRedisTemplate().opsForValue().set(cacheKey, cacheObj, 600, TimeUnit.SECONDS);
 
-        CacheObject obj = (CacheObject) cacheManager.getRedisTemplate().opsForValue().get(cacheKey);
+        JSONObject obj = (JSONObject) cacheManager.getRedisTemplate().opsForValue().get(cacheKey);
+
+
+        String hash_cache_key = "hash_cache_key";
+        Map<String, Object> valueMap = new HashMap<>();
+        valueMap.put("id", 1);
+        valueMap.put("obj", cacheObj);
+        cacheManager.getRedisTemplate().opsForHash().putAll(hash_cache_key, valueMap);
+        cacheManager.getRedisTemplate().opsForHash().increment(hash_cache_key, "id", 100);
+
+        List<Object> list = cacheManager.getRedisTemplate().opsForHash().multiGet(hash_cache_key, Arrays.asList("id", "obj"));
+        for (Object o : list) {
+            System.err.println(o.getClass().getName() + " --->>> " + o.toString());
+        }
+
+        String string_cache_key = "string_cache_key";
+        cacheManager.getStringRedisTemplate().opsForValue().set(string_cache_key, "5", 600, TimeUnit.SECONDS);
+        System.err.println(cacheManager.getStringRedisTemplate().opsForValue().get(string_cache_key));
+        cacheManager.getStringRedisTemplate().opsForValue().increment(string_cache_key);
+        System.err.println(cacheManager.getStringRedisTemplate().opsForValue().get(string_cache_key));
+        cacheManager.getStringRedisTemplate().opsForValue().increment(string_cache_key, 10);
+        System.err.println(cacheManager.getStringRedisTemplate().opsForValue().get(string_cache_key));
+
         return JsonResult.success(obj);
     }
 }
