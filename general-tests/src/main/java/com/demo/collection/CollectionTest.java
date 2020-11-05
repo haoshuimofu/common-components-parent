@@ -1,7 +1,7 @@
 package com.demo.collection;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * @author wude
@@ -43,9 +43,15 @@ public class CollectionTest {
 //            System.err.println(i >> 1);
 //        }
 
-        System.err.println(BigDecimal.valueOf(22).divideToIntegralValue(BigDecimal.valueOf(15)).doubleValue());
+        System.err.println(5 & 0);
 
+        map();
 
+    }
+
+    public static void map() {
+        HashMap<Integer, Integer> map = new HashMap<>();
+        map.put(1, 1);
     }
 
 }
