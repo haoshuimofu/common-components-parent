@@ -43,8 +43,6 @@ public class CollectionTest {
 //            System.err.println(i >> 1);
 //        }
 
-        System.err.println(5 & 0);
-
         map();
 
     }
