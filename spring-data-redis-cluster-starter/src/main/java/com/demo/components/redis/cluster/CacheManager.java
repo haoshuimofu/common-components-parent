@@ -26,9 +26,11 @@ public class CacheManager {
      * 锁等待-线程sleep毫秒数
      */
     private final static long LOCK_WAIT_THREAD_SLEEP_MILLS = 100;
-
+    /**
+     * 锁释放lua script
+     */
     private static final String RELEASE_LOCK_LUA_SCRIPT = "if redis.call('get', KEYS[1]) == ARGV[1] then return redis.call('del', KEYS[1]) else return 0 end";
-    private static final Long RELEASE_LOCK_SUCCESS_RESULT = 1L;
+
 
     private final RedisTemplate<String, Object> redisTemplate;
     private final StringRedisTemplate stringRedisTemplate;
@@ -55,7 +57,7 @@ public class CacheManager {
      * @param value    缓存Value
      * @param timeout  缓存Key过期时间值
      * @param timeUnit 缓存Key过期时间单位
-     * @return
+     * @return set cache 成功与否
      */
     public boolean setnx(String key, Object value, long timeout, TimeUnit timeUnit) {
         Boolean result;
@@ -75,7 +77,7 @@ public class CacheManager {
      * @param expire  缓存Key过期时间
      * @param timeout 加锁等待超时时间
      * @param unit    时间单位
-     * @return
+     * @return 加锁是否成功
      */
     public boolean lock(String key, String value, long expire, long timeout, TimeUnit unit) {
         long waitMillis = unit.toMillis(timeout);
@@ -90,7 +92,7 @@ public class CacheManager {
         if (waitAlready < waitMillis) {
             return true;
         }
-        logger.warn("### Redis lock failed after waiting for {}ms, key=[{}].", waitAlready, key);
+        logger.warn("### Redis lock failed after waiting {}ms, key=[{}].", waitAlready, key);
         return false;
     }
 
@@ -99,11 +101,11 @@ public class CacheManager {
      *
      * @param key   缓存Key
      * @param value 加锁时的缓存值
-     * @return
+     * @return 释放锁是否成功
      */
     public boolean releaseLock(String key, String value) {
         DefaultRedisScript<Long> redisScript = new DefaultRedisScript<>(RELEASE_LOCK_LUA_SCRIPT, Long.class);
         Long returnValue = getStringRedisTemplate().execute(redisScript, Collections.singletonList(key), value);
-        return RELEASE_LOCK_SUCCESS_RESULT.equals(returnValue);
+        return Long.valueOf(1).equals(returnValue);
     }
 }

@@ -45,6 +45,9 @@ public class RedisClusterConfig {
             return new RedisNode(nodeInfo[0], Integer.parseInt(nodeInfo[1]));
         }).collect(Collectors.toList());
         redisClusterConfiguration.setClusterNodes(redisNodes);
+        if (redisProperties.getPassword() != null && redisProperties.getPassword().length() > 0) {
+            redisClusterConfiguration.setPassword(redisProperties.getPassword());
+        }
         if (redisProperties.getCluster().getMaxRedirects() != null && redisProperties.getCluster().getMaxRedirects() > 0) {
             redisClusterConfiguration.setMaxRedirects(redisProperties.getCluster().getMaxRedirects());
         }
