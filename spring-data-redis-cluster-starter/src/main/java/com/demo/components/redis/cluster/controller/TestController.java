@@ -74,6 +74,11 @@ public class TestController {
         cacheManager.getStringRedisTemplate().opsForValue().increment(string_cache_key, 10);
         System.err.println(cacheManager.getStringRedisTemplate().opsForValue().get(string_cache_key));
 
+        String stock_key = UUID.randomUUID().toString();
+        System.err.println(cacheManager.getStringRedisTemplate().opsForValue().get(stock_key));
+        cacheManager.getStringRedisTemplate().opsForValue().increment(stock_key);
+        System.err.println(cacheManager.getStringRedisTemplate().opsForValue().get(stock_key));
+
         return JsonResult.success(obj);
     }
 }
