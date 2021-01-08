@@ -6,6 +6,7 @@ import com.demo.components.elasticsearch.DebugHelper;
 import com.demo.components.elasticsearch.Pagation;
 import com.demo.components.elasticsearch.annotation.*;
 import com.demo.components.elasticsearch.base.model.BaseIndexModel;
+import com.demo.components.elasticsearch.config.ElasticsearchConfig;
 import com.demo.components.elasticsearch.config.ElasticsearchRestClient;
 import com.demo.components.elasticsearch.config.ElasticsearchRestDynamicConfig;
 import com.demo.components.elasticsearch.request.SearchOptions;
@@ -76,15 +77,45 @@ public abstract class AbstractElasticsearchRepository<T extends BaseIndexModel> 
     private String schema;
     private boolean autoId;
 
-    @Autowired
+    /**
+     * Elasticsearch RestHighLevelClient实例
+     */
+    private RestHighLevelClient client;
+
+    /**
+     * elasticsearch.rest配置对应的RestClient实例
+     */
+    @Autowired(required = false)
     private ElasticsearchRestClient restClient;
+
+    @Autowired
+    private ElasticsearchConfig elasticsearchConfig;
     @Autowired
     private ElasticsearchRestDynamicConfig restDynamicConfig;
     @Autowired
     private DebugHelper debugHelper;
 
+    /**
+     * 获取当前Elasticsearch环境配置名, 对应elasticsearch.environment.config.{config_name}
+     *
+     * @return
+     */
+    public abstract String getElasticsearchConfigName();
+
+    /**
+     * 获取当前Elasticsearch环境对应的RestHighLevelClient示例
+     *
+     * @return
+     */
     public RestHighLevelClient getClient() {
-        return restClient.getRestClient();
+        if (client == null) {
+            if (getElasticsearchConfigName() == null && restClient != null) {
+                client = restClient.getRestClient();
+            } else if (getElasticsearchConfigName() != null) {
+                client = elasticsearchConfig.getRestClient(getElasticsearchConfigName()).getRestClient();
+            }
+        }
+        return client;
     }
 
     public long searchTimeout() {

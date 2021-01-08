@@ -50,6 +50,7 @@ public class ElasticsearchRestClient implements DisposableBean {
         ElasticsearchRestProperties properties = new ElasticsearchRestProperties();
         properties.setSchema(DEFAULT_SCHEMA);
         properties.setServers(DEFAULT_SERVER);
+        this.restProperties = properties;
         this.restClient = buildRestClient();
     }
 
@@ -136,9 +137,9 @@ public class ElasticsearchRestClient implements DisposableBean {
         if (this.restClient != null) {
             try {
                 this.restClient.close();
-                logger.error("### RestHighLevelClient: instance was destroyed!");
+                logger.info("### RestHighLevelClient instance was destroyed! servers=[{}].", this.restProperties.getServers());
             } catch (Exception e) {
-                logger.error("### RestHighLevelClient: An exception occurred when it's instance was destroyed!");
+                logger.error("### RestHighLevelClient instance destroying error! servers=[{}].", this.restProperties.getServers());
             }
         }
     }
