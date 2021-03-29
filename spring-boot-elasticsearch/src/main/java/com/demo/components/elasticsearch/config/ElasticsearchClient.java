@@ -38,24 +38,24 @@ public class ElasticsearchClient implements DisposableBean {
 
     public ElasticsearchClient(String environment, ElasticsearchProperties properties) throws IOReactorException {
         Assert.isTrue(environment != null && !environment.isEmpty(), "ES env is empty!");
-        Assert.notNull(properties, "ES properties is null!");
-        Assert.isTrue(StringUtils.isNotBlank(properties.getServers()), "elasticsearch.rest.servers配置为空!");
+        Assert.notNull(properties, "ES(env=" + environment + ") properties is null!");
+        Assert.isTrue(StringUtils.isNotBlank(properties.getServers()), "ES(env=" + environment + ") servers is empty!");
         this.environment = environment;
         this.properties = properties;
         this.restClient = buildRestClient();
     }
 
-    public RestHighLevelClient getRestClient() {
-        return restClient;
-    }
-
     private RestHighLevelClient buildRestClient() throws IOReactorException {
+        String schema = properties.getSchema();
+        if (schema == null || schema.isEmpty()) {
+            schema = DEFAULT_SCHEME_NAME;
+        }
         String[] servers = properties.getServers().split(SERVER_SPLIT_CHAR);
         HttpHost[] httpHosts = new HttpHost[servers.length];
         for (int i = 0; i < servers.length; i++) {
             String server = servers[i];
             String[] hostAndPort = server.split(HOST_PORT_SPLIT_CHAR);
-            httpHosts[i] = new HttpHost(hostAndPort[0], Integer.parseInt(hostAndPort[1]), properties.getSchema());
+            httpHosts[i] = new HttpHost(hostAndPort[0], Integer.parseInt(hostAndPort[1]), schema);
         }
 
         RestClientBuilder builder = RestClient.builder(httpHosts);
@@ -113,6 +113,10 @@ public class ElasticsearchClient implements DisposableBean {
         });
 
         return new RestHighLevelClient(builder);
+    }
+
+    public RestHighLevelClient getRestClient() {
+        return restClient;
     }
 
     @Override
