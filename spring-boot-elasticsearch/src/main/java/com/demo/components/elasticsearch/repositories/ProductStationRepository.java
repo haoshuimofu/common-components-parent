@@ -21,7 +21,7 @@ public class ProductStationRepository extends AbstractElasticsearchRepository<Pr
     }
 
     @Override
-    public String getElasticsearchConfigName() {
-        return null;
+    public String getEnv() {
+        return "default";
     }
 }

@@ -7,7 +7,6 @@ import com.demo.components.elasticsearch.Pagation;
 import com.demo.components.elasticsearch.annotation.*;
 import com.demo.components.elasticsearch.base.model.BaseIndexModel;
 import com.demo.components.elasticsearch.config.ElasticsearchConfig;
-import com.demo.components.elasticsearch.config.ElasticsearchRestClient;
 import com.demo.components.elasticsearch.config.ElasticsearchRestDynamicConfig;
 import com.demo.components.elasticsearch.request.SearchOptions;
 import com.demo.components.elasticsearch.utils.StringUtils;
@@ -77,30 +76,19 @@ public abstract class AbstractElasticsearchRepository<T extends BaseIndexModel> 
     private String schema;
     private boolean autoId;
 
-    /**
-     * Elasticsearch RestHighLevelClient实例
-     */
-    private RestHighLevelClient client;
-
-    /**
-     * elasticsearch.rest配置对应的RestClient实例
-     */
-    @Autowired(required = false)
-    private ElasticsearchRestClient restClient;
-
     @Autowired
-    private ElasticsearchConfig elasticsearchConfig;
+    private ElasticsearchConfig config;
     @Autowired
     private ElasticsearchRestDynamicConfig restDynamicConfig;
     @Autowired
     private DebugHelper debugHelper;
 
     /**
-     * 获取当前Elasticsearch环境配置名, 对应elasticsearch.environment.config.{config_name}
+     * 获取集群环境标识
      *
      * @return
      */
-    public abstract String getElasticsearchConfigName();
+    public abstract String getEnv();
 
     /**
      * 获取当前Elasticsearch环境对应的RestHighLevelClient示例
@@ -108,14 +96,7 @@ public abstract class AbstractElasticsearchRepository<T extends BaseIndexModel> 
      * @return
      */
     public RestHighLevelClient getClient() {
-        if (client == null) {
-            if (getElasticsearchConfigName() == null && restClient != null) {
-                client = restClient.getRestClient();
-            } else if (getElasticsearchConfigName() != null) {
-                client = elasticsearchConfig.getRestClient(getElasticsearchConfigName()).getRestClient();
-            }
-        }
-        return client;
+        return config.getRestClient(getEnv()).getRestClient();
     }
 
     public long searchTimeout() {
@@ -125,6 +106,7 @@ public abstract class AbstractElasticsearchRepository<T extends BaseIndexModel> 
     public long searchTimeoutMax() {
         return restDynamicConfig.getSearchTimeoutMax();
     }
+
 
     @Override
     public String getIndex() {

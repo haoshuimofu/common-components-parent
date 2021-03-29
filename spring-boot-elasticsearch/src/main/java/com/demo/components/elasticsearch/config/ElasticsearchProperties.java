@@ -1,15 +1,9 @@
 package com.demo.components.elasticsearch.config;
 
-import org.springframework.boot.context.properties.ConfigurationProperties;
-
 /**
- * Elasticsearch集群RESTful配置
- *
- * @author wude
- * @date 2020/6/15 13:05
+ * ES配置属性
  */
-@ConfigurationProperties(prefix = "elasticsearch.rest")
-public class ElasticsearchRestProperties {
+public class ElasticsearchProperties {
 
     private String schema;
     private String servers;
@@ -74,4 +68,5 @@ public class ElasticsearchRestProperties {
     public void setMaxTotal(int maxTotal) {
         this.maxTotal = maxTotal;
     }
+
 }
