@@ -26,6 +26,8 @@ public class ElasticsearchClient implements DisposableBean {
 
     private static final Logger logger = LoggerFactory.getLogger(ElasticsearchClient.class);
 
+    private static final String DEFAULT_SCHEME_NAME = "http";
+
     private static final String SERVER_SPLIT_CHAR = ";";
     private static final String HOST_PORT_SPLIT_CHAR = ":";
 
@@ -35,10 +37,10 @@ public class ElasticsearchClient implements DisposableBean {
 
 
     public ElasticsearchClient(String environment, ElasticsearchProperties properties) throws IOReactorException {
-        Assert.isTrue(environment != null && !environment.isEmpty(), "ES config error!");
-        Assert.notNull(properties, "ES config error!");
-        Assert.isTrue(StringUtils.isNotBlank(properties.getSchema()), "elasticsearch.rest.schema配置为空!");
+        Assert.isTrue(environment != null && !environment.isEmpty(), "ES env is empty!");
+        Assert.notNull(properties, "ES properties is null!");
         Assert.isTrue(StringUtils.isNotBlank(properties.getServers()), "elasticsearch.rest.servers配置为空!");
+        this.environment = environment;
         this.properties = properties;
         this.restClient = buildRestClient();
     }
@@ -118,9 +120,9 @@ public class ElasticsearchClient implements DisposableBean {
         if (this.restClient != null) {
             try {
                 this.restClient.close();
-                logger.info("### ES client has been destroyed successfully! env=[{}].", environment);
+                logger.info("### ES client(env={}) destroyed successfully!", environment);
             } catch (Exception e) {
-                logger.info("### ES client has been destroyed successfully! env=[{}].", environment);
+                logger.info("### ES client(env={}) destroyed error!", environment);
             }
         }
     }

@@ -33,7 +33,6 @@ public class ElasticsearchConfig implements InitializingBean, DisposableBean {
         if (environment != null && !environment.isEmpty()) {
             for (Map.Entry<String, ElasticsearchProperties> entry : environment.entrySet()) {
                 clients.put(entry.getKey(), new ElasticsearchClient(entry.getKey(), entry.getValue()));
-                logger.info("### RestHighLevelClient instance init success! servers=[{}].", entry.getValue().getServers());
             }
         }
     }
