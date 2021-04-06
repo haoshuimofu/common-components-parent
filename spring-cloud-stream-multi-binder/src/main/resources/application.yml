@@ -15,21 +15,24 @@ spring:
           environment:
             spring:
               rabbitmq:
-                host: 192.168.40.161
+                host: mq1pub.te.test.srv.mc.dd
                 port: 5672
                 username: admin
-                password: admin
-                virtual-host: /ddmc
+                password: 1234qwer
+                virtual-host: /
         rabbit2:
           type: rabbit
           environment:
             spring:
               rabbitmq:
-                host: 192.168.40.161
+                host: mq1pub.te.test.srv.mc.dd
                 port: 5672
                 username: admin
-                password: admin
-                virtual-host: /ddmc/search-service
+                password: 1234qwer
+                virtual-host: /
+
+        rocket:
+          type: rocketmq
       bindings:
         inputDemo_1:
           binder: rabbit1
@@ -45,6 +48,12 @@ spring:
           cousumer:
             max-attempts: 2
             concurrency: 2
+
+        outputSyncProductInfo2Station:
+          destination: SyncProductInfo2Station_Topic
+          content-type: application/json
+          binder: rocket
+
         outputDemo_1:
           binder: rabbit1
           destination: demoExchange_1
@@ -57,6 +66,15 @@ spring:
           content-type: application/json
           producer:
             delayed-exchange: false
+
+        inputSyncProductInfo2Station:
+          binder: rocket
+          destination: SyncProductInfo2Station_Topic
+          group: SyncProductInfo2Station_Group
+          content-type: application/json
+          consumer:
+            concurrency: 1
+
       rabbit:
         bindings:
           inputDemo_1:
@@ -82,4 +100,10 @@ spring:
               dead-letter-routing-key: demoGroup_2
               dead-letter-queue-name: demoExchange_2.demoGroup_2.DLQ
       default-binder: rabbit1
+
+      rocketmq:
+        binder:
+          #          name-server: rmq1pub.tsht3.mc.ops:9876
+          name-server: 127.0.0.1:9876
+
 
