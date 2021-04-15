@@ -17,4 +17,8 @@ public class ProductRepository extends AbstractElasticsearchRepository<Product> 
         return null;
     }
 
+    @Override
+    public String getEnv() {
+        return "default";
+    }
 }

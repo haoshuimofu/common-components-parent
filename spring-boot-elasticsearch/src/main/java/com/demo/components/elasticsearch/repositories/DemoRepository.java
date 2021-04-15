@@ -75,4 +75,8 @@ public class DemoRepository extends AbstractElasticsearchRepository<Demo> {
         return demo;
     }
 
+    @Override
+    public String getEnv() {
+        return "default";
+    }
 }

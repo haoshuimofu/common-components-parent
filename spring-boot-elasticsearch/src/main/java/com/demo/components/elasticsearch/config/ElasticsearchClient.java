@@ -20,81 +20,65 @@ import org.springframework.beans.factory.DisposableBean;
 import org.springframework.util.Assert;
 
 /**
- * @author wude
- * @date 2020/6/15 11:13
+ * ES restClient实例, RestHighLevelClient包装
  */
-public class ElasticsearchRestClient implements DisposableBean {
+public class ElasticsearchClient implements DisposableBean {
 
-    private static final Logger logger = LoggerFactory.getLogger(ElasticsearchRestClient.class);
+    private static final Logger logger = LoggerFactory.getLogger(ElasticsearchClient.class);
 
-    /**
-     * Elasticsearch默认配置
-     */
-    private static final String DEFAULT_SCHEMA = "http://";
-    private static final String DEFAULT_SERVER = "localhost:9200";
+    private static final String DEFAULT_SCHEME_NAME = "http";
 
     private static final String SERVER_SPLIT_CHAR = ";";
     private static final String HOST_PORT_SPLIT_CHAR = ":";
 
-    /**
-     * Elasticsearch配置
-     */
-    private ElasticsearchRestProperties restProperties;
-
-    /**
-     * Elasticsearch RestHighLevelClient实例
-     */
+    private String environment;
+    private ElasticsearchProperties properties;
     private RestHighLevelClient restClient;
 
-    public ElasticsearchRestClient() throws IOReactorException {
-        ElasticsearchRestProperties properties = new ElasticsearchRestProperties();
-        properties.setSchema(DEFAULT_SCHEMA);
-        properties.setServers(DEFAULT_SERVER);
-        this.restClient = buildRestClient();
-    }
 
-    public ElasticsearchRestClient(ElasticsearchRestProperties restProperties) throws IOReactorException {
-        Assert.notNull(restProperties, "Elasticsearch rest配置为空!");
-        Assert.isTrue(StringUtils.isNotBlank(restProperties.getSchema()), "elasticsearch.rest.schema配置为空!");
-        Assert.isTrue(StringUtils.isNotBlank(restProperties.getServers()), "elasticsearch.rest.servers配置为空!");
-        this.restProperties = restProperties;
+    public ElasticsearchClient(String environment, ElasticsearchProperties properties) throws IOReactorException {
+        Assert.isTrue(environment != null && !environment.isEmpty(), "ES env is empty!");
+        Assert.notNull(properties, "ES(env=" + environment + ") properties is null!");
+        Assert.isTrue(StringUtils.isNotBlank(properties.getServers()), "ES(env=" + environment + ") servers is empty!");
+        this.environment = environment;
+        this.properties = properties;
         this.restClient = buildRestClient();
-    }
-
-    public RestHighLevelClient getRestClient() {
-        return restClient;
     }
 
     private RestHighLevelClient buildRestClient() throws IOReactorException {
-        String[] servers = restProperties.getServers().split(SERVER_SPLIT_CHAR);
+        String schema = properties.getSchema();
+        if (schema == null || schema.isEmpty()) {
+            schema = DEFAULT_SCHEME_NAME;
+        }
+        String[] servers = properties.getServers().split(SERVER_SPLIT_CHAR);
         HttpHost[] httpHosts = new HttpHost[servers.length];
         for (int i = 0; i < servers.length; i++) {
             String server = servers[i];
             String[] hostAndPort = server.split(HOST_PORT_SPLIT_CHAR);
-            httpHosts[i] = new HttpHost(hostAndPort[0], Integer.parseInt(hostAndPort[1]), restProperties.getSchema());
+            httpHosts[i] = new HttpHost(hostAndPort[0], Integer.parseInt(hostAndPort[1]), schema);
         }
 
         RestClientBuilder builder = RestClient.builder(httpHosts);
         builder.setRequestConfigCallback(
                 requestConfigBuilder -> requestConfigBuilder
-                        .setConnectTimeout(restProperties.getConnectTimeout() > 0 ?
-                                restProperties.getConnectTimeout() : RestClientBuilder.DEFAULT_CONNECT_TIMEOUT_MILLIS)
-                        .setSocketTimeout(restProperties.getSocketTimeout() > 0 ?
-                                restProperties.getSocketTimeout() : RestClientBuilder.DEFAULT_SOCKET_TIMEOUT_MILLIS)
-                        .setConnectionRequestTimeout(restProperties.getConnectionRequestTimeout() > 0 ?
-                                restProperties.getConnectionRequestTimeout() : RestClientBuilder.DEFAULT_CONNECT_TIMEOUT_MILLIS));
+                        .setConnectTimeout(properties.getConnectTimeout() > 0 ?
+                                properties.getConnectTimeout() : RestClientBuilder.DEFAULT_CONNECT_TIMEOUT_MILLIS)
+                        .setSocketTimeout(properties.getSocketTimeout() > 0 ?
+                                properties.getSocketTimeout() : RestClientBuilder.DEFAULT_SOCKET_TIMEOUT_MILLIS)
+                        .setConnectionRequestTimeout(properties.getConnectionRequestTimeout() > 0 ?
+                                properties.getConnectionRequestTimeout() : RestClientBuilder.DEFAULT_CONNECT_TIMEOUT_MILLIS));
 
         final IOReactorConfig ioReactorConfig = IOReactorConfig.custom()
-                .setConnectTimeout(Math.max(restProperties.getConnectTimeout(), 0))
-                .setSoTimeout(Math.max(restProperties.getSocketTimeout(), 0))
+                .setConnectTimeout(Math.max(properties.getConnectTimeout(), 0))
+                .setSoTimeout(Math.max(properties.getSocketTimeout(), 0))
                 .setSoKeepAlive(true)
                 .build();
         final PoolingNHttpClientConnectionManager connManager =
                 new PoolingNHttpClientConnectionManager(new DefaultConnectingIOReactor(ioReactorConfig));
-        connManager.setDefaultMaxPerRoute(restProperties.getDefaultMaxPerRoute() > 0 ?
-                restProperties.getDefaultMaxPerRoute() : RestClientBuilder.DEFAULT_MAX_CONN_PER_ROUTE);
-        connManager.setMaxTotal(restProperties.getMaxTotal() > 0 ?
-                restProperties.getMaxTotal() : RestClientBuilder.DEFAULT_MAX_CONN_TOTAL);
+        connManager.setDefaultMaxPerRoute(properties.getDefaultMaxPerRoute() > 0 ?
+                properties.getDefaultMaxPerRoute() : RestClientBuilder.DEFAULT_MAX_CONN_PER_ROUTE);
+        connManager.setMaxTotal(properties.getMaxTotal() > 0 ?
+                properties.getMaxTotal() : RestClientBuilder.DEFAULT_MAX_CONN_TOTAL);
 
         // 设置HttpClientConfigCallback
         builder.setHttpClientConfigCallback(httpClientBuilder -> {
@@ -131,14 +115,18 @@ public class ElasticsearchRestClient implements DisposableBean {
         return new RestHighLevelClient(builder);
     }
 
+    public RestHighLevelClient getRestClient() {
+        return restClient;
+    }
+
     @Override
     public void destroy() throws Exception {
         if (this.restClient != null) {
             try {
                 this.restClient.close();
-                logger.error("### RestHighLevelClient: instance was destroyed!");
+                logger.info("### ES client(env={}) destroyed successfully!", environment);
             } catch (Exception e) {
-                logger.error("### RestHighLevelClient: An exception occurred when it's instance was destroyed!");
+                logger.info("### ES client(env={}) destroyed error!", environment);
             }
         }
     }

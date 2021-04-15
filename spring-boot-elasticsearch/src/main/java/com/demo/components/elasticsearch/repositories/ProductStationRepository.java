@@ -20,4 +20,8 @@ public class ProductStationRepository extends AbstractElasticsearchRepository<Pr
         return null;
     }
 
+    @Override
+    public String getEnv() {
+        return "default";
+    }
 }

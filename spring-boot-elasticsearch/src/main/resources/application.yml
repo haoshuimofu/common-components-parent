@@ -1,4 +1,24 @@
 elasticsearch:
+  config:
+    environment:
+      default:
+        schema: http
+        servers: 127.0.0.1:9201;127.0.0.1:9202
+        connectTimeout: 1
+        socketTimeout: 1
+        connectPoolingEnabled: true
+        connectionRequestTimeout: 1
+        maxTotal: 100
+        defaultMaxPerRoute: 100
+      cluster2:
+        schema: http
+        servers: 127.0.0.1:9201;127.0.0.1:9202
+        connectTimeout: 1
+        socketTimeout: 1
+        connectPoolingEnabled: true
+        connectionRequestTimeout: 1
+        maxTotal: 100
+        defaultMaxPerRoute: 100
   rest:
     schema: http
     servers: 127.0.0.1:9201;127.0.0.1:9202

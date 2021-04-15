@@ -24,4 +24,8 @@ public class StationProductReplicaRepository extends AbstractElasticsearchReposi
         return null;
     }
 
+    @Override
+    public String getEnv() {
+        return "default";
+    }
 }

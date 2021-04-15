@@ -25,4 +25,8 @@ public class StationProductRepository extends AbstractElasticsearchRepository<St
         return JSONObject.parseObject(sourceAsString, StationProduct.class);
     }
 
+    @Override
+    public String getEnv() {
+        return "default";
+    }
 }

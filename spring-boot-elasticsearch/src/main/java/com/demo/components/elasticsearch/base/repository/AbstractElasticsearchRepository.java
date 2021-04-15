@@ -6,7 +6,7 @@ import com.demo.components.elasticsearch.DebugHelper;
 import com.demo.components.elasticsearch.Pagation;
 import com.demo.components.elasticsearch.annotation.*;
 import com.demo.components.elasticsearch.base.model.BaseIndexModel;
-import com.demo.components.elasticsearch.config.ElasticsearchRestClient;
+import com.demo.components.elasticsearch.config.ElasticsearchConfig;
 import com.demo.components.elasticsearch.config.ElasticsearchRestDynamicConfig;
 import com.demo.components.elasticsearch.request.SearchOptions;
 import com.demo.components.elasticsearch.utils.StringUtils;
@@ -77,14 +77,26 @@ public abstract class AbstractElasticsearchRepository<T extends BaseIndexModel> 
     private boolean autoId;
 
     @Autowired
-    private ElasticsearchRestClient restClient;
+    private ElasticsearchConfig config;
     @Autowired
     private ElasticsearchRestDynamicConfig restDynamicConfig;
     @Autowired
     private DebugHelper debugHelper;
 
+    /**
+     * 获取集群环境标识
+     *
+     * @return
+     */
+    public abstract String getEnv();
+
+    /**
+     * 获取当前Elasticsearch环境对应的RestHighLevelClient示例
+     *
+     * @return
+     */
     public RestHighLevelClient getClient() {
-        return restClient.getRestClient();
+        return config.getRestClient(getEnv()).getRestClient();
     }
 
     public long searchTimeout() {
@@ -94,6 +106,7 @@ public abstract class AbstractElasticsearchRepository<T extends BaseIndexModel> 
     public long searchTimeoutMax() {
         return restDynamicConfig.getSearchTimeoutMax();
     }
+
 
     @Override
     public String getIndex() {
