@@ -10,7 +10,6 @@ import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.index.query.functionscore.FunctionScoreQueryBuilder;
 import org.elasticsearch.index.query.functionscore.ScoreFunctionBuilders;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -25,7 +24,6 @@ import java.io.IOException;
 @RequestMapping("/station/product/")
 public class StationProductController {
 
-    @Autowired(required = false)
     private StationProductRepository stationProductRepository;
 
     @RequestMapping("count")
