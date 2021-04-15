@@ -1,8 +1,8 @@
 package com.demo.components.elasticsearch.service;
 
 import com.alibaba.fastjson.JSONObject;
-import com.demo.components.elasticsearch.config.ElasticsearchClient;
-import com.demo.components.elasticsearch.config.ElasticsearchProperties;
+import com.demo.components.elasticsearch.config.ESRestClient;
+import com.demo.components.elasticsearch.config.ESRestProperties;
 import com.demo.components.elasticsearch.model.Product;
 import com.demo.components.elasticsearch.model.StationProduct;
 import com.demo.components.elasticsearch.repositories.ProductRepository;
@@ -69,10 +69,10 @@ public class ProductStationTestService implements InitializingBean {
         // 执行成功后针对destination index flush一次
         String remoteSchema = "http";
         String remoteAddress = "127.0.0.1:9800";
-        ElasticsearchProperties remoteProperties = new ElasticsearchProperties();
+        ESRestProperties remoteProperties = new ESRestProperties();
         remoteProperties.setSchema(remoteSchema);
         remoteProperties.setServers(remoteAddress);
-        ElasticsearchClient remoteRestClient = new ElasticsearchClient("evn", remoteProperties);
+        ESRestClient remoteRestClient = new ESRestClient("evn", remoteProperties);
 
         // 先判断source index在destination是否存在，如果不存在，根据source index创建索引
         String sourceIndex = stationProductRepository.getIndex();

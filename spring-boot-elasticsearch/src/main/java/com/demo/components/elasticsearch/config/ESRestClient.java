@@ -20,11 +20,11 @@ import org.springframework.beans.factory.DisposableBean;
 import org.springframework.util.Assert;
 
 /**
- * ES restClient实例, RestHighLevelClient包装
+ * Elasticsearch Rest client based on RestHighLevelClient
  */
-public class ElasticsearchClient implements DisposableBean {
+public class ESRestClient implements DisposableBean {
 
-    private static final Logger logger = LoggerFactory.getLogger(ElasticsearchClient.class);
+    private static final Logger logger = LoggerFactory.getLogger(ESRestClient.class);
 
     private static final String DEFAULT_SCHEME_NAME = "http";
 
@@ -32,11 +32,11 @@ public class ElasticsearchClient implements DisposableBean {
     private static final String HOST_PORT_SPLIT_CHAR = ":";
 
     private String environment;
-    private ElasticsearchProperties properties;
+    private ESRestProperties properties;
     private RestHighLevelClient restClient;
 
 
-    public ElasticsearchClient(String environment, ElasticsearchProperties properties) throws IOReactorException {
+    public ESRestClient(String environment, ESRestProperties properties) throws IOReactorException {
         Assert.isTrue(environment != null && !environment.isEmpty(), "ES env is empty!");
         Assert.notNull(properties, "ES(env=" + environment + ") properties is null!");
         Assert.isTrue(StringUtils.isNotBlank(properties.getServers()), "ES(env=" + environment + ") servers is empty!");

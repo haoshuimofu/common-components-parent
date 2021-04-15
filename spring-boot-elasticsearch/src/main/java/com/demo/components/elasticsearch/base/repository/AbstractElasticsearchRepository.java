@@ -6,8 +6,7 @@ import com.demo.components.elasticsearch.DebugHelper;
 import com.demo.components.elasticsearch.Pagation;
 import com.demo.components.elasticsearch.annotation.*;
 import com.demo.components.elasticsearch.base.model.BaseIndexModel;
-import com.demo.components.elasticsearch.config.ElasticsearchConfig;
-import com.demo.components.elasticsearch.config.ElasticsearchRestDynamicConfig;
+import com.demo.components.elasticsearch.config.ESRestClientContainer;
 import com.demo.components.elasticsearch.request.SearchOptions;
 import com.demo.components.elasticsearch.utils.StringUtils;
 import org.elasticsearch.ElasticsearchStatusException;
@@ -77,36 +76,15 @@ public abstract class AbstractElasticsearchRepository<T extends BaseIndexModel> 
     private boolean autoId;
 
     @Autowired
-    private ElasticsearchConfig config;
-    @Autowired
-    private ElasticsearchRestDynamicConfig restDynamicConfig;
+    private ESRestClientContainer restClientContainer;
     @Autowired
     private DebugHelper debugHelper;
 
-    /**
-     * 获取集群环境标识
-     *
-     * @return
-     */
     public abstract String getEnv();
 
-    /**
-     * 获取当前Elasticsearch环境对应的RestHighLevelClient示例
-     *
-     * @return
-     */
     public RestHighLevelClient getClient() {
-        return config.getRestClient(getEnv()).getRestClient();
+        return restClientContainer.restHighLevelClient(getEnv());
     }
-
-    public long searchTimeout() {
-        return restDynamicConfig.getSearchTimeout();
-    }
-
-    public long searchTimeoutMax() {
-        return restDynamicConfig.getSearchTimeoutMax();
-    }
-
 
     @Override
     public String getIndex() {
@@ -370,7 +348,7 @@ public abstract class AbstractElasticsearchRepository<T extends BaseIndexModel> 
 
     @Override
     public boolean update(T model) throws Exception {
-        UpdateRequest request = BuildingIndexUtils.buildUpdateRequest(model, entityClass, getIndex(), restDynamicConfig.getRetryOnConflict());
+        UpdateRequest request = BuildingIndexUtils.buildUpdateRequest(model, entityClass, getIndex(), restClientContainer.getEsConfig().getRetryOnConflict());
         try {
             UpdateResponse response = getClient().update(request, DEFAULT);
             DocWriteResponse.Result result = response.getResult();
@@ -396,7 +374,7 @@ public abstract class AbstractElasticsearchRepository<T extends BaseIndexModel> 
 
     @Override
     public void updateAsync(T model) throws Exception {
-        UpdateRequest updateRequest = BuildingIndexUtils.buildUpdateRequest(model, entityClass, getIndex(), restDynamicConfig.getRetryOnConflict());
+        UpdateRequest updateRequest = BuildingIndexUtils.buildUpdateRequest(model, entityClass, getIndex(), restClientContainer.getEsConfig().getRetryOnConflict());
         getClient().updateAsync(updateRequest, DEFAULT, new ActionListener<UpdateResponse>() {
             @Override
             public void onResponse(UpdateResponse updateResponse) {
@@ -430,7 +408,7 @@ public abstract class AbstractElasticsearchRepository<T extends BaseIndexModel> 
 
     @Override
     public boolean bulkUpdate(List<T> models) throws Exception {
-        BulkRequest bulkRequest = BuildingIndexUtils.buildBulkUpdateRequest(models, entityClass, getIndex(), restDynamicConfig.getRetryOnConflict());
+        BulkRequest bulkRequest = BuildingIndexUtils.buildBulkUpdateRequest(models, entityClass, getIndex(), restClientContainer.getEsConfig().getRetryOnConflict());
         BulkResponse bulkResponse = getClient().bulk(bulkRequest, DEFAULT);
         boolean success = !bulkResponse.hasFailures();
         if (success) {
@@ -445,7 +423,7 @@ public abstract class AbstractElasticsearchRepository<T extends BaseIndexModel> 
 
     @Override
     public void bulkUpdateAsync(List<T> models) throws Exception {
-        BulkRequest bulkRequest = BuildingIndexUtils.buildBulkUpdateRequest(models, entityClass, getIndex(), restDynamicConfig.getRetryOnConflict());
+        BulkRequest bulkRequest = BuildingIndexUtils.buildBulkUpdateRequest(models, entityClass, getIndex(), restClientContainer.getEsConfig().getRetryOnConflict());
         getClient().bulkAsync(bulkRequest, DEFAULT, new ActionListener<BulkResponse>() {
             @Override
             public void onResponse(BulkResponse bulkResponse) {

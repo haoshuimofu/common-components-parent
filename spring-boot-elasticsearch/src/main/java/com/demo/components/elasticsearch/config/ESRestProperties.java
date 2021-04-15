@@ -1,9 +1,9 @@
 package com.demo.components.elasticsearch.config;
 
 /**
- * ES配置属性
+ * Elasticsearch rest request config properties
  */
-public class ElasticsearchProperties {
+public class ESRestProperties {
 
     private String schema;
     private String servers;
