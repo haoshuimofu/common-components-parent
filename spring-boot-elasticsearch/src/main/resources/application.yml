@@ -12,7 +12,7 @@ elasticsearch:
         defaultMaxPerRoute: 100
       cluster2:
         schema: http
-        servers: 127.0.0.1:9201;127.0.0.1:9202
+        servers: es2search.ye.test.srv.mc.dd:9200
         connectTimeout: 1
         socketTimeout: 1
         connectPoolingEnabled: true

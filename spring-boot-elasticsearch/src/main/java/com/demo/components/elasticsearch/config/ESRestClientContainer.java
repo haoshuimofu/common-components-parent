@@ -38,9 +38,9 @@ public class ESRestClientContainer implements DisposableBean {
     }
 
     public RestHighLevelClient restHighLevelClient(String env) {
-        Assert.notNull(env, "Elasticsearch env is null.");
+        Assert.notNull(env, "Env is null.");
         ESRestClient restClient = restClients.get(env);
-        Assert.notNull(restClient, "Elasticsearch RestClient is null for env = " + env + "!");
+        Assert.notNull(restClient, "RestClient is null.");
         return restClient.getRestClient();
     }
 
@@ -53,7 +53,6 @@ public class ESRestClientContainer implements DisposableBean {
         if (esConfig.getEnvironment() != null && !esConfig.getEnvironment().isEmpty()) {
             for (Map.Entry<String, ESRestClient> entry : restClients.entrySet()) {
                 entry.getValue().destroy();
-                LOGGER.info("### Elasticsearch restClient was destroyed! env=[{}].", entry.getKey());
             }
         }
     }

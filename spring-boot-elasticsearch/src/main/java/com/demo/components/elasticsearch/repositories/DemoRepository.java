@@ -77,6 +77,6 @@ public class DemoRepository extends AbstractElasticsearchRepository<Demo> {
 
     @Override
     public String getEnv() {
-        return "default";
+        return "cluster2";
     }
 }

@@ -1,6 +1,5 @@
 package com.demo.components.elasticsearch.config;
 
-import com.demo.components.elasticsearch.utils.StringUtils;
 import org.apache.http.HeaderElement;
 import org.apache.http.HeaderElementIterator;
 import org.apache.http.HttpHost;
@@ -24,7 +23,7 @@ import org.springframework.util.Assert;
  */
 public class ESRestClient implements DisposableBean {
 
-    private static final Logger logger = LoggerFactory.getLogger(ESRestClient.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ESRestClient.class);
 
     private static final String DEFAULT_SCHEME_NAME = "http";
 
@@ -35,11 +34,9 @@ public class ESRestClient implements DisposableBean {
     private ESRestProperties properties;
     private RestHighLevelClient restClient;
 
-
     public ESRestClient(String environment, ESRestProperties properties) throws IOReactorException {
-        Assert.isTrue(environment != null && !environment.isEmpty(), "ES env is empty!");
-        Assert.notNull(properties, "ES(env=" + environment + ") properties is null!");
-        Assert.isTrue(StringUtils.isNotBlank(properties.getServers()), "ES(env=" + environment + ") servers is empty!");
+        Assert.isTrue(environment != null && !environment.isEmpty(), "Elasticsearch env is empty!");
+        Assert.notNull(properties, "Elasticsearch rest properties is null!");
         this.environment = environment;
         this.properties = properties;
         this.restClient = buildRestClient();
@@ -124,9 +121,9 @@ public class ESRestClient implements DisposableBean {
         if (this.restClient != null) {
             try {
                 this.restClient.close();
-                logger.info("### ES client(env={}) destroyed successfully!", environment);
+                LOGGER.info("### Elasticsearch RestClient was destroyed! env=[{}].", environment);
             } catch (Exception e) {
-                logger.info("### ES client(env={}) destroyed error!", environment);
+                LOGGER.error("### Elasticsearch RestClient destroyed error! env=[{}].", environment, e);
             }
         }
     }
