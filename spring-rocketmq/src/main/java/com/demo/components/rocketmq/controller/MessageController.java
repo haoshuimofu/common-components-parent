@@ -1,9 +1,20 @@
 package com.demo.components.rocketmq.controller;
 
+import com.demo.components.rocketmq.RocketConfig;
+import com.demo.components.rocketmq.message.DemoMessage;
+import com.demo.components.rocketmq.message.UserMessage;
+import org.apache.rocketmq.spring.core.RocketMQTemplate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.MessageHeaders;
+import org.springframework.messaging.support.MessageBuilder;
+import org.springframework.util.MimeTypeUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * @author wude
@@ -15,9 +26,29 @@ public class MessageController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MessageController.class);
 
-    @RequestMapping("send")
-    public Object send() {
-        return "send ok";
+    @Autowired
+    private RocketMQTemplate rocketMQTemplate;
+    @Autowired
+    private RocketConfig rocketConfig;
+
+    @RequestMapping("send/demo")
+    public Object sendDemo() {
+        DemoMessage message = new DemoMessage();
+        message.setText(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
+        rocketMQTemplate.send(rocketConfig.demoTopic,
+                MessageBuilder.withPayload(message)
+                        .setHeader(MessageHeaders.CONTENT_TYPE, MimeTypeUtils.APPLICATION_JSON_VALUE)
+                        .build());
+        return "send demo message ok";
+    }
+
+    @RequestMapping("send/user")
+    public Object sendUser() {
+        rocketMQTemplate.send(rocketConfig.userTopic,
+                MessageBuilder.withPayload(new UserMessage().setUserName("wude").setUserAge(Byte.valueOf("18")))
+                        .setHeader(MessageHeaders.CONTENT_TYPE, MimeTypeUtils.APPLICATION_JSON_VALUE)
+                        .build());
+        return "send user message ok";
     }
 
 }

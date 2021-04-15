@@ -16,5 +16,4 @@ public class SpringRocketMQApplication {
         ApplicationContext ctx = SpringApplication.run(SpringRocketMQApplication.class, args);
 
     }
-
 }

@@ -1,0 +1,11 @@
+rocketmq:
+  name-server: 127.0.0.1:9876
+  producer:
+    group: rocketProducerGroup
+    send-message-timeout: 3000
+
+
+  # 自定义配置
+  topic:
+    demoTopic: demo-topic
+    userTopic: user-topic
