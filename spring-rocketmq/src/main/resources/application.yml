@@ -9,3 +9,12 @@ rocketmq:
   topic:
     demoTopic: demo-topic
     userTopic: user-topic
+
+another:
+  rocketmq:
+    name-server: rmq1pub.tsht3.mc.ops:9876
+    producer:
+      group: anotherRocketProducerGroup
+      send-message-timeout: 3000
+    topic:
+      userTopic: another-user-topic

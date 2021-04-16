@@ -1,6 +1,9 @@
 package com.demo.components.rocketmq.controller;
 
+import com.demo.components.rocketmq.AnotherRocketConfig;
+import com.demo.components.rocketmq.AnotherRocketMQTemplate;
 import com.demo.components.rocketmq.RocketConfig;
+import com.demo.components.rocketmq.message.AnotherUserMessage;
 import com.demo.components.rocketmq.message.DemoMessage;
 import com.demo.components.rocketmq.message.UserMessage;
 import org.apache.rocketmq.spring.core.RocketMQTemplate;
@@ -15,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.UUID;
 
 /**
  * @author wude
@@ -30,6 +34,10 @@ public class MessageController {
     private RocketMQTemplate rocketMQTemplate;
     @Autowired
     private RocketConfig rocketConfig;
+    @Autowired
+    private AnotherRocketMQTemplate anotherRocketMQTemplate;
+    @Autowired
+    private AnotherRocketConfig anotherRocketConfig;
 
     @RequestMapping("send/demo")
     public Object sendDemo() {
@@ -51,4 +59,14 @@ public class MessageController {
         return "send user message ok";
     }
 
+    @RequestMapping("send/another/user")
+    public Object sendAnotherUser() {
+        AnotherUserMessage message = new AnotherUserMessage();
+        message.setName("another_" + UUID.randomUUID().toString());
+        anotherRocketMQTemplate.send(anotherRocketConfig.userTopic,
+                MessageBuilder.withPayload(message)
+                        .setHeader(MessageHeaders.CONTENT_TYPE, MimeTypeUtils.APPLICATION_JSON_VALUE)
+                        .build());
+        return "send another user message ok";
+    }
 }
