@@ -1,4 +1,4 @@
-package com.demo.components.stream.multibinders;
+package com.demo.components.stream.rabbit;
 
 import org.springframework.cloud.stream.annotation.Input;
 import org.springframework.cloud.stream.annotation.Output;
@@ -13,22 +13,22 @@ import org.springframework.messaging.SubscribableChannel;
  * @author ddmc
  * @date 2019/9/25 14:24
  */
-public interface DemoMessageProcessor2 {
+public interface DemoMessageProcessor1 {
 
     /**
      * Input channel name.
      */
-    String INPUT = "inputDemo_2";
+    String INPUT = "inputDemo_1";
 
-    String OUTPUT = "outputDemo_2";
+    String OUTPUT = "outputDemo_1";
 
     /**
      * @return input channel.
      */
-    @Input(DemoMessageProcessor2.INPUT)
+    @Input(DemoMessageProcessor1.INPUT)
     SubscribableChannel inputDemo();
 
-    @Output(DemoMessageProcessor2.OUTPUT)
+    @Output(DemoMessageProcessor1.OUTPUT)
     MessageChannel outputDemo();
 
 }

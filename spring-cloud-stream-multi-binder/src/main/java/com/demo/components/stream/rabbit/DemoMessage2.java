@@ -1,4 +1,4 @@
-package com.demo.components.stream.multibinders;
+package com.demo.components.stream.rabbit;
 
 /**
  * @author ddmc

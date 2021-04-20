@@ -1,6 +1,7 @@
-package com.demo.components.stream.multibinders.rockemq;
+package com.demo.components.stream.rocket;
 
 import com.alibaba.fastjson.JSON;
+import com.demo.components.stream.rocket.message.SyncProductInfo2StationMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cloud.stream.annotation.StreamListener;
@@ -12,12 +13,12 @@ import org.springframework.stereotype.Component;
  * @date 2021/4/6 16:34
  */
 @Component
-public class RocketConsumer {
+public class RocketMessageConsumer {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(RocketConsumer.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(RocketMessageConsumer.class);
 
 
-    @StreamListener(RocketProcessor.INPUT_SYNC_PRODUCT_INFO_TO_STATION)
+    @StreamListener(RocketMessageProcessor.INPUT_SYNC_PRODUCT_INFO_TO_STATION)
     public void syncProductInfo2Station(@Payload SyncProductInfo2StationMessage message) {
         long interval = System.currentTimeMillis() / 1000 - message.getTriggerTime();
         System.err.println("消费时差: " + interval + "; message=" + JSON.toJSONString(message, true));

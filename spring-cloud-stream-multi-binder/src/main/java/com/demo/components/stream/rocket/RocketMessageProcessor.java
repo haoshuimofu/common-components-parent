@@ -1,4 +1,4 @@
-package com.demo.components.stream.multibinders.rockemq;
+package com.demo.components.stream.rocket;
 
 import org.springframework.cloud.stream.annotation.Input;
 import org.springframework.cloud.stream.annotation.Output;
@@ -9,7 +9,7 @@ import org.springframework.messaging.SubscribableChannel;
  * @author wude
  * @date 2021/4/6 16:32
  */
-public interface RocketProcessor {
+public interface RocketMessageProcessor {
 
     String INPUT_SYNC_PRODUCT_INFO_TO_STATION = "inputSyncProductInfo2Station";
 
@@ -20,5 +20,17 @@ public interface RocketProcessor {
 
     @Output(OUTPUT_SYNC_PRODUCT_INFO_TO_STATION)
     MessageChannel outputSyncProductInfo2Station();
+
+    // demo
+
+    String INPUT_ROCKET_DEMO = "inputSyncProductInfo2Station";
+
+    String OUTPUT_ROCKET_DEMO = "outputSyncProductInfo2Station";
+
+    @Input(INPUT_ROCKET_DEMO)
+    SubscribableChannel inputRocketDemo();
+
+    @Output(OUTPUT_ROCKET_DEMO)
+    MessageChannel outputRocketDemo();
 
 }

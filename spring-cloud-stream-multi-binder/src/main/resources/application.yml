@@ -48,12 +48,6 @@ spring:
           cousumer:
             max-attempts: 2
             concurrency: 2
-
-        outputSyncProductInfo2Station:
-          destination: SyncProductInfo2Station_Topic
-          content-type: application/json
-          binder: rocket
-
         outputDemo_1:
           binder: rabbit1
           destination: demoExchange_1
@@ -67,10 +61,25 @@ spring:
           producer:
             delayed-exchange: false
 
+        outputSyncProductInfo2Station:
+          destination: SyncProductInfo2Station_Topic
+          content-type: application/json
+          binder: rocket
+        outputRocketDemo:
+          destination: RocketDemo_Topic
+          content-type: application/json
+          binder: rocket
         inputSyncProductInfo2Station:
           binder: rocket
           destination: SyncProductInfo2Station_Topic
           group: SyncProductInfo2Station_Group
+          content-type: application/json
+          consumer:
+            concurrency: 1
+        inputRocketDemo:
+          binder: rocket
+          destination: RocketDemo_Topic
+          group: RocketDemo_Group
           content-type: application/json
           consumer:
             concurrency: 1

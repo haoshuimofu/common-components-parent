@@ -1,4 +1,4 @@
-package com.demo.components.stream.multibinders.rockemq;
+package com.demo.components.stream.rocket.message;
 
 import java.util.List;
 

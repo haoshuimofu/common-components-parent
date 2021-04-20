@@ -1,11 +1,11 @@
 package com.demo.components.stream;
 
-import com.demo.components.stream.multibinders.DemoMessage1;
-import com.demo.components.stream.multibinders.DemoMessage2;
-import com.demo.components.stream.multibinders.DemoMessageProcessor1;
-import com.demo.components.stream.multibinders.DemoMessageProcessor2;
-import com.demo.components.stream.multibinders.rockemq.RocketProcessor;
-import com.demo.components.stream.multibinders.rockemq.SyncProductInfo2StationMessage;
+import com.demo.components.stream.rabbit.DemoMessage1;
+import com.demo.components.stream.rabbit.DemoMessage2;
+import com.demo.components.stream.rabbit.DemoMessageProcessor1;
+import com.demo.components.stream.rabbit.DemoMessageProcessor2;
+import com.demo.components.stream.rocket.RocketMessageProcessor;
+import com.demo.components.stream.rocket.message.SyncProductInfo2StationMessage;
 import org.apache.rocketmq.common.message.MessageConst;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.Message;
@@ -29,7 +29,7 @@ public class MultiBinderMessageController {
     @Autowired
     private DemoMessageProcessor2 demoMessageProcessor2;
     @Autowired
-    private RocketProcessor rocketProcessor;
+    private RocketMessageProcessor rocketProcessor;
 
     public static void main(String[] args) {
 
@@ -47,19 +47,5 @@ public class MultiBinderMessageController {
 //        return demoMessageConsumer.handle(new DemoMessage("spring-cloud-stream", "wude"));
     }
 
-    @RequestMapping("rocket")
-    @ResponseBody
-    public String rocketSend() {
-        SyncProductInfo2StationMessage message = new SyncProductInfo2StationMessage();
-        message.setProductIds(Arrays.asList("1", "a"));
-        message.setTriggerTime(System.currentTimeMillis() / 1000);
-
-        Message msg = MessageBuilder.withPayload(message)
-                .setHeader(MessageConst.PROPERTY_DELAY_TIME_LEVEL, 4)
-                .setHeader("__STARTDELIVERTIME", new Date().getTime() + 30000).build();
-        rocketProcessor.outputSyncProductInfo2Station().send(msg);
-        return "send rocket message success";
-//        return demoMessageConsumer.handle(new DemoMessage("spring-cloud-stream", "wude"));
-    }
 
 }
