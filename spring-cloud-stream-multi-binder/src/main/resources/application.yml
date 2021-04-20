@@ -115,4 +115,8 @@ spring:
           #          name-server: rmq1pub.tsht3.mc.ops:9876
           name-server: 127.0.0.1:9876
 
-
+rocketmq:
+  name-server: rmq1pub.tsht3.mc.ops:9876
+  producer:
+    name-server: rmq1pub.tsht3.mc.ops:9876
+    group: rocketmqGroup

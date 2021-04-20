@@ -1,21 +1,15 @@
 package com.demo.components.stream;
 
-import com.demo.components.stream.rabbit.DemoMessage1;
-import com.demo.components.stream.rabbit.DemoMessage2;
+import com.demo.components.stream.rabbit.message.DemoMessage1;
+import com.demo.components.stream.rabbit.message.DemoMessage2;
 import com.demo.components.stream.rabbit.DemoMessageProcessor1;
 import com.demo.components.stream.rabbit.DemoMessageProcessor2;
-import com.demo.components.stream.rocket.RocketMessageProcessor;
-import com.demo.components.stream.rocket.message.SyncProductInfo2StationMessage;
-import org.apache.rocketmq.common.message.MessageConst;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.Arrays;
-import java.util.Date;
 
 /**
  * @author wude

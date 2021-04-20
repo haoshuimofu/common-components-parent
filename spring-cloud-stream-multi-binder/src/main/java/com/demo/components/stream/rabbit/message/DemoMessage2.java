@@ -1,4 +1,4 @@
-package com.demo.components.stream.rabbit;
+package com.demo.components.stream.rabbit.message;
 
 /**
  * @author ddmc
