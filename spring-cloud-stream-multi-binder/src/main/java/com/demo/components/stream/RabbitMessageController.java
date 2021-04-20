@@ -23,17 +23,11 @@ import java.util.Date;
  */
 @RestController
 @RequestMapping("/multi/message/send")
-public class MultiBinderMessageController {
+public class RabbitMessageController {
     @Autowired
     private DemoMessageProcessor1 demoMessageProcessor1;
     @Autowired
     private DemoMessageProcessor2 demoMessageProcessor2;
-    @Autowired
-    private RocketMessageProcessor rocketProcessor;
-
-    public static void main(String[] args) {
-
-    }
 
     @RequestMapping("demo")
     @ResponseBody

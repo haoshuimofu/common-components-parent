@@ -10,10 +10,10 @@ import org.springframework.context.annotation.Bean;
 
 @SpringBootApplication
 @EnableBinding(RocketMessageProcessor.class)
-public class MultiBinderApplication {
+public class Application {
 
     public static void main(String[] args) {
-        SpringApplication.run(MultiBinderApplication.class, args);
+        SpringApplication.run(Application.class, args);
     }
 
     @Bean
