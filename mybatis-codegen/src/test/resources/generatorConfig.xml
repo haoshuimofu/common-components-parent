@@ -64,7 +64,7 @@
         </javaClientGenerator>
 
         <!-- !!!! Table Configurations !!!! -->
-        <table tableName="t_users" domainObjectName="User">
+        <table tableName="t_user" domainObjectName="User">
             <!--<generatedKey column="id" sqlStatement="JDBC" identity="true"/> 生成主键-->
             <!--插件本身支持rootClass，也可以自定义extendsBaseModel属性，效果一样-->
             <!--<property name="rootClass" value="com.demo.components.base.model.BaseModel"/>-->
