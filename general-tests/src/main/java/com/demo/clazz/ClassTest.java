@@ -7,6 +7,7 @@ package com.demo.clazz;
 public class ClassTest {
 
     public static void main(String[] args) {
+        // 不初始化不会运营类中的
         System.err.println(SubClass.value);
 //        System.err.println(new SuperClass());
 //        System.err.println(new SubClass());
