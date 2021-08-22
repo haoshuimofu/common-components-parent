@@ -13,13 +13,14 @@ import java.util.Date;
  */
 @Data
 @Builder
-public class Order {
+public class OrderModel {
 
     private String orderId;
     private String userId;
     private String title;
     private Double totalAmount;
     private Date createTime;
+    private Date updateTime;
     private Date payTime;
 
 }

@@ -71,7 +71,7 @@ public class DBAutoConfiguration {
     Map<String, DataSource> createDataSourceMap() {
         Map<String, DataSource> result = new HashMap<>();
         result.put("ds0", DataSourceFactory.dataSource(databaseConfig.getConfig().get("ds_0")));
-        result.put("ds0", DataSourceFactory.dataSource(databaseConfig.getConfig().get("ds_1")));
+        result.put("ds1", DataSourceFactory.dataSource(databaseConfig.getConfig().get("ds_1")));
         return result;
     }
 

@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.demo.components.mybatis.codegen.dao.UserDao">
   <resultMap id="BaseResultMap" type="com.demo.components.mybatis.codegen.model.User">
-    <!--@mbg.generated 2021-08-14 20:25:13-->
+    <!--@mbg.generated 2021-08-22 13:53:50-->
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="username" jdbcType="VARCHAR" property="username" />
     <result column="email" jdbcType="VARCHAR" property="email" />
@@ -11,11 +11,11 @@
     <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
   </resultMap>
   <sql id="Base_Column_List">
-    <!--@mbg.generated 2021-08-14 20:25:13-->
+    <!--@mbg.generated 2021-08-22 13:53:50-->
     id, username, email, status, create_time, update_time
   </sql>
   <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.demo.components.mybatis.codegen.model.User" useGeneratedKeys="true">
-    <!--@mbg.generated 2021-08-14 20:25:13-->
+    <!--@mbg.generated 2021-08-22 13:53:50-->
     INSERT INTO t_user
     <trim prefix="(" suffix=")" suffixOverrides=",">
       username,
@@ -50,7 +50,7 @@
     </trim>
   </insert>
   <insert id="insertList" parameterType="java.util.List">
-    <!--@mbg.generated 2021-08-14 20:25:13-->
+    <!--@mbg.generated 2021-08-22 13:53:50-->
     INSERT INTO t_user (
       username, email, status, create_time, update_time
     ) VALUES 
@@ -62,11 +62,11 @@
     </foreach>
   </insert>
   <select id="selectById" parameterType="java.lang.Long" resultMap="BaseResultMap">
-    <!--@mbg.generated 2021-08-14 20:25:13-->
+    <!--@mbg.generated 2021-08-22 13:53:50-->
     SELECT <include refid="Base_Column_List" /> FROM t_user WHERE id = #{id,jdbcType=BIGINT}
   </select>
   <select id="selectOne" parameterType="com.demo.components.mybatis.codegen.model.User" resultMap="BaseResultMap">
-    <!--@mbg.generated 2021-08-14 20:25:13-->
+    <!--@mbg.generated 2021-08-22 13:53:50-->
     SELECT <include refid="Base_Column_List" /> FROM t_user
     <where>
       <if test="username != null">
@@ -88,7 +88,7 @@
     </where>
   </select>
   <select id="selectList" parameterType="com.demo.components.mybatis.codegen.model.User" resultMap="BaseResultMap">
-    <!--@mbg.generated 2021-08-14 20:25:13-->
+    <!--@mbg.generated 2021-08-22 13:53:50-->
     SELECT <include refid="Base_Column_List" /> FROM t_user
     <where>
       <if test="username != null">
@@ -109,11 +109,11 @@
     </where>
   </select>
   <select id="selectAll" resultMap="BaseResultMap">
-    <!--@mbg.generated 2021-08-14 20:25:13-->
+    <!--@mbg.generated 2021-08-22 13:53:50-->
     SELECT <include refid="Base_Column_List" /> FROM t_user
   </select>
   <select id="count" parameterType="com.demo.components.mybatis.codegen.model.User" resultType="java.lang.Long">
-    <!--@mbg.generated 2021-08-14 20:25:13-->
+    <!--@mbg.generated 2021-08-22 13:53:50-->
     SELECT count(1) FROM t_user
     <where>
       <if test="id != null">
@@ -137,11 +137,11 @@
     </where>
   </select>
   <delete id="deleteById" parameterType="java.lang.Long">
-    <!--@mbg.generated 2021-08-14 20:25:13-->
+    <!--@mbg.generated 2021-08-22 13:53:50-->
     DELETE FROM t_user WHERE id = #{id,jdbcType=BIGINT}
   </delete>
   <update id="update" parameterType="com.demo.components.mybatis.codegen.model.User">
-    <!--@mbg.generated 2021-08-14 20:25:13-->
+    <!--@mbg.generated 2021-08-22 13:53:50-->
     UPDATE t_user
     <set>
       <if test="username != null">

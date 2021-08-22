@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE generatorConfiguration PUBLIC
+        "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"
+        "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd" >
+<generatorConfiguration>
+
+    <properties resource="generatorConfig.properties"/>
+
+    <!-- !!!! Driver Class Path !!!! -->
+    <classPathEntry location="${driver.class.path}"/>
+
+    <!--<context id="context" targetRuntime="MyBatis3Simple">-->
+    <context id="context" targetRuntime="com.demo.components.mybatis.codegen.CustomIntrospectedTableMyBatis3Impl">
+
+        <property name="javaFileEncoding" value="UTF-8"/>
+
+        <!--BaseColumns 和 BLOBsColumns是否在Base_Column_List和BaseResultMap中-->
+        <!--<property name="isSimple" value="false"/>-->
+
+        <property name="beginningDelimiter" value="`"/>
+        <property name="endingDelimiter" value="`"/>
+
+        <plugin type="com.demo.components.mybatis.codegen.plugins.JavaClientWrapperPlugin">
+            <property name="javaClientTargetPackage" value="${mapper.package}"/>
+            <property name="javaClientTargetProject" value="${mapper.project}"/>
+
+            <property name="modelTargetPackage" value="${model.package}"/>
+            <property name="modelTargetProject" value="${model.project}"/>
+        </plugin>
+
+        <plugin type="com.demo.components.mybatis.codegen.plugins.MapperExtXmlGeneratorPlugin"/>
+
+        <!--注释生成器-->
+        <commentGenerator type="com.demo.components.mybatis.codegen.generator.CustomCommentGenerator">
+            <property name="suppressDate" value="false"/>
+            <property name="suppressAllComments" value="false"/><!--禁止注释-->
+        </commentGenerator>
+
+        <!--jdbc:mysql://localhost:3306/demo-db?useUnicode=true&characterEncoding=utf-8-->
+        <!-- !!!! Database Configurations !!!! -->
+        <jdbcConnection driverClass="${jdbc.driver}"
+                        connectionURL="${jdbc.url}"
+                        userId="${jdbc.username}" password="${jdbc.password}"/>
+
+        <javaTypeResolver type="com.demo.components.mybatis.codegen.resolver.CustomJavaTypeResolverImpl">
+            <property name="forceBigDecimals" value="false"/>
+        </javaTypeResolver>
+
+        <!-- !!!! Model Configurations !!!! -->
+        <javaModelGenerator targetPackage="${model.package}" targetProject="${model.project}">
+            <property name="enableSubPackages" value="true"/>
+            <property name="trimStrings" value="false"/>
+        </javaModelGenerator>
+
+        <!-- !!!! Mapper XML Configurations !!!! -->
+        <sqlMapGenerator targetPackage="${xml.package}" targetProject="${xml.project}">
+            <property name="enableSubPackages" value="true"/>
+        </sqlMapGenerator>
+
+        <!-- !!!! Mapper Interface Configurations !!!! -->
+        <javaClientGenerator targetPackage="${mapper.package}" targetProject="${mapper.project}"
+                             type="XMLMAPPER">
+            <property name="enableSubPackages" value="true"/>
+        </javaClientGenerator>
+
+        <!-- !!!! Table Configurations !!!! -->
+        <table tableName="t_order" domainObjectName="OrderModel">
+            <!--<generatedKey column="id" sqlStatement="JDBC" identity="true"/> 生成主键-->
+            <!--插件本身支持rootClass，也可以自定义extendsBaseModel属性，效果一样-->
+            <!--<property name="rootClass" value="com.demo.components.base.model.BaseModel"/>-->
+            <!--<property name="extendsBaseModel" value="true"/>-->
+            <property name="escapeColumn" value="false"/>
+
+        </table>
+    </context>
+</generatorConfiguration>
