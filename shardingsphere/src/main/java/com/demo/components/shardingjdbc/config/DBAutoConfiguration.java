@@ -32,15 +32,16 @@ public class DBAutoConfiguration {
         ShardingRuleConfiguration shardingRuleConfig = new ShardingRuleConfiguration();
         shardingRuleConfig.getTableRuleConfigs().add(getOrderTableRuleConfiguration());
         shardingRuleConfig.getBindingTableGroups().add("t_order");
+        shardingRuleConfig.getBroadcastTables().add("t_order");
 //        shardingRuleConfig.getBroadcastTables().add("t_config");
-        shardingRuleConfig.setDefaultDatabaseShardingStrategyConfig(new InlineShardingStrategyConfiguration("oder_id", "ds${order_id % 2}"));
+//        shardingRuleConfig.setDefaultDatabaseShardingStrategyConfig(new InlineShardingStrategyConfiguration("oder_id", "ds${order_id % 2}"));
 //        shardingRuleConfig.setDefaultTableShardingStrategyConfig(new StandardShardingStrategyConfiguration("order_id", new ModuloShardingTableAlgorithm()));
         return ShardingDataSourceFactory.createDataSource(createDataSourceMap(), shardingRuleConfig, null);
     }
 
     @Bean
     TableRuleConfiguration getOrderTableRuleConfiguration() {
-        TableRuleConfiguration tableRuleConfiguration = new TableRuleConfiguration("t_order");
+        TableRuleConfiguration tableRuleConfiguration = new TableRuleConfiguration("t_order", "ds_${0..1}.t_order_${[0, 1]}");
         // 数据库的分配策略, ds_(order_id)%2
         ShardingStrategyConfiguration databaseConfig = new StandardShardingStrategyConfiguration("order_id", new PreciseShardingAlgorithm<String>() {
             @Override
@@ -68,8 +69,8 @@ public class DBAutoConfiguration {
     @Bean
     Map<String, DataSource> createDataSourceMap() {
         Map<String, DataSource> result = new HashMap<>();
-        result.put("ds0", DataSourceFactory.dataSource(databaseConfig.getConfig().get("ds_0")));
-        result.put("ds1", DataSourceFactory.dataSource(databaseConfig.getConfig().get("ds_1")));
+        result.put("ds_0", DataSourceFactory.dataSource(databaseConfig.getConfig().get("ds_0")));
+        result.put("ds_1", DataSourceFactory.dataSource(databaseConfig.getConfig().get("ds_1")));
         return result;
     }
 
