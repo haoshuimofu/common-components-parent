@@ -3,9 +3,12 @@ package com.demo.components.shardingjdbc.config;
 import com.demo.components.shardingjdbc.utils.DataSourceFactory;
 import org.apache.shardingsphere.api.config.sharding.ShardingRuleConfiguration;
 import org.apache.shardingsphere.api.config.sharding.TableRuleConfiguration;
+import org.apache.shardingsphere.api.config.sharding.strategy.ComplexShardingStrategyConfiguration;
 import org.apache.shardingsphere.api.config.sharding.strategy.InlineShardingStrategyConfiguration;
 import org.apache.shardingsphere.api.config.sharding.strategy.ShardingStrategyConfiguration;
 import org.apache.shardingsphere.api.config.sharding.strategy.StandardShardingStrategyConfiguration;
+import org.apache.shardingsphere.api.sharding.complex.ComplexKeysShardingAlgorithm;
+import org.apache.shardingsphere.api.sharding.complex.ComplexKeysShardingValue;
 import org.apache.shardingsphere.api.sharding.standard.PreciseShardingAlgorithm;
 import org.apache.shardingsphere.api.sharding.standard.PreciseShardingValue;
 import org.apache.shardingsphere.shardingjdbc.api.ShardingDataSourceFactory;
@@ -32,7 +35,7 @@ public class DBAutoConfiguration {
         ShardingRuleConfiguration shardingRuleConfig = new ShardingRuleConfiguration();
         shardingRuleConfig.getTableRuleConfigs().add(getOrderTableRuleConfiguration());
         shardingRuleConfig.getBindingTableGroups().add("t_order");
-        shardingRuleConfig.getBroadcastTables().add("t_order");
+//        shardingRuleConfig.getBroadcastTables().add("t_order");// 不能广播
 //        shardingRuleConfig.getBroadcastTables().add("t_config");
 //        shardingRuleConfig.setDefaultDatabaseShardingStrategyConfig(new InlineShardingStrategyConfiguration("oder_id", "ds${order_id % 2}"));
 //        shardingRuleConfig.setDefaultTableShardingStrategyConfig(new StandardShardingStrategyConfiguration("order_id", new ModuloShardingTableAlgorithm()));
@@ -46,8 +49,9 @@ public class DBAutoConfiguration {
         ShardingStrategyConfiguration databaseConfig = new StandardShardingStrategyConfiguration("order_id", new PreciseShardingAlgorithm<String>() {
             @Override
             public String doSharding(Collection<String> availableTargetNames, PreciseShardingValue<String> shardingValue) {
-                String dsName = "ds_" + String.valueOf(Integer.parseInt(shardingValue.getValue().toString()) % 2);
-                return availableTargetNames.stream().filter(e -> e.equals(dsName)).findFirst().orElse(null);
+                System.err.println(shardingValue.getValue());
+                String dsName = "ds_" + Integer.parseInt(shardingValue.getValue()) % 2;
+                return availableTargetNames.stream().filter(e -> e.equals(dsName)).findFirst().get();
             }
         });
         tableRuleConfiguration.setDatabaseShardingStrategyConfig(databaseConfig);
@@ -56,8 +60,9 @@ public class DBAutoConfiguration {
         ShardingStrategyConfiguration tableConfig = new StandardShardingStrategyConfiguration("order_id", new PreciseShardingAlgorithm<String>() {
             @Override
             public String doSharding(Collection<String> availableTargetNames, PreciseShardingValue<String> shardingValue) {
-                String tbName = "t_order_" + String.valueOf(Integer.parseInt(shardingValue.getValue().toString()) % 2);
-                return availableTargetNames.stream().filter(e -> e.equals(tbName)).findFirst().orElse(null);
+                System.err.println(shardingValue.getValue());
+                String tbName = "t_order_" + Integer.parseInt(shardingValue.getValue()) % 2;
+                return availableTargetNames.stream().filter(e -> e.equals(tbName)).findFirst().get();
             }
         });
         tableRuleConfiguration.setTableShardingStrategyConfig(tableConfig);
