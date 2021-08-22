@@ -18,3 +18,6 @@ database:
       maxActive: 5
       maxWait: 100
       driverClassName: com.mysql.jdbc.Driver
+
+mybatis:
+  mapper-locations: classpath:/mapper/*.xml

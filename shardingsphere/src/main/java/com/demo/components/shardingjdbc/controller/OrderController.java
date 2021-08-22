@@ -20,6 +20,7 @@ public class OrderController {
 
     @PostMapping("create")
     public JsonResult createOrder(@RequestBody OrderModel order) {
+        orderService.createOrder(order);
         return JsonResult.success("test");
     }
 
