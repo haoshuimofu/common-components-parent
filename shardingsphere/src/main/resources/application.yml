@@ -1,7 +1,7 @@
 database:
   config:
     ds_0:
-      url: jdbc:mysql://localhost:3306/shading_db_0?useUnicode=truecharacterEncoding=UTF-8
+      url: jdbc:mysql://localhost:3306/ds_0?useUnicode=truecharacterEncoding=UTF-8
       username: root
       password: root
       initalSize: 1
@@ -10,7 +10,7 @@ database:
       maxWait: 100
       driverClassName: com.mysql.jdbc.Driver
     ds_1:
-      url: jdbc:mysql://localhost:3306/shading_db_0?useUnicode=truecharacterEncoding=UTF-8
+      url: jdbc:mysql://localhost:3306/ds_1?useUnicode=truecharacterEncoding=UTF-8
       username: root
       password: root
       initalSize: 1

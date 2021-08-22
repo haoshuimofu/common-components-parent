@@ -33,7 +33,7 @@ public class DBAutoConfiguration {
         shardingRuleConfig.getTableRuleConfigs().add(getOrderTableRuleConfiguration());
         shardingRuleConfig.getBindingTableGroups().add("t_order");
 //        shardingRuleConfig.getBroadcastTables().add("t_config");
-        shardingRuleConfig.setDefaultDatabaseShardingStrategyConfig(new InlineShardingStrategyConfiguration("user_id", "ds${user_id % 2}"));
+        shardingRuleConfig.setDefaultDatabaseShardingStrategyConfig(new InlineShardingStrategyConfiguration("oder_id", "ds${order_id % 2}"));
 //        shardingRuleConfig.setDefaultTableShardingStrategyConfig(new StandardShardingStrategyConfiguration("order_id", new ModuloShardingTableAlgorithm()));
         return ShardingDataSourceFactory.createDataSource(createDataSourceMap(), shardingRuleConfig, null);
     }
@@ -59,8 +59,6 @@ public class DBAutoConfiguration {
                 return availableTargetNames.stream().filter(e -> e.equals(tbName)).findFirst().orElse(null);
             }
         });
-        tableRuleConfiguration.setDatabaseShardingStrategyConfig(databaseConfig);
-
         tableRuleConfiguration.setTableShardingStrategyConfig(tableConfig);
 //        tableRuleConfiguration.setKeyGeneratorConfig(null);
         return tableRuleConfiguration;
