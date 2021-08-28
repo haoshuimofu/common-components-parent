@@ -63,3 +63,14 @@ create table t_order_1(
   pay_time timestamp not null comment '支付时间',
   primary key (`order_id`)
 );
+
+use ds_0;
+delete from t_order;
+delete from t_order_0;
+delete from t_order_1;
+
+use ds_1;
+delete from t_order;
+delete from t_order_0;
+delete from t_order_1;
+

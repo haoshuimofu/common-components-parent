@@ -1,1 +1,1 @@
-网址链接：http://shardingsphere.apache.org/document/legacy/3.x/document/cn/quick-start/sharding-jdbc-quick-start/
+网址链接：https://shardingsphere.apache.org/document/legacy/3.x/document/cn/manual/sharding-jdbc/
