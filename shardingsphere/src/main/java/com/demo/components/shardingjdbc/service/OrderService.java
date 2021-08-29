@@ -24,7 +24,7 @@ public class OrderService {
 
         order.setOrderId(String.valueOf(Integer.parseInt(order.getOrderId()) + 1));
         orderModelDao.insert(order);
-        order = null;
-        order.toString();
+//        order = null;
+//        order.toString();
     }
 }
