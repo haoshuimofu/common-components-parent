@@ -1,0 +1,41 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+autonumber
+
+Alice -> Alice: 自检
+note left: 自我\n检查
+alt 自检通过
+
+        Alice -> Bob: Authentication Request
+        activate Bob
+        Bob -> Bob
+        Bob -> Tom
+        activate Tom
+        Tom -> Tom: self
+        note right: 自己做\n些什么
+        Tom --> Bob
+        deactivate Tom
+        Alice <-- Bob: Authentication Response
+        deactivate Bob
+
+else 自检未通过
+
+    Alice --> Bob: final do something
+
+    alt 某情况没发生
+        loop 3次
+            Alice -> Bob: Another authentication Request
+        end
+
+    else 111
+
+    else 222
+
+    end
+
+else 无视检查
+
+end
+
+@enduml
