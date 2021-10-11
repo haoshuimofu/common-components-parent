@@ -12,7 +12,7 @@ create TABLE `geom_test`(
     SPATIAL KEY `s_idx_geometry` (`geometry_1`)
     SPATIAL KEY `s_idx_pt` (`point_1`),
     SPATIAL KEY `s_idx_line` (`linestring_1`),
-    SPATIAL KEY `s_idx_polygon` (`polygon_1`),
+    SPATIAL KEY `s_idx_polygon` (`polygon_1`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 comment='mysql空间索引测试表';
 
 -- ----------------------------
