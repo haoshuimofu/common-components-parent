@@ -11,8 +11,6 @@ public class PredicateTestOne {
 
     public static void main(String[] args) {
 
-        PredicateTestOne predicateTestOne = new PredicateTestOne();
-
         Predicate<String> predicate = new Predicate<String>() {
             @Override
             public boolean test(String s) {

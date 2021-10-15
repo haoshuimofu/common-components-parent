@@ -3,7 +3,7 @@ package com.demo.components.elasticsearch.base.repository;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.demo.components.elasticsearch.DebugHelper;
-import com.demo.components.elasticsearch.Pagation;
+import com.demo.components.elasticsearch.PageResult;
 import com.demo.components.elasticsearch.annotation.*;
 import com.demo.components.elasticsearch.base.model.BaseIndexModel;
 import com.demo.components.elasticsearch.config.ESRestClientContainer;
@@ -123,7 +123,7 @@ public abstract class AbstractElasticsearchRepository<T extends BaseIndexModel> 
         JSONObject schemaJson;
         try {
             schemaJson = JSON.parseObject(sb.toString());
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             logger.error("### 索引创建失败! schema文件格式错误! index=[{}], schema=[{}].", getIndex(), schema, e);
             throw new RuntimeException("索引创建失败! schema文件内容格式错误!", e);
         }
@@ -456,7 +456,7 @@ public abstract class AbstractElasticsearchRepository<T extends BaseIndexModel> 
     }
 
     @Override
-    public Pagation<T> search(QueryBuilder query, SearchOptions searchOptions) throws Exception {
+    public PageResult<T> search(QueryBuilder query, SearchOptions searchOptions) throws Exception {
         SearchSourceBuilder searchSourceBuilder = SearchSourceBuilder.searchSource().query(query);
         if (searchOptions != null) {
             if (searchOptions.getFrom() >= 0 && searchOptions.getSize() > 0) {
@@ -494,23 +494,23 @@ public abstract class AbstractElasticsearchRepository<T extends BaseIndexModel> 
         }
         SearchResponse searchResponse = getClient().search(searchRequest, RequestOptions.DEFAULT);
         debugHelper.debugESQuery(searchSourceBuilder, searchResponse, logger);
-        Pagation<T> pagation = new Pagation<>();
-        pagation.setTotal(searchResponse.getHits() != null
+        PageResult<T> pageResult = new PageResult<>();
+        pageResult.setTotal(searchResponse.getHits() != null
                 && searchResponse.getHits().getTotalHits() != null ?
                 searchResponse.getHits().getTotalHits().value : 0);
         List<T> data = new ArrayList<>();
-        if (pagation.getTotal() > 0) {
+        if (pageResult.getTotal() > 0) {
             for (SearchHit hit : searchResponse.getHits().getHits()) {
                 data.add(convert(hit.getId(), hit.getSourceAsMap(), hit.getSourceAsString()));
             }
         }
-        pagation.setData(data);
-        return pagation;
+        pageResult.setData(data);
+        return pageResult;
     }
 
     @Override
-    public Pagation<T> search(QueryBuilder query, String routing, int from, int size,
-                              TreeMap<String, SortOrder> sort, SearchType searchType, int timeoutMillis, String... fields) throws Exception {
+    public PageResult<T> search(QueryBuilder query, String routing, int from, int size,
+                                TreeMap<String, SortOrder> sort, SearchType searchType, int timeoutMillis, String... fields) throws Exception {
         SearchOptions searchOptions = SearchOptions.instance()
                 .setRouting(routing)
                 .setFrom(from).setSize(size)

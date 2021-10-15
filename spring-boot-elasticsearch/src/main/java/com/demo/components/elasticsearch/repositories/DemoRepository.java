@@ -1,7 +1,7 @@
 package com.demo.components.elasticsearch.repositories;
 
 import com.alibaba.fastjson.JSON;
-import com.demo.components.elasticsearch.Pagation;
+import com.demo.components.elasticsearch.PageResult;
 import com.demo.components.elasticsearch.base.repository.AbstractElasticsearchRepository;
 import com.demo.components.elasticsearch.model.Demo;
 import org.elasticsearch.action.search.SearchRequest;
@@ -62,7 +62,7 @@ public class DemoRepository extends AbstractElasticsearchRepository<Demo> {
     }
 
 
-    public Pagation<Demo> page(int from, int size) throws Exception {
+    public PageResult<Demo> page(int from, int size) throws Exception {
         QueryBuilder queryBuilder = QueryBuilders.boolQuery().filter(QueryBuilders.termQuery("status", 1));
         return search(queryBuilder, null, from, size, null, null, 0);
     }

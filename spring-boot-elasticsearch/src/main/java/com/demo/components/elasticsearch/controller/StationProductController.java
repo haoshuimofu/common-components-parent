@@ -1,7 +1,7 @@
 package com.demo.components.elasticsearch.controller;
 
 import com.demo.components.elasticsearch.JsonResult;
-import com.demo.components.elasticsearch.Pagation;
+import com.demo.components.elasticsearch.PageResult;
 import com.demo.components.elasticsearch.model.StationProduct;
 import com.demo.components.elasticsearch.repositories.StationProductRepository;
 import com.demo.components.elasticsearch.request.SearchOptions;
@@ -34,7 +34,7 @@ public class StationProductController {
     }
 
     @RequestMapping("search")
-    public JsonResult<Pagation<StationProduct>> search(@RequestParam String keyword) throws Exception {
+    public JsonResult<PageResult<StationProduct>> search(@RequestParam String keyword) throws Exception {
         QueryBuilder queryBuilder = QueryBuilders.boolQuery().should(QueryBuilders.matchQuery("name_analyze", keyword))
                 .should(QueryBuilders.matchQuery("search_tags_analyzer", keyword))
                 .should(QueryBuilders.wildcardQuery("name", "*" + keyword + "*"));

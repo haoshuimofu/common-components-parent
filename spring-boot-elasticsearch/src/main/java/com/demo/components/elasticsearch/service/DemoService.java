@@ -1,6 +1,6 @@
 package com.demo.components.elasticsearch.service;
 
-import com.demo.components.elasticsearch.Pagation;
+import com.demo.components.elasticsearch.PageResult;
 import com.demo.components.elasticsearch.model.Demo;
 import com.demo.components.elasticsearch.model.DemoDetail;
 import com.demo.components.elasticsearch.model.DemoItem;
@@ -127,7 +127,7 @@ public class DemoService {
         return demoRepository.searchByKeyword(keyword, from, size);
     }
 
-    public Pagation<Demo> page(int from, int size) throws Exception {
+    public PageResult<Demo> page(int from, int size) throws Exception {
         return demoRepository.page(from, size);
     }
 

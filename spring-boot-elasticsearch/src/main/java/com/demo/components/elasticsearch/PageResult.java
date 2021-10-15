@@ -3,10 +3,12 @@ package com.demo.components.elasticsearch;
 import java.util.List;
 
 /**
+ * 分页结果
+ *
  * @author wude
  * @date 2020/8/8 18:35
  */
-public class Pagation<T> {
+public class PageResult<T> {
 
     private long total;
     private List<T> data;
