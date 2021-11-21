@@ -23,6 +23,7 @@
         <module>spring-session</module>
         <module>spring-rocketmq</module>
         <module>shardingsphere</module>
+        <module>web-test</module>
     </modules>
 
     <properties>
