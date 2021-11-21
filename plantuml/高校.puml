@@ -1,0 +1,18 @@
+@startuml
+==栖云平台==
+小二 -> 栖云: 访问栖云平台
+栖云 -> 云鼎: 认证鉴权
+栖云 <- 云鼎: 鉴权通过
+栖云 -> 应用服务: 提交POI标注
+应用服务 -> DB: POI标注持久化
+应用服务 <- DB: POI存至DB成功
+应用服务 -> Kafka: POI信息发送至Kafka
+应用服务 <- Kafka: POI Kafka信息发送成功
+栖云 <- 应用服务
+小二 <- 栖云
+==DataWorks==
+Kafka -> Blink: Kafka->Blink
+Blink -> ODPS: 数据存储
+ODPS <- 数据团队: 试验投产
+
+@enduml
