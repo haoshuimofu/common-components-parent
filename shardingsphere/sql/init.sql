@@ -7,7 +7,7 @@ create table t_order(
   total_amount bigint(20) not null default 0 comment '订单总金额，单位分',
   create_time timestamp not null default current_timestamp comment '创建时间',
   update_time timestamp not null default current_timestamp on update current_timestamp comment '更新时间',
-  pay_time timestamp not null comment '支付时间',
+  pay_time timestamp comment '支付时间',
   primary key (`order_id`)
 );
 create table t_order_0(
@@ -17,7 +17,7 @@ create table t_order_0(
   total_amount bigint(20) not null default 0 comment '订单总金额，单位分',
   create_time timestamp not null default current_timestamp comment '创建时间',
   update_time timestamp not null default current_timestamp on update current_timestamp comment '更新时间',
-  pay_time timestamp not null comment '支付时间',
+  pay_time timestamp comment '支付时间',
   primary key (`order_id`)
 );
 create table t_order_1(
@@ -27,7 +27,7 @@ create table t_order_1(
   total_amount bigint(20) not null default 0 comment '订单总金额，单位分',
   create_time timestamp not null default current_timestamp comment '创建时间',
   update_time timestamp not null default current_timestamp on update current_timestamp comment '更新时间',
-  pay_time timestamp not null comment '支付时间',
+  pay_time timestamp comment '支付时间',
   primary key (`order_id`)
 );
 
@@ -40,7 +40,7 @@ create table t_order(
   total_amount bigint(20) not null default 0 comment '订单总金额，单位分',
   create_time timestamp not null default current_timestamp comment '创建时间',
   update_time timestamp not null default current_timestamp on update current_timestamp comment '更新时间',
-  pay_time timestamp not null comment '支付时间',
+  pay_time timestamp comment '支付时间',
   primary key (`order_id`)
 );
 create table t_order_0(
@@ -50,7 +50,7 @@ create table t_order_0(
   total_amount bigint(20) not null default 0 comment '订单总金额，单位分',
   create_time timestamp not null default current_timestamp comment '创建时间',
   update_time timestamp not null default current_timestamp on update current_timestamp comment '更新时间',
-  pay_time timestamp not null comment '支付时间',
+  pay_time timestamp comment '支付时间',
   primary key (`order_id`)
 );
 create table t_order_1(
@@ -60,7 +60,7 @@ create table t_order_1(
   total_amount bigint(20) not null default 0 comment '订单总金额，单位分',
   create_time timestamp not null default current_timestamp comment '创建时间',
   update_time timestamp not null default current_timestamp on update current_timestamp comment '更新时间',
-  pay_time timestamp not null comment '支付时间',
+  pay_time timestamp comment '支付时间',
   primary key (`order_id`)
 );
 

@@ -3,20 +3,20 @@ database:
     ds_0:
       url: jdbc:mysql://localhost:3306/ds_0?useUnicode=true&characterEncoding=UTF-8
       username: root
-      password: root
+      password: root123456
       initalSize: 1
       minIdle: 1
       maxActive: 5
-      maxWait: 100
+      maxWait: 1000
       driverClassName: com.mysql.jdbc.Driver
     ds_1:
       url: jdbc:mysql://localhost:3306/ds_1?useUnicode=true&characterEncoding=UTF-8
       username: root
-      password: root
+      password: root123456
       initalSize: 1
       minIdle: 1
       maxActive: 5
-      maxWait: 100
+      maxWait: 1000
       driverClassName: com.mysql.jdbc.Driver
 
 mybatis:
