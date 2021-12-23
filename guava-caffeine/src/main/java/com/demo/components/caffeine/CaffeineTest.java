@@ -14,9 +14,11 @@ public class CaffeineTest {
     public static void main(String[] args) {
         LoadingCache<String, CachedUser> users = Caffeine.newBuilder()
                 .maximumSize(10_000)
-                .expireAfterWrite(50, TimeUnit.SECONDS)
+                .expireAfterWrite(60, TimeUnit.MINUTES)
                 .build(key -> createUser(key));
 
+
+        long freeMemory = Runtime.getRuntime().freeMemory();
         CachedUser user = users.get("wangbo");
         System.err.println(user == null);
 

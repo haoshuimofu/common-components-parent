@@ -90,6 +90,18 @@
             <version>1.18.2</version>
         </dependency>
 
+        <!-- java内存空间 -->
+        <dependency>
+            <groupId>com.carrotsearch</groupId>
+            <artifactId>java-sizeof</artifactId>
+            <version>0.0.5</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+        </dependency>
+
+
     </dependencies>
 
     <build>
