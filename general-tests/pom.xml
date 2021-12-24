@@ -89,6 +89,26 @@
             <artifactId>jts-core</artifactId>
             <version>1.18.2</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/org.locationtech.spatial4j/spatial4j -->
+        <dependency>
+            <groupId>org.locationtech.spatial4j</groupId>
+            <artifactId>spatial4j</artifactId>
+            <version>0.8</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.locationtech.geomesa/geomesa-tools -->
+        <dependency>
+            <groupId>org.locationtech.geomesa</groupId>
+            <artifactId>geomesa-tools_2.12</artifactId>
+            <version>3.3.0</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.locationtech.geomesa/geomesa-utils -->
+        <dependency>
+            <groupId>org.locationtech.geomesa</groupId>
+            <artifactId>geomesa-utils_2.12</artifactId>
+            <version>3.3.0</version>
+        </dependency>
+
 
         <!-- java内存空间 -->
         <dependency>
