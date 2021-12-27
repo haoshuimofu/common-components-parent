@@ -2,6 +2,7 @@ package com.demo.jdk8;
 
 
 import com.alibaba.fastjson.JSON;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.concurrent.BasicThreadFactory;
 
 import java.time.LocalDateTime;
@@ -17,92 +18,120 @@ import java.util.stream.Stream;
  */
 public class CompletableFutureDemo {
 
+    // 计算OD对距离线程池
     private static final ExecutorService THREAD_POOL = new ThreadPoolExecutor(
-            8, 8,
+            16, 16,
             0, TimeUnit.SECONDS,
             new LinkedBlockingQueue<>(1000),
             new BasicThreadFactory.Builder()
-                    .namingPattern("completable-future-%s").build());
+                    .namingPattern("od-distance-%s").build());
 
-    public static void main(String[] args) throws Exception {
-        int batch = 10;
-        for (int i = 0; i < batch; i++) {
-            int size = new Random().nextInt(10) + 1;
-            List<String> taskIds = new ArrayList<>(size);
-            for (int j = 0; j < size; j++) {
-                taskIds.add(i + "-" + j);
-            }
-            List<String> result = batchTask(taskIds);
-        }
+    private static List<String> query(List<String> taskIds) throws ExecutionException, InterruptedException, TimeoutException {
+        List<String> resultList = new ArrayList<>();
 
-//        test();
-
-    }
-
-    /**
-     * 模拟任务执行, 将taskId直接返回
-     *
-     * @param taskIds
-     * @return
-     */
-    private static List<String> batchTask(List<String> taskIds) {
-        List<String> result = new ArrayList<>();
-        Stream<CompletableFuture<String>> stream = taskIds.stream().map(taskId -> {
+        List<CompletableFuture<String>> cfList = taskIds.stream().map(taskId -> {
             CompletableFuture<String> cf = CompletableFuture.supplyAsync(() -> {
+                for (int i = 0; i < 100000; i++) {
+
+                }
                 try {
-                    Thread.sleep(taskIds.size() * 200);
+                    Thread.sleep(100);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                // result.add(taskId);
+//                resultList.add(taskId);
+//                System.out.println("task=" + taskId + "执行了 at " + System.currentTimeMillis());
                 return taskId;
-            }).handle((res ,throwable) -> {
-                if (throwable != null) {
-                    System.err.println(taskId + "执行异常!");
-                } else {
-//                    System.out.println(res + " adding...");
-//                    result.add(res);
-                }
-                return res;
-            });
+            }, THREAD_POOL)
+//                    .handle(new BiFunction<String, Throwable, String>() {
+//                        @Override
+//                        public String apply(String s, Throwable throwable) {
+//
+//                            if (throwable == null) {
+//                                System.out.println("task=" + taskId + "完成! result=" + s + ", at " + System.currentTimeMillis());
+//                                resultList.add(taskId);
+//                            } else {
+//                                System.err.println("task=" + taskId + "异常! e=" + throwable + ", at " + System.currentTimeMillis());
+//                            }
+//                            return "";
+//                        }
+//                    })
+                    ;
+//            cf.whenComplete((s, throwable) -> {
+//                if (throwable == null) {
+//                    System.out.println("task=" + taskId + "完成! result=" + s + ", at " + System.currentTimeMillis());
+//                } else {
+//                    System.err.println("task=" + taskId + "异常! e=" + throwable + ", at " + System.currentTimeMillis());
+//                }
+//            });
+//            cf.thenApply(s -> {
+//                resultList.add(taskId);
+//                return s;
+//            });
             return cf;
-        });
-        List<CompletableFuture<String>> cfs = stream.collect(Collectors.toList());
+        }).collect(Collectors.toList());
 
-        // CompletableFuture.allOf(cfs.toArray(new CompletableFuture[]{})).join();
+        CompletableFuture<List<String>> resultTask = CompletableFuture.allOf(cfList.toArray(new CompletableFuture[]{}))
+                .thenApply(s -> cfList.stream().map(CompletableFuture::join).collect(Collectors.toList()));
+        try {
+            resultList = resultTask.get(500, TimeUnit.MILLISECONDS);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
-
-//        for (CompletableFuture<String> cf : cfs) {
-//            try {
-//                result.add(cf.get());
-//            } catch (InterruptedException e) {
-//                e.printStackTrace();
-//            } catch (ExecutionException e) {
-//                e.printStackTrace();
-//            }
-//        }
-
-         CompletableFuture<List<String>> allCf = CompletableFuture.allOf(cfs.toArray(new CompletableFuture[]{}))
-                .thenApply(ignore -> cfs.stream()
-                        .map(CompletableFuture::join)
-                        .collect(Collectors.toList()));
-         result = allCf.join();
-
-        List<String> finalResult = result;
-        List<String> diff = taskIds.stream().filter(e -> !finalResult.contains(e)).collect(Collectors.toList());
-        if (diff.isEmpty()) {
+        List<String> finalResultList = resultList;
+        List<String> diff = taskIds.stream().filter(e -> !finalResultList.contains(e)).collect(Collectors.toList());
+        if (CollectionUtils.isEmpty(diff)) {
             System.out.println("task=" + JSON.toJSONString(taskIds)
-                    + ", result=" + JSON.toJSONString(result)
+                    + ", result=" + JSON.toJSONString(resultList)
                     + ", diff=" + JSON.toJSONString(diff)
                     + ", at " + System.currentTimeMillis());
         } else {
             System.err.println("task=" + JSON.toJSONString(taskIds)
-                    + ", result=" + JSON.toJSONString(result)
+                    + ", result=" + JSON.toJSONString(resultList)
                     + ", diff=" + JSON.toJSONString(diff)
                     + ", at " + System.currentTimeMillis());
         }
-        return result;
+
+        return resultList;
     }
+
+
+    public static void main(String[] args) throws ExecutionException, InterruptedException, TimeoutException {
+        long begin = System.currentTimeMillis();
+        // 2. 提交任务
+        int batch = 100;
+        int total = 0;
+        for (int i = 0; i < batch; i++) {
+            int size = (int) (Math.random() * 10) + 1;
+            List<String> taskIds = new ArrayList<>();
+            for (int j = 0; j < size; j++) {
+                taskIds.add(i + "-" + j);
+            }
+            List<String> resultList = query(taskIds);
+            total += size;
+
+
+        }
+        System.err.println("total=" + total);
+
+        total = 0;
+        int skip = batch;
+        for (int i = 0; i < batch; i++) {
+            int size = (int) (Math.random() * 10) + 1;
+            List<String> taskIds = new ArrayList<>();
+            for (int j = 0; j < size; j++) {
+                taskIds.add((skip + i) + "-" + j);
+            }
+            List<String> resultList = query(taskIds);
+            total += size;
+        }
+        long end = System.currentTimeMillis();
+        System.err.println("耗时 = " + (end - begin));
+
+
+    }
+
 
     public static Map<String, String> test() throws InterruptedException, ExecutionException {
         long start = System.currentTimeMillis();
