@@ -16,7 +16,7 @@ import java.util.concurrent.TimeUnit;
  * @author dewu.de
  * @date 2022-01-14 3:40 下午
  */
-@BenchmarkMode(Mode.Throughput)
+@BenchmarkMode(Mode.AverageTime)
 @OutputTimeUnit(TimeUnit.MICROSECONDS)
 @State(Scope.Thread)
 public class JmhDemo {
