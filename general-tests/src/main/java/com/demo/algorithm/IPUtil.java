@@ -14,7 +14,6 @@ public class IPUtil {
         List<String> ipList = new ArrayList<>();
 
         String ip = "2551551893";
-        int round = 0;
         while (true) {
             int len = ip.length();
 

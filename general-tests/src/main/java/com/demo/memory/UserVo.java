@@ -20,6 +20,39 @@ public class UserVo {
         carrotsearch();
 
         getObjectSize();
+
+        // 12,34,56
+        // 135,246
+        int[][] a1 = new int[3][2];
+        a1[0] = new int[]{1, 2};
+        a1[1] = new int[]{3, 4};
+        a1[2] = new int[]{5, 6};
+
+        int[][] a2 = new int[2][3];
+        a2[0] = new int[]{1, 3, 5};
+        a2[1] = new int[]{2, 4, 6};
+
+        System.out.println(ObjectSizeCalculator.getObjectSize(a1) + "-" + ObjectSizeCalculator.getObjectSize(a2));
+        System.out.println(RamUsageEstimator.sizeOf(a1) + "-" + RamUsageEstimator.sizeOf(a2));
+
+        UserVo u1 = new UserVo();
+        UserVo u2 = new UserVo();
+        UserVo u3 = new UserVo();
+        UserVo u4 = new UserVo();
+        UserVo u5 = new UserVo();
+        UserVo u6 = new UserVo();
+        UserVo[][] uv1 = new UserVo[3][2];
+        uv1[0] = new UserVo[]{u1, u2};
+        uv1[1] = new UserVo[]{u3, u4};
+        uv1[2] = new UserVo[]{u5, u6};
+
+        UserVo[][] uv2 = new UserVo[2][3];
+        uv2[0] = new UserVo[]{u1, u3, u5};
+        uv2[1] = new UserVo[]{u2, u4, u6};
+        System.out.println(ObjectSizeCalculator.getObjectSize(uv1) + "-" + ObjectSizeCalculator.getObjectSize(uv2));
+        System.out.println(RamUsageEstimator.sizeOf(uv1) + "-" + RamUsageEstimator.sizeOf(uv2));
+
+
     }
 
     private static long carrotsearch() {

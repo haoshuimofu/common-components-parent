@@ -14,7 +14,7 @@ public class RoadNetUtils {
      * @param bLat b点
      * @return
      */
-    public static double calDis(double aLng, double aLat, double bLng, double bLat) {
+    public static double calSphereDistance(double aLng, double aLat, double bLng, double bLat) {
         int radius = 6371;
         double dLat = Math.toRadians(bLat - aLat);
         double dLon = Math.toRadians(bLng - aLng);
@@ -25,26 +25,12 @@ public class RoadNetUtils {
         return d * 1000;
     }
 
-    /**
-     * 计算球面距离
-     *
-     * @param aLng a点
-     * @param aLat a点
-     * @param bLng b点
-     * @param bLat b点
-     * @return
-     */
-    public static double calSpherDistance(double aLng, double aLat, double bLng, double bLat) {
-        return calDis(aLng, aLat, bLng, bLat) * 1.414;
-    }
-
     public static void main(String[] args) {
         double lon1 = 121.0;
         double lat1 = 31.0;
         double lon2 = 121.01;
         double lat2 = 31.0;
 
-        System.err.println(calDis(lon1, lat1, lon2, lat2));
-        System.err.println(calSpherDistance(lon1, lat1, lon2, lat2));
+        System.err.println(calSphereDistance(lon1, lat1, lon2, lat2));
     }
 }
