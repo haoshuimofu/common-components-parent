@@ -1,5 +1,7 @@
 package com.demo.jdk8;
 
+import com.alibaba.fastjson.JSON;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -18,13 +20,16 @@ public class CompletableFutureJoinDemo {
         List<Integer> seconds = new ArrayList<>();
         List<Integer> times = Arrays.asList(100, 200, 300, 500, 800);
         long start = System.currentTimeMillis();
-        List<CompletableFuture<Boolean>> futures = times.stream()
-                .map(second -> CompletableFuture.supplyAsync(() -> action(second))
-                        .thenApply(result -> seconds.add(result)))
+        List<CompletableFuture<Integer>> futures = times.stream()
+                .map(second -> CompletableFuture.supplyAsync(() -> action(second)))
                 .collect(Collectors.toList());
         CompletableFuture.allOf(futures.toArray(new CompletableFuture[]{})).join();
+        for (CompletableFuture<Integer> future : futures) {
+            seconds.add(future.getNow(null));
+        }
         long interval = System.currentTimeMillis() - start;
         System.out.println("总耗时 = " + interval);
+        System.out.println(JSON.toJSONString(seconds, true));
 
     }
 
