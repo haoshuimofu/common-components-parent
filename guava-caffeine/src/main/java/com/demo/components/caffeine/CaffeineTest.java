@@ -15,6 +15,8 @@ public class CaffeineTest {
         LoadingCache<String, CachedUser> users = Caffeine.newBuilder()
                 .maximumSize(10_000)
                 .expireAfterWrite(60, TimeUnit.MINUTES)
+                .executor(null)
+//                .buildAsync()
                 .build(key -> createUser(key));
 
 
