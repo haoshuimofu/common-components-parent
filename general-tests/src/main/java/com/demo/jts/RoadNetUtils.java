@@ -28,8 +28,8 @@ public class RoadNetUtils {
     public static void main(String[] args) {
         double lon1 = 121.0;
         double lat1 = 31.0;
-        double lon2 = 121.01;
-        double lat2 = 31.0;
+        double lon2 = 121.005;
+        double lat2 = 31.000;
 
         System.err.println(calSphereDistance(lon1, lat1, lon2, lat2));
     }
