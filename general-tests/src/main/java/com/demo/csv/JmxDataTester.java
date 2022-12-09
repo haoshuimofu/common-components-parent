@@ -27,7 +27,7 @@ public class JmxDataTester {
 //        }
 
 
-        String path = "/Users/eleme/local/jmx/data/23_500od.csv";
+        String path = "/Users/eleme/local/jmx/data/23_500od.json";
         BufferedWriter writer = new BufferedWriter(new FileWriter(new File(path)));
         writer.write("city_id|od");
         writer.newLine();
@@ -38,26 +38,26 @@ public class JmxDataTester {
         Iterable<CSVRecord> records = CSVFormat.DEFAULT.withHeader("city_id", "origin_lng", "origin_lat", "dest_lng", "dest_lat").parse(in);
 
         BufferedReader reader = new BufferedReader(new FileReader(inputPath));
-        List<OdPair> odPairs = new ArrayList<>(100);
+        List<OdPair> odPairs = new ArrayList<>(500);
         int rows = 0;
         for (CSVRecord record : records) {
             rows++;
             if (rows == 1) {
                 continue;
             }
-//            if (rows > 100) {
-//                break;
-//            }
+            if (rows > 100000) {
+                break;
+            }
             // city_id,origin_lng,origin_lat,dest_lng,dest_lat
             try {
 
                 Pair<Integer, OdPair> pair = parseRecord(record);
                 odPairs.add(pair.getRight());
-                if (odPairs.size() == 100) {
+                if (odPairs.size() == 500) {
                     String od = JSON.toJSONString(odPairs).replace("\"\"", "\"");
 
 //                    System.out.println(od);
-                    writer.write(pair.getLeft() + "|" + od);
+                    writer.write(od);
                     writer.newLine();
                     odPairs.clear();
                 }
@@ -69,13 +69,13 @@ public class JmxDataTester {
                 System.err.println(record.toList());
             }
         }
-        if (odPairs.size() > 0) {
-            String od = JSON.toJSONString(odPairs).replace("\"\"", "\"");
-
-            System.out.println(od);
-            writer.write(23 + "|" + od);
-
-        }
+//        if (odPairs.size() > 0) {
+//            String od = JSON.toJSONString(odPairs).replace("\"\"", "\"");
+//
+//            System.out.println(od);
+//            writer.write(23 + "|" + od);
+//
+//        }
         writer.flush();
         writer.close();
 
