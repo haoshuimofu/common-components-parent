@@ -22,14 +22,14 @@ public class JmxDataTest {
 
 
     public static void main(String[] args) throws IOException {
-        String inputPath = "/Users/eleme/local/jmx/data/23.txt";
+        String inputPath = "/Users/eleme/local/jmx/data/.txt";
         File file = new File(inputPath);
 //        if (file.exists()) {
 //            file.delete();
 //        }
 
 
-        String path = "/Users/eleme/local/jmx/data/23.csv";
+        String path = "/Users/eleme/local/jmx/data/1_500.csv";
         Appendable out = new PrintWriter(path);
         CSVFormat csvFormat = CSVFormat.Builder.create()
 //                .setQuoteMode(QuoteMode.ALL)
@@ -47,25 +47,25 @@ public class JmxDataTest {
         Iterable<CSVRecord> records = CSVFormat.DEFAULT.withHeader("city_id", "origin_lng", "origin_lat", "dest_lng", "dest_lat").parse(in);
 
         BufferedReader reader = new BufferedReader(new FileReader(inputPath));
-        List<OdPair> odPairs = new ArrayList<>(1);
+        List<OdPair> odPairs = new ArrayList<>(500);
         int rows = 0;
         for (CSVRecord record : records) {
             rows++;
             if (rows == 1) {
                 continue;
             }
-            if (rows > 100) {
-                break;
-            }
+//            if (rows > 100) {
+//                break;
+//            }
             // city_id,origin_lng,origin_lat,dest_lng,dest_lat
             try {
 
                 Pair<Integer, OdPair> pair = parseRecord(record);
                 odPairs.add(pair.getRight());
-                if (odPairs.size() == 1) {
+                if (odPairs.size() == 500) {
                     String od = JSON.toJSONString(odPairs).replace("\"\"", "\"");
-                    System.out.println(od);
-                    printer.printRecord(pair.getLeft(), od);
+//                    System.out.println(od);
+                    printer.printRecord(1, od);
 //                    printer.print(pair.getLeft() + "," + od);
                     printer.println();
                     odPairs.clear();

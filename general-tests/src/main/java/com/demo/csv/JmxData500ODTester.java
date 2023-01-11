@@ -3,10 +3,6 @@ package com.demo.csv;
 import com.alibaba.fastjson.JSON;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import org.apache.commons.csv.CSVFormat;
-import org.apache.commons.csv.CSVPrinter;
-import org.apache.commons.csv.CSVRecord;
-import org.apache.commons.lang3.tuple.Pair;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -16,7 +12,7 @@ import java.util.List;
  * @author dewu.de
  * @date 2022-12-05 5:57 下午
  */
-public class JmxDataTester {
+public class JmxData500ODTester {
 
 
     public static void main(String[] args) throws IOException {
@@ -28,10 +24,10 @@ public class JmxDataTester {
 //        if (file.exists()) {
 //            file.delete();
 //        }
-        String path = "/Users/eleme/local/jmx/data/" + cityId + "_500_1.csv";
+        String path = "/Users/eleme/local/jmx/data/" + cityId + "_500_10W.csv";
         BufferedWriter writer = new BufferedWriter(new FileWriter(new File(path)));
 //        writer.write("city_id|od");
-        writer.newLine();
+//        writer.newLine();
 
 
         Reader in = new FileReader(inputPath);
@@ -46,9 +42,9 @@ public class JmxDataTester {
             if (rows == 1) {
                 continue;
             }
-//            if (rows > 100) {
-//                break;
-//            }
+            if (rows > 100_000) {
+                break;
+            }
             // city_id,origin_lng,origin_lat,dest_lng,dest_lat
             try {
                 OdPair odPair = parseRecord(line);
@@ -57,12 +53,11 @@ public class JmxDataTester {
                 }
                 if (odPairs.size() == batch) {
                     String od = JSON.toJSONString(odPairs).replace("\"\"", "\"");
-                    writer.write(od);
+                    String request = "["+cityId+","+od+"]";
+                    writer.write(request);
 //                    System.out.println(cityId + "|" + od);
                     writer.newLine();
                     odPairs.clear();
-                    System.out.println(od);
-                    break;
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -70,8 +65,8 @@ public class JmxDataTester {
         }
         if (odPairs.size() > 0) {
             String od = JSON.toJSONString(odPairs).replace("\"\"", "\"");
-            writer.write(cityId + "|" + od);
-            System.out.println(cityId + "|" + od);
+            String request = "["+cityId+","+od+"]";
+            writer.write(request);
         }
         writer.flush();
         writer.close();
