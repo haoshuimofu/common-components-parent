@@ -29,7 +29,4 @@ public class OkHttpClientTest {
         }
     }
 
-    public static void postToAServer() {
-
-    }
 }

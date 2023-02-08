@@ -24,10 +24,10 @@ public class JmxData500ODTester {
 //        if (file.exists()) {
 //            file.delete();
 //        }
-        String path = "/Users/eleme/local/jmx/data/" + cityId + "_500_10W.csv";
+        String path = "/Users/eleme/local/jmx/data/" + cityId + "_500.csv";
         BufferedWriter writer = new BufferedWriter(new FileWriter(new File(path)));
-//        writer.write("city_id|od");
-//        writer.newLine();
+        writer.write("id,msg_req");
+        writer.newLine();
 
 
         Reader in = new FileReader(inputPath);
@@ -42,9 +42,9 @@ public class JmxData500ODTester {
             if (rows == 1) {
                 continue;
             }
-            if (rows > 100_000) {
-                break;
-            }
+//            if (rows > 100) {
+//                break;
+//            }
             // city_id,origin_lng,origin_lat,dest_lng,dest_lat
             try {
                 OdPair odPair = parseRecord(line);
@@ -53,9 +53,9 @@ public class JmxData500ODTester {
                 }
                 if (odPairs.size() == batch) {
                     String od = JSON.toJSONString(odPairs).replace("\"\"", "\"");
-                    String request = "["+cityId+","+od+"]";
+                    String request = rows + "," + od;
+                    System.out.println(request);
                     writer.write(request);
-//                    System.out.println(cityId + "|" + od);
                     writer.newLine();
                     odPairs.clear();
                 }
@@ -65,7 +65,8 @@ public class JmxData500ODTester {
         }
         if (odPairs.size() > 0) {
             String od = JSON.toJSONString(odPairs).replace("\"\"", "\"");
-            String request = "["+cityId+","+od+"]";
+            String request = rows + "," + od;
+            System.out.println(request);
             writer.write(request);
         }
         writer.flush();
