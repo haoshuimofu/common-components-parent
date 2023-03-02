@@ -146,6 +146,11 @@
             <version>28.1-jre</version>
             <scope>compile</scope>
         </dependency>
+        <dependency>
+            <groupId>com.github.davidmoten</groupId>
+            <artifactId>rtree</artifactId>
+            <version>0.10</version>
+        </dependency>
 
     </dependencies>
 

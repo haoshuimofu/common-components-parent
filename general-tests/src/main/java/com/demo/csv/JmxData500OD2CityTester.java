@@ -12,32 +12,44 @@ import java.util.List;
  * @author dewu.de
  * @date 2022-12-05 5:57 下午
  */
-public class JmxData500ODTester {
+public class JmxData500OD2CityTester {
 
 
     public static void main(String[] args) throws IOException {
-        int cityId = 23;
         int batch = 500;
 
-        String inputPath = "/Users/eleme/local/jmx/data/" + cityId + ".txt";
-        File file = new File(inputPath);
-//        if (file.exists()) {
-//            file.delete();
-//        }
-        String path = "/Users/eleme/local/jmx/data/" + cityId + "_500.csv";
-        BufferedWriter writer = new BufferedWriter(new FileWriter(new File(path)));
-        writer.write("city_id|od");
+        int cityId1 = 23;
+        String inputPath1 = "/Users/eleme/local/jmx/data/" + cityId1 + ".txt";
+
+        int cityId2 = 3;
+        String inputPath2 = "/Users/eleme/local/jmx/data/" + cityId2 + ".txt";
+
+        int cityId3 = 4;
+        String inputPath3 = "/Users/eleme/local/jmx/data/" + cityId3 + ".txt";
+
+
+        String outPath = "/Users/eleme/local/jmx/data/" + cityId1 + "_500.csv";
+        BufferedWriter writer = new BufferedWriter(new FileWriter(outPath));
+        writer.write("od");
         writer.newLine();
 
 
-        Reader in = new FileReader(inputPath);
+        Reader reader1 = new FileReader(inputPath1);
+        BufferedReader bufferedReader1 = new BufferedReader(reader1);
 
+        Reader reader2 = new FileReader(inputPath2);
+        BufferedReader bufferedReader2 = new BufferedReader(reader2);
 
-        BufferedReader reader = new BufferedReader(new FileReader(inputPath));
+//        Reader reader3 = new FileReader(inputPath3);
+//        BufferedReader bufferedReader3 = new BufferedReader(reader3);
+
         List<OdPair> odPairs = new ArrayList<>(batch);
         int rows = 0;
-        String line;
-        while ((line = reader.readLine()) != null) {
+        String line1, line2, line3;
+        while ((line1 = bufferedReader1.readLine()) != null
+                && (line2 = bufferedReader2.readLine()) != null
+//                && (line3 = bufferedReader3.readLine()) != null
+        ) {
             rows++;
             if (rows == 1) {
                 continue;
@@ -47,13 +59,23 @@ public class JmxData500ODTester {
 //            }
             // city_id,origin_lng,origin_lat,dest_lng,dest_lat
             try {
-                OdPair odPair = parseRecord(line);
-                if (odPair != null) {
-                    odPairs.add(odPair);
+                OdPair odPair1 = parseRecord(cityId1, line1);
+                if (odPair1 != null) {
+                    odPairs.add(odPair1);
                 }
+                OdPair odPair2 = parseRecord(cityId2, line2);
+                if (odPair2 != null) {
+                    odPairs.add(odPair2);
+                }
+
+//                OdPair odPair3 = parseRecord(cityId3, line3);
+//                if (odPair3 != null) {
+//                    odPairs.add(odPair3);
+//                }
+
                 if (odPairs.size() == batch) {
                     String od = JSON.toJSONString(odPairs).replace("\"\"", "\"");
-                    String request = cityId + "|" + od;
+                    String request = od;
                     System.out.println(request);
                     writer.write(request);
                     writer.newLine();
@@ -65,30 +87,29 @@ public class JmxData500ODTester {
         }
         if (odPairs.size() > 0) {
             String od = JSON.toJSONString(odPairs).replace("\"\"", "\"");
-            String request = cityId + "|" + od;
+            String request = od;
             System.out.println(request);
             writer.write(request);
         }
         writer.flush();
         writer.close();
 
-        in.close();
+        reader1.close();
+        reader2.close();
         System.err.println("rows=" + rows);
     }
 
-    public static OdPair parseRecord(String line) {
+    public static OdPair parseRecord(int cityId, String line) {
         // city_id,origin_lng,origin_lat,dest_lng,dest_lat
         String[] dataCols = line.split(",");
         if (dataCols.length != 5) {
             return null;
         }
-        int cityId = Integer.parseInt(dataCols[0]);
-
         double originLng = Double.parseDouble(dataCols[1]);
         double originLat = Double.parseDouble(dataCols[2]);
         double destLng = Double.parseDouble(dataCols[3]);
         double destLat = Double.parseDouble(dataCols[4]);
-        return new OdPair(new Point(originLng, originLat), new Point(destLng, destLat));
+        return new OdPair(cityId, new Point(originLng, originLat), new Point(destLng, destLat));
     }
 
 
@@ -104,11 +125,9 @@ public class JmxData500ODTester {
     @Data
     @AllArgsConstructor
     static class OdPair {
+        private int cityId;
         private Point origin;
         private Point dest;
     }
 
-    static enum Headers {
-        CITY_ID, OD
-    }
 }
