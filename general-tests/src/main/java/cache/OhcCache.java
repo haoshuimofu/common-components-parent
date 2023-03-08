@@ -45,17 +45,16 @@ public class OhcCache {
     }
 
     public static void main(String[] args) throws Exception {
-        String content = "11111111111111122222222222222222233333333333333333333444444444";
         while (true) {
             long start = System.currentTimeMillis();
             //只测试写入
             for (int j = 0; j < 500000; j++) {
-                OhcCache.put("" + j, j + ""+content);
+                OhcCache.put("" + j, j + "");
             }
             System.out.println("写入耗时:" + (System.currentTimeMillis() - start));
             //测试读写
             for (int j = 0; j < 500000; j++) {
-                OhcCache.get("" + j);
+                System.out.println(OhcCache.get("" + j));
             }
             System.out.println("读取命中耗时:" + (System.currentTimeMillis() - start));
             //读写+读为命中

@@ -156,6 +156,11 @@
             <artifactId>ohc-core</artifactId>
             <version>0.7.4</version>
         </dependency>
+        <dependency>
+            <groupId>com.esotericsoftware</groupId>
+            <artifactId>kryo</artifactId>
+            <version>5.1.1</version>
+        </dependency>
 
         <dependency>
             <groupId>com.github.davidmoten</groupId>

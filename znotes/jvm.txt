@@ -1,0 +1,7 @@
+查看jvm参数
+jps -v
+
+查看内存
+jcmd 2730 VM.native_memory scale=MB
+
+
