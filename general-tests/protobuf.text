@@ -1,0 +1,43 @@
+引入Java jar:
+    <!-- Protobuf -->
+    <dependency>
+        <groupId>com.google.protobuf</groupId>
+        <artifactId>protobuf-java</artifactId>
+        <version>3.11.4</version>
+    </dependency>
+
+创建一个proto文件, User.proto：
+    syntax = "proto3";
+
+    message User {
+     string name =1;
+     int32 age =2;
+     string address =3;
+    }
+注意, 数字1、2、3代表了字段的编号，用于在序列化和反序列化时识别字段
+
+在User.proto目录下执行命令，生产对应的java class文件：
+    protoc --java_out=./ User.proto
+
+Java对象序列化：
+    User user = new User();
+    user.setName("Tom");
+    user.setAge(20);
+    user.setAddress("Beijing");
+
+    UserProto.User protoUser = UserProto.User.newBuilder()
+     .setName(user.getName())
+     .setAge(user.getAge())
+     .setAddress(user.getAddress())
+     .build();
+
+    byte[] bytes = protoUser.toByteArray();
+
+Java对象反序列化：
+    UserProto.User protoUser = UserProto.User.parseFrom(bytes);
+
+    User user = new User();
+    user.setName(protoUser.getName());
+    user.setAge(protoUser.getAge());
+    user.setAddress(protoUser.getAddress());
+
