@@ -165,8 +165,16 @@
         <dependency>
             <groupId>com.google.protobuf</groupId>
             <artifactId>protobuf-java</artifactId>
-            <version>3.11.4</version>
+            <version>3.22.2</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/com.google.protobuf/protobuf-java-util -->
+        <dependency>
+            <groupId>com.google.protobuf</groupId>
+            <artifactId>protobuf-java-util</artifactId>
+            <version>3.22.2</version>
+            <scope>runtime</scope>
+        </dependency>
+
 
 
         <dependency>

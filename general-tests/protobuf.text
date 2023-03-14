@@ -17,7 +17,7 @@
 注意, 数字1、2、3代表了字段的编号，用于在序列化和反序列化时识别字段
 
 在User.proto目录下执行命令，生产对应的java class文件：
-    protoc --java_out=./ User.proto
+    protoc --java_out=./src/main/java User.proto
 
 Java对象序列化：
     User user = new User();
