@@ -2,12 +2,11 @@ package cache;
 
 import cache.model.BindLink;
 import cache.model.Point;
-import com.esotericsoftware.kryo.Kryo;
+import cache.serializer.HotPointSerializer;
+import cache.serializer.PointSerializer;
 import org.caffinitas.ohc.Eviction;
 import org.caffinitas.ohc.OHCache;
 import org.caffinitas.ohc.OHCacheBuilder;
-
-import java.nio.charset.StandardCharsets;
 
 /**
  * @author dewu.de

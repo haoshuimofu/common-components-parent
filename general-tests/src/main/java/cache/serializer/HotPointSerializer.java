@@ -1,4 +1,4 @@
-package cache;
+package cache.serializer;
 
 import cache.model.BindLink;
 import cache.model.Point;

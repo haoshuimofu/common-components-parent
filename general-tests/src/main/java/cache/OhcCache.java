@@ -1,5 +1,6 @@
 package cache;
 
+import cache.serializer.OhcStringSerializer;
 import lombok.extern.slf4j.Slf4j;
 import org.caffinitas.ohc.Eviction;
 import org.caffinitas.ohc.OHCache;

@@ -1,4 +1,4 @@
-package cache;
+package cache.serializer;
 
 import cache.model.Point;
 import com.alibaba.fastjson.JSON;
