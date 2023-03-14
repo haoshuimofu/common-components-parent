@@ -1,9 +1,9 @@
 package cache;
 
-import com.google.common.base.Charsets;
 import org.caffinitas.ohc.CacheSerializer;
 
 import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
 
 public class OhcStringSerializer implements CacheSerializer<String> {
 
@@ -15,7 +15,7 @@ public class OhcStringSerializer implements CacheSerializer<String> {
      */
     @Override
     public int serializedSize(String value) {
-        byte[] bytes = value.getBytes(Charsets.UTF_8);
+        byte[] bytes = value.getBytes(StandardCharsets.UTF_8);
 
         // 设置字符串长度限制，2^16 = 65536
         if (bytes.length > 65536)
@@ -33,7 +33,7 @@ public class OhcStringSerializer implements CacheSerializer<String> {
     @Override
     public void serialize(String value, ByteBuffer buf) {
         // 得到字符串对象UTF-8编码的字节数组
-        byte[] bytes = value.getBytes(Charsets.UTF_8);
+        byte[] bytes = value.getBytes(StandardCharsets.UTF_8);
         // 用前16位记录数组长度
         buf.put((byte) ((bytes.length >>> 8) & 0xFF));
         buf.put((byte) ((bytes.length) & 0xFF));
@@ -54,6 +54,6 @@ public class OhcStringSerializer implements CacheSerializer<String> {
         // 读取字节数组
         buf.get(bytes);
         // 返回字符串对象
-        return new String(bytes, Charsets.UTF_8);
+        return new String(bytes, StandardCharsets.UTF_8);
     }
 }

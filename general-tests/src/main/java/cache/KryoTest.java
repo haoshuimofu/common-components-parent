@@ -27,40 +27,33 @@ public class KryoTest {
                 .eviction(Eviction.LRU)
                 .build();
 
-        Point point = new Point(121.333,32.555);
-//        BindLink bindLink = hotPointCache.get(point);
-//        System.out.println(bindLink);
+        Point point = new Point(121.333, 32.555);
+        BindLink bindLink = hotPointCache.get(point);
+        System.out.println("Step01: get=" + bindLink);
 
-        BindLink bindLink = new BindLink();
+        bindLink = new BindLink();
         bindLink.setLinkId("23-23232w");
         bindLink.setPjNode(point);
         bindLink.setPjNodeToStartDis(1200);
         bindLink.setPjNodeToEndDis(800);
+        hotPointCache.put(point, bindLink);
+        System.out.println("Step02: put, key=" + point + ", value=" + bindLink);
 
 
-//        hotPointCache.put(point, bindLink);
-//        System.out.println(bindLink);
-//
-//
-//        bindLink = hotPointCache.get(point);
-//        System.out.println(bindLink);
+        bindLink = hotPointCache.get(point);
+        System.out.println("Step03: get after put, key=" + point + ", value=" + bindLink);
 
-
-
-        String val = "23_5886245424968899218|102.76661560921075,24.954512011346573|43.01807998888527|11.252225644659653";
-        String[] a = val.split("\\|");
-        for (String s : a) {
-            System.out.println(s);
-        }
-        int byteSize = val.getBytes(StandardCharsets.UTF_8).length;
-        System.out.println(val.length());
-        System.out.println(byteSize);
-
-
+//        String val = "23_5886245424968899218|102.76661560921075,24.954512011346573|43.01807998888527|11.252225644659653";
+//        String[] a = val.split("\\|");
+//        for (String s : a) {
+//            System.out.println(s);
+//        }
+//        int byteSize = val.getBytes(StandardCharsets.UTF_8).length;
+//        System.out.println(val.length());
+//        System.out.println(byteSize);
 
 
     }
-
 
 
 }
