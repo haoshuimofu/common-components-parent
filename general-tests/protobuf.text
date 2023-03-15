@@ -2,8 +2,9 @@
     <!-- Protobuf -->
     <dependency>
         <groupId>com.google.protobuf</groupId>
-        <artifactId>protobuf-java</artifactId>
-        <version>3.11.4</version>
+        <artifactId>protobuf-java-util</artifactId>
+        <version>3.22.2</version>
+        <scope>runtime</scope>
     </dependency>
 
 创建一个proto文件, User.proto：

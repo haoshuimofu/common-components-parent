@@ -1,28 +1,34 @@
-package cache;
+package test.cache;
 
-import com.google.common.cache.*;
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
+import com.github.benmanes.caffeine.cache.RemovalCause;
+import com.github.benmanes.caffeine.cache.RemovalListener;
+import com.github.benmanes.caffeine.cache.stats.CacheStats;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
+import javax.annotation.Nullable;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 @Slf4j
-public class GuavaCache {
+public class CaffeineCache {
 
-    private static Cache<String, Object> cache = CacheBuilder.newBuilder()
+    private static Cache<String, Object> caffeineCache = Caffeine.newBuilder()
             .maximumSize(1000000)
             .expireAfterWrite(60, TimeUnit.SECONDS)
-            .concurrencyLevel(4)
             .initialCapacity(1000)
             //配置上recordStats,cache.stats()才能生效
             //.recordStats()
             .removalListener(new RemovalListener<String, Object>() {
                 @Override
-                public void onRemoval(RemovalNotification<String, Object> rn) {
+                public void onRemoval(@Nullable String key, @Nullable Object value, @NonNull RemovalCause cause) {
 
                 }
-            }).build();
+            })
+            .build();
 
 
     /*
@@ -31,7 +37,7 @@ public class GuavaCache {
      */
     public static Object get(String key) {
         try {
-            return StringUtils.isNotEmpty(key) ? cache.getIfPresent(key) : null;
+            return StringUtils.isNotEmpty(key) ? caffeineCache.getIfPresent(key) : null;
         } catch (Exception e) {
             log.error("local cache by featureId 异常", e);
             return null;
@@ -44,7 +50,7 @@ public class GuavaCache {
      */
     public static void put(String key, Object value) {
         if (StringUtils.isNotEmpty(key) && value != null) {
-            cache.put(key, value);
+            caffeineCache.put(key, value);
         }
     }
 
@@ -54,7 +60,7 @@ public class GuavaCache {
      */
     public static void remove(String key) {
         if (StringUtils.isNotEmpty(key)) {
-            cache.invalidate(key);
+            caffeineCache.invalidate(key);
         }
     }
 
@@ -64,12 +70,12 @@ public class GuavaCache {
      */
     public static void remove(List<String> keys) {
         if (keys != null && keys.size() > 0) {
-            cache.invalidateAll(keys);
+            caffeineCache.invalidateAll(keys);
         }
     }
 
     public static CacheStats getStats() {
-        return cache.stats();
+        return caffeineCache.stats();
     }
 
     /**
@@ -78,23 +84,22 @@ public class GuavaCache {
      * @param args
      */
 
-    public static void main(String[] args) {
+
+    public static void main(String[] args) throws Exception {
         long start = System.currentTimeMillis();
         //只测试写入
         for (int j = 0; j < 500000; j++) {
-            GuavaCache.put("" + j, j);
+            CaffeineCache.put("" + j, j);
         }
         //测试读写
         for (int j = 0; j < 500000; j++) {
-            GuavaCache.get("" + j);
+            CaffeineCache.get("" + j);
         }
         //读写+读为命中
         for (int j = 0; j < 500000; j++) {
-            GuavaCache.get("" + j + "noHits");
+            CaffeineCache.get("" + j + "noHits");
         }
-        GuavaCache.cache.cleanUp();
         long end = System.currentTimeMillis();
         System.out.println(end - start);
     }
-
 }

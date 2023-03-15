@@ -1,4 +1,4 @@
-package cache.serializer;
+package test.cache.serializer;
 
 import org.caffinitas.ohc.CacheSerializer;
 

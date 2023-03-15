@@ -1,6 +1,6 @@
-package cache.serializer;
+package test.cache.serializer;
 
-import cache.model.Point;
+import test.cache.model.Point;
 import com.alibaba.fastjson.JSON;
 import org.caffinitas.ohc.CacheSerializer;
 

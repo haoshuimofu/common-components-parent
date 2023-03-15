@@ -1,4 +1,4 @@
-package threadpool.model;
+package test.threadpool.model;
 
 import java.util.concurrent.Callable;
 import java.util.function.Supplier;

@@ -1,4 +1,4 @@
-package cache.model;
+package test.cache.model;
 
 import lombok.Getter;
 import lombok.Setter;

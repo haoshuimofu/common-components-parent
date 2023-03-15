@@ -1,7 +1,7 @@
-package cache.serializer;
+package test.cache.serializer;
 
-import cache.model.User;
-import cache.model.UserOuter;
+import test.cache.model.User;
+import test.cache.model.UserOuter;
 import com.google.protobuf.InvalidProtocolBufferException;
 import org.caffinitas.ohc.CacheSerializer;
 

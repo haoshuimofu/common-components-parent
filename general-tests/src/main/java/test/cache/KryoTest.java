@@ -1,9 +1,9 @@
-package cache;
+package test.cache;
 
-import cache.model.BindLink;
-import cache.model.Point;
-import cache.serializer.HotPointSerializer;
-import cache.serializer.PointSerializer;
+import test.cache.model.BindLink;
+import test.cache.model.Point;
+import test.cache.serializer.HotPointSerializer;
+import test.cache.serializer.PointSerializer;
 import org.caffinitas.ohc.Eviction;
 import org.caffinitas.ohc.OHCache;
 import org.caffinitas.ohc.OHCacheBuilder;

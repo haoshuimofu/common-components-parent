@@ -1,7 +1,7 @@
-package threadpool;
+package test.threadpool;
 
-import threadpool.model.ForkJoinAction;
-import threadpool.model.ForkJoinCallable;
+import test.threadpool.model.ForkJoinAction;
+import test.threadpool.model.ForkJoinCallable;
 
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;

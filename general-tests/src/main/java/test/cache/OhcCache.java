@@ -1,8 +1,8 @@
-package cache;
+package test.cache;
 
-import cache.model.User;
-import cache.serializer.OHCacheProtobufSerializer;
-import cache.serializer.OhcStringSerializer;
+import test.cache.model.User;
+import test.cache.serializer.OHCacheProtobufSerializer;
+import test.cache.serializer.OhcStringSerializer;
 import lombok.extern.slf4j.Slf4j;
 import org.caffinitas.ohc.Eviction;
 import org.caffinitas.ohc.OHCache;
