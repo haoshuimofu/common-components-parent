@@ -16,7 +16,6 @@
         <module>spring-cloud-stream-rabbitmq</module>
         <module>spring-boot-elasticsearch</module>
         <module>general-tests</module>
-        <module>guava-caffeine</module>
         <module>rocketmq</module>
         <module>httpclient</module>
         <module>spring-cloud-stream-multi-binder</module>

@@ -9,7 +9,7 @@ import org.caffinitas.ohc.OHCache;
 import org.caffinitas.ohc.OHCacheBuilder;
 
 @Slf4j
-public class OhcCache {
+public class OhcCacheTest {
 
     private static OHCache<String, String> ohCache = OHCacheBuilder.<String, String>newBuilder()
             .keySerializer(new OhcStringSerializer())
@@ -57,25 +57,25 @@ public class OhcCache {
 //        总耗时:949
 //
 
-        while (true) {
-            start = System.currentTimeMillis();
-            //只测试写入
-            for (int j = 0; j < 500000; j++) {
-                ohCache.putIfAbsent("" + j, new User(j + "", j, j + "").format());
-            }
-            System.out.println("写入耗时:" + (System.currentTimeMillis() - start));
-            //测试读写
-            for (int j = 0; j < 500000; j++) {
-                ohCache.get("" + j);
-            }
-            System.out.println("读取命中耗时:" + (System.currentTimeMillis() - start));
-            //读写+读为命中
-            for (int j = 0; j < 500000; j++) {
-                ohCache.get("" + j + "noHits");
-            }
-            System.out.println("读取未命中耗时:" + (System.currentTimeMillis() - start));
-            System.out.println("总耗时:" + (System.currentTimeMillis() - start));
-        }
+//        while (true) {
+//            start = System.currentTimeMillis();
+//            //只测试写入
+//            for (int j = 0; j < 500000; j++) {
+//                ohCache.putIfAbsent("" + j, new User(j + "", j, j + "").format());
+//            }
+//            System.out.println("写入耗时:" + (System.currentTimeMillis() - start));
+//            //测试读写
+//            for (int j = 0; j < 500000; j++) {
+//                ohCache.get("" + j);
+//            }
+//            System.out.println("读取命中耗时:" + (System.currentTimeMillis() - start));
+//            //读写+读为命中
+//            for (int j = 0; j < 500000; j++) {
+//                ohCache.get("" + j + "noHits");
+//            }
+//            System.out.println("读取未命中耗时:" + (System.currentTimeMillis() - start));
+//            System.out.println("总耗时:" + (System.currentTimeMillis() - start));
+//        }
 
 
 //        写入耗时:945
@@ -99,25 +99,25 @@ public class OhcCache {
 //        读取未命中耗时:885
 //        总耗时:886
 
-//        while (true) {
-//            start = System.currentTimeMillis();
-//            //只测试写入
-//            for (int j = 0; j < 500000; j++) {
-//                userOHCache.putIfAbsent("" + j, new User("" + j, j, "" + j));
-//            }
-//            System.out.println("写入耗时:" + (System.currentTimeMillis() - start));
-//            //测试读写
-//            for (int j = 0; j < 500000; j++) {
-//                userOHCache.get("" + j);
-//            }
-//            System.out.println("读取命中耗时:" + (System.currentTimeMillis() - start));
-//            //读写+读为命中
-//            for (int j = 0; j < 500000; j++) {
-//                userOHCache.get("" + j + "noHits");
-//            }
-//            System.out.println("读取未命中耗时:" + (System.currentTimeMillis() - start));
-//            System.out.println("总耗时:" + (System.currentTimeMillis() - start));
-//        }
+        while (true) {
+            start = System.currentTimeMillis();
+            //只测试写入
+            for (int j = 0; j < 500000; j++) {
+                userOHCache.putIfAbsent("" + j, new User("" + j, j, "" + j));
+            }
+            System.out.println("写入耗时:" + (System.currentTimeMillis() - start));
+            //测试读写
+            for (int j = 0; j < 500000; j++) {
+                userOHCache.get("" + j);
+            }
+            System.out.println("读取命中耗时:" + (System.currentTimeMillis() - start));
+            //读写+读为命中
+            for (int j = 0; j < 500000; j++) {
+                userOHCache.get("" + j + "noHits");
+            }
+            System.out.println("读取未命中耗时:" + (System.currentTimeMillis() - start));
+            System.out.println("总耗时:" + (System.currentTimeMillis() - start));
+        }
     }
 
 }
