@@ -10,7 +10,7 @@ import java.util.Date;
 
 @Slf4j
 @Service
-@Transactional(rollbackFor = IllegalArgumentException.class) // 默认没有事务，异常就回滚
+//@Transactional(rollbackFor = IllegalArgumentException.class) // 默认没有事务，异常就回滚
 public class OrderService {
 
     private final OrderModelDao orderModelDao;
@@ -29,8 +29,8 @@ public class OrderService {
         order.setUpdateTime(order.getCreateTime());
         orderModelDao.insert(order);
 
-//        int testNum = 1 / 0;
-//        log.error("error test: {}", testNum);
+        int testNum = 1 / 0;
+        log.error("error test: {}", testNum);
 
     }
 }

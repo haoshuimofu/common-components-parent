@@ -1,16 +1,11 @@
 package com.demo.components.shardingjdbc.config;
 
-import com.alibaba.fastjson.JSON;
 import com.demo.components.shardingjdbc.utils.DataSourceFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shardingsphere.api.config.sharding.ShardingRuleConfiguration;
 import org.apache.shardingsphere.api.config.sharding.TableRuleConfiguration;
-import org.apache.shardingsphere.api.config.sharding.strategy.ComplexShardingStrategyConfiguration;
-import org.apache.shardingsphere.api.config.sharding.strategy.InlineShardingStrategyConfiguration;
 import org.apache.shardingsphere.api.config.sharding.strategy.ShardingStrategyConfiguration;
 import org.apache.shardingsphere.api.config.sharding.strategy.StandardShardingStrategyConfiguration;
-import org.apache.shardingsphere.api.sharding.complex.ComplexKeysShardingAlgorithm;
-import org.apache.shardingsphere.api.sharding.complex.ComplexKeysShardingValue;
 import org.apache.shardingsphere.api.sharding.standard.PreciseShardingAlgorithm;
 import org.apache.shardingsphere.api.sharding.standard.PreciseShardingValue;
 import org.apache.shardingsphere.shardingjdbc.api.ShardingDataSourceFactory;
@@ -18,9 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
-import org.springframework.jdbc.datasource.DataSourceTransactionManager;
-import org.springframework.transaction.TransactionManager;
 
 import javax.sql.DataSource;
 import java.sql.SQLException;
@@ -91,4 +83,5 @@ public class DBAutoConfiguration {
         result.put("ds_1", DataSourceFactory.dataSource(databaseConfig.getConfig().get("ds_1")));
         return result;
     }
+
 }
