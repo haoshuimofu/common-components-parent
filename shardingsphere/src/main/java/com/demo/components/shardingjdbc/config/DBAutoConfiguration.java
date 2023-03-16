@@ -1,5 +1,6 @@
 package com.demo.components.shardingjdbc.config;
 
+import com.alibaba.fastjson.JSON;
 import com.demo.components.shardingjdbc.utils.DataSourceFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shardingsphere.api.config.sharding.ShardingRuleConfiguration;
@@ -27,10 +28,9 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+@Slf4j
 @Configuration
 @EnableConfigurationProperties(value = {DatabaseConfig.class})
-//@Import(DatabaseConfig.class)
-@Slf4j
 public class DBAutoConfiguration {
 
     @Autowired
@@ -50,17 +50,18 @@ public class DBAutoConfiguration {
     @Bean
     TableRuleConfiguration getOrderTableRuleConfiguration() {
         TableRuleConfiguration tableRuleConfiguration = new TableRuleConfiguration("t_order", "ds_${0..1}.t_order_${[0, 1]}");
-        tableRuleConfiguration = new TableRuleConfiguration("t_order","ds_${0..1}.t_order_${0..1}");
+        tableRuleConfiguration = new TableRuleConfiguration("t_order", "ds_${0..1}.t_order_${0..1}");
         // 数据库的分配策略, ds_(order_id)%2
         ShardingStrategyConfiguration databaseConfig = new StandardShardingStrategyConfiguration("order_id", new PreciseShardingAlgorithm<String>() {
             @Override
             public String doSharding(Collection<String> availableTargetNames, PreciseShardingValue<String> shardingValue) {
+//                log.info("分库策略: availableTargetNames:{}, shardingValue={}", JSON.toJSONString(availableTargetNames), shardingValue);
                 String dsName = "ds_" + Integer.parseInt(shardingValue.getValue()) % 2;
-                log.error("### {}({}={})路由到到database=[{}]",
-                        shardingValue.getLogicTableName(),
-                        shardingValue.getColumnName(),
-                        shardingValue.getValue(), dsName);
-                return availableTargetNames.stream().filter(e -> e.equals(dsName)).findFirst().get();
+                log.info("订单路由: {}=[{}], db=[{}]", shardingValue.getColumnName(), shardingValue.getValue(), dsName);
+                return availableTargetNames.stream()
+                        .filter(e -> e.equals(dsName))
+                        .findFirst()
+                        .orElseThrow(() -> new RuntimeException("分库路由失败"));
             }
         });
         tableRuleConfiguration.setDatabaseShardingStrategyConfig(databaseConfig);
@@ -69,16 +70,16 @@ public class DBAutoConfiguration {
         ShardingStrategyConfiguration tableConfig = new StandardShardingStrategyConfiguration("order_id", new PreciseShardingAlgorithm<String>() {
             @Override
             public String doSharding(Collection<String> availableTargetNames, PreciseShardingValue<String> shardingValue) {
+//                log.info("分表策略: availableTargetNames:{}, shardingValue={}", JSON.toJSONString(availableTargetNames), shardingValue);
                 String tbName = "t_order_" + Integer.parseInt(shardingValue.getValue()) % 2;
-                log.error("### {}({}={})路由到到table=[{}]",
-                        shardingValue.getLogicTableName(),
-                        shardingValue.getColumnName(),
-                        shardingValue.getValue(), tbName);
-                return availableTargetNames.stream().filter(e -> e.equals(tbName)).findFirst().get();
+                log.info("订单路由: {}=[{}], table=[{}]", shardingValue.getColumnName(), shardingValue.getValue(), tbName);
+                return availableTargetNames.stream()
+                        .filter(e -> e.equals(tbName))
+                        .findFirst()
+                        .orElseThrow(() -> new RuntimeException("分表路由失败"));
             }
         });
         tableRuleConfiguration.setTableShardingStrategyConfig(tableConfig);
-//        tableRuleConfiguration.setKeyGeneratorConfig(null);
         return tableRuleConfiguration;
     }
 
