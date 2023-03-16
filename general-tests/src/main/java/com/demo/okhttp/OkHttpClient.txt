@@ -1,0 +1,20 @@
+okhttp:
+
+OkHttp is a Java-based HTTP client library that is used to send HTTP requests and receive HTTP responses from a web server.
+It supports HTTP/1.1 and HTTP/2 protocols and provides features such as request/response caching, connection pooling, and asynchronous calls.
+It can be used to make RESTful API calls, upload and download files, and handle various HTTP methods and status codes.
+OkHttp is commonly used in Android applications as a replacement for the default HttpURLConnection class.
+
+
+OkHttpClient VS HttpClient
+OkHttpClient and HttpClient are both HTTP client libraries used to send and receive HTTP requests and responses, but there are some differences between them.
+
+1. Development and Support: OkHttpClient is developed by Square and is an open-source library, while HttpClient is a part of Apache HttpComponents and is also open-source. Both libraries have active development and are widely used.
+
+2. Ease of Use: OkHttpClient is designed to be simple and easy to use, with a concise and easy-to-understand API. HttpClient is feature-rich and powerful, but can be more complex to use.
+
+3. Performance: OkHttpClient is optimized for performance, with a focus on reducing latency and increasing throughput. HttpClient also has good performance, but may not be as optimized as OkHttpClient.
+
+4. Features: Both libraries provide a range of features such as connection pooling, support for various protocols, and automatic retry on connection failures. However, HttpClient offers a wider range of features, such as custom connection management strategies and support for NTLM authentication.
+
+In summary, OkHttpClient is a simple and optimized library for making HTTP requests, while HttpClient is a more feature-rich and powerful library that may require more configuration and setup. The choice between the two libraries depends on the specific requirements of the application and the developer's familiarity with the libraries.
