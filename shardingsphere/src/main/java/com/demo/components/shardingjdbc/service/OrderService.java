@@ -8,9 +8,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 
+/**
+ * DB操作和事务测试
+ * <p>问题1: 系统自动创建TransactionManager, mvn tree显示spring-tx包是mybatis-spring-boot-starter引入的</p>
+ */
 @Slf4j
 @Service
-//@Transactional(rollbackFor = IllegalArgumentException.class) // 默认没有事务，异常就回滚
+@Transactional(rollbackFor = IllegalArgumentException.class) // 默认没有事务，异常就回滚
 public class OrderService {
 
     private final OrderModelDao orderModelDao;

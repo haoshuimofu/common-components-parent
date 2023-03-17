@@ -1,11 +1,9 @@
-package com.demo.components.shardingjdbc.utils;
+package com.demo.components.shardingjdbc.config;
 
 import com.alibaba.druid.pool.DruidDataSource;
-import com.alibaba.druid.sql.visitor.SQLTableAliasCollectVisitor;
-import com.demo.components.shardingjdbc.property.DruidProperty;
+import com.demo.components.shardingjdbc.config.DruidProperty;
 
 import javax.sql.DataSource;
-import java.sql.SQLException;
 
 /**
  * @author eleme

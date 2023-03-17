@@ -1,6 +1,5 @@
 package com.demo.components.shardingjdbc.config;
 
-import com.demo.components.shardingjdbc.utils.DataSourceFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shardingsphere.api.config.sharding.ShardingRuleConfiguration;
 import org.apache.shardingsphere.api.config.sharding.TableRuleConfiguration;
