@@ -2,7 +2,8 @@ spring:
   redis:
     # spring-data-redis默认配置格式
     cluster:
-      nodes: 127.0.0.1:6000,127.0.0.1:7000,127.0.0.1:8000
+#      nodes: 127.0.0.1:6000,127.0.0.1:7000,127.0.0.1:8000
+      nodes: 127.0.0.1:6379
       max-redirects: 8
     jedis:
       pool:
@@ -13,7 +14,8 @@ spring:
     # 自定义redis配置, 配置格式和spring-data-redis一致
     custom:
       cluster:
-        nodes: 127.0.0.1:6000,127.0.0.1:7000,127.0.0.1:8000
+#        nodes: 127.0.0.1:6000,127.0.0.1:7000,127.0.0.1:8000
+        nodes: 127.0.0.1:6379
         max-redirects: 1
       jedis:
         pool:
