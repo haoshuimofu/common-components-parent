@@ -2,6 +2,8 @@ package com.demo.components.redis.cluster;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.redis.connection.RedisStringCommands;
+import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.script.DefaultRedisScript;
 import org.springframework.stereotype.Service;
@@ -84,6 +86,22 @@ public class CacheManager {
         DefaultRedisScript<String> redisScript = new DefaultRedisScript<>(lockReleaseScript, String.class);
         String result = getStringRedisTemplate().execute(redisScript, Collections.singletonList(key), value);
         return "1".equals(result);
+    }
+
+    public long bitCount(final String key) {
+        return getStringRedisTemplate().execute((RedisCallback<Long>) connection -> connection.bitCount(key.getBytes()));
+    }
+
+    public Long bitCount(String key, int start, int end) {
+        return getStringRedisTemplate().execute((RedisCallback<Long>) con -> con.bitCount(key.getBytes(), start, end));
+    }
+
+    public Long bitOp(RedisStringCommands.BitOperation op, String saveKey, String... desKey) {
+        byte[][] bytes = new byte[desKey.length][];
+        for (int i = 0; i < desKey.length; i++) {
+            bytes[i] = desKey[i].getBytes();
+        }
+        return getStringRedisTemplate().execute((RedisCallback<Long>) con -> con.bitOp(op, saveKey.getBytes(), bytes));
     }
 
 }

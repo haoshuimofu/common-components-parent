@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @date 2020/10/14 16:35
  */
 @RestController
-@RequestMapping("local/test")
+@RequestMapping("lock/test")
 public class LockTestController {
 
     private static final Logger logger = LoggerFactory.getLogger(LockTestController.class);
