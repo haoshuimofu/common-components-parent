@@ -1,4 +1,4 @@
-package com.demo.juc;
+package test.juc;
 
 import java.util.concurrent.CountDownLatch;
 
@@ -11,27 +11,26 @@ public class CountDownLatchTest {
     public static void main(String[] args) throws InterruptedException {
         CountDownLatch countDownLatch = new CountDownLatch(5);
         for (int i = 0; i < 5; i++) {
-            new Thread(new readNum(i, countDownLatch)).start();
+            new Thread(new Task(i, countDownLatch)).start();
         }
         countDownLatch.await();
         System.out.println("线程执行结束。。。。");
     }
 
-    static class readNum implements Runnable {
-        private int id;
+    static class Task implements Runnable {
+        private int num;
         private CountDownLatch latch;
 
-        public readNum(int id, CountDownLatch latch) {
-            this.id = id;
+        public Task(int num, CountDownLatch latch) {
+            this.num = num;
             this.latch = latch;
         }
 
         @Override
         public void run() {
             synchronized (this) {
-                System.out.println("id:" + id);
+                System.out.println("num = " + num + "; thread = " + Thread.currentThread().getName());
                 latch.countDown();
-                System.out.println("线程组任务" + id + "结束，其他任务继续");
             }
         }
     }

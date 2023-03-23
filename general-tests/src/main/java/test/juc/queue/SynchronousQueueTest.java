@@ -1,4 +1,4 @@
-package com.demo.juc.queue;
+package test.juc.queue;
 
 import java.util.concurrent.SynchronousQueue;
 
