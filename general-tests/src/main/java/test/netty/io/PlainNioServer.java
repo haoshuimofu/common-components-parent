@@ -37,72 +37,51 @@ public class PlainNioServer {
         ServerSocketChannel serverChannel = ServerSocketChannel.open();
         serverChannel.socket().bind(new InetSocketAddress(port));
         serverChannel.configureBlocking(false);
-        // 打开Selector来处理Channel
-        Selector selector = Selector.open();
-        // 将ServerSocket注册到Selector以接受链接
-        serverChannel.register(selector, SelectionKey.OP_ACCEPT);
+        Selector selector = null;
+        try {
+            // 打开Selector来处理Channel
+            selector = Selector.open();
+            // 将ServerSocket注册到Selector以接受链接
+            serverChannel.register(selector, SelectionKey.OP_ACCEPT);
 
-
-        while (true) {
-            // 返回的值大于零，表示有连接事件发生，可以通过 SelectedKeys 获取事件的类型和对应的 Channel
-            int keysNum = selector.select(TIMEOUT);
-            if (keysNum == 0) {
-                System.out.println("等待连接超时。");
-                continue;
-            }
-        }
-
-
-
-
-        final ByteBuffer msg = ByteBuffer.wrap("Hi! \r\n".getBytes());
-        for (; ; ) {
-            try {
-                // 等待需要处理的新事件, 阻塞 将一致持续到下一个传入事件
-                selector.select();
-            } catch (IOException ex) {
-                ex.printStackTrace();
-                break;
-            }
-            // 获取所有接收事件的Selection-Key实例
-            Set<SelectionKey> readyKeys = selector.selectedKeys();
-            Iterator<SelectionKey> iterator = readyKeys.iterator();
-            while (iterator.hasNext()) {
-                SelectionKey key = iterator.next();
-                iterator.remove();
-                try {
-                    // 检查事件是否是一个新的已经就绪可以被接受的连接
-                    if (key.isAcceptable()) {
-                        ServerSocketChannel server = (ServerSocketChannel) key.channel();
-                        SocketChannel client = server.accept();
-                        // 接受客户端, 并将它注册到选择器
-                        client.register(selector, SelectionKey.OP_WRITE | SelectionKey.OP_READ, msg.duplicate());
-                        System.out.println("NIO Server accepted connection from " + client);
-                    }
-                    // 检查套接字是否已经准备好写数据
-                    if (key.isWritable()) {
-                        SocketChannel client = (SocketChannel) key.channel();
-                        ByteBuffer buffer = (ByteBuffer) key.attachment();
-                        // 将数据写到已经连接的客户端
-                        while (client.write(buffer) == 0) {
-                            break;
-                        }
-                        // 关闭连接
-                        client.close();
-                    }
-                } catch (IOException ex) {
-                    key.cancel();
-                    try {
-                        key.channel().close();
-                    } catch (IOException cex) {
-                        // ignore on close
-                    }
-
+            while (true) {
+                // 返回的值大于零，表示有连接事件发生，可以通过 SelectedKeys 获取事件的类型和对应的 Channel
+                int keysNum = selector.select(TIMEOUT);
+                if (keysNum == 0) {
+                    System.out.println("等待连接超时。");
+                    continue;
                 }
+                Iterator<SelectionKey> iterator = selector.selectedKeys().iterator();
+                while (iterator.hasNext()) {
+                    SelectionKey key = iterator.next();
+                    if (key.isAcceptable()) {
+                        handleAccept(key);
+                    }
+                    if (key.isReadable()) {
+                        handleRead(key);
+                    }
+                    if (key.isWritable() && key.isValid()) {
+                        handleWrite(key);
+                    }
+                    if (key.isConnectable()) {
+                        System.out.println("isConnectable = true");
+                    }
+                    iterator.remove();
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (selector != null) {
+                    selector.close();
+                }
+                serverChannel.close();
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         }
     }
-
 
     private static void handleAccept(SelectionKey key) throws IOException {
         ServerSocketChannel serverSocketChannel = (ServerSocketChannel) key.channel();
@@ -124,9 +103,19 @@ public class PlainNioServer {
             buf.clear();
             bytesRead = socketChannel.read(buf);
         }
-        if (bytesRead == -1) {
-            socketChannel.close();
-        }
-
-
+//        if (bytesRead == -1) {
+//            socketChannel.close();
+//        }
     }
+
+    private static void handleWrite(SelectionKey key) throws IOException {
+        ByteBuffer buf = (ByteBuffer) key.attachment();
+        buf.flip();
+        SocketChannel socketChannel = (SocketChannel) key.channel();
+        while (buf.hasRemaining()) {
+            socketChannel.write(buf);
+        }
+        buf.compact();
+    }
+
+}
