@@ -5,7 +5,6 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
-import io.netty.channel.oio.OioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.util.CharsetUtil;
@@ -19,7 +18,7 @@ import java.net.InetSocketAddress;
 public class NettyNioServer {
 
     public void server(int port) throws Exception {
-        final ByteBuf buf = Unpooled.copiedBuffer("Hi!\r\n", CharsetUtil.UTF_8);
+
         // 为非阻塞模式NioEventLoopGroup
         EventLoopGroup bossGroup = new NioEventLoopGroup();
         EventLoopGroup workerGroup = new NioEventLoopGroup();
@@ -37,10 +36,27 @@ public class NettyNioServer {
                             // 添加一个 ChannelInboundHandleAdapter 以拦截和处理事件
                             ch.pipeline().addLast(
                                     new ChannelInboundHandlerAdapter() {
+
                                         @Override
                                         public void channelActive(ChannelHandlerContext ctx) throws Exception {
-                                            // 将消息写到客户端，并添加 ChannelFutureListener，以便消息一被写完就关闭连接
-                                            ctx.writeAndFlush(buf.duplicate()).addListener(ChannelFutureListener.CLOSE);
+                                            ByteBuf activeBuf = Unpooled.copiedBuffer("Server active!\r\n", CharsetUtil.UTF_8);
+                                            ctx.writeAndFlush(activeBuf.duplicate());
+                                        }
+
+                                        @Override
+                                        public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
+                                            ByteBuf in = (ByteBuf) msg;
+                                            // 将消息记录到控制台
+                                            System.out.println("Server received: " + in.toString(CharsetUtil.UTF_8));
+                                            // 将接收到的消息写给发送者, 而不冲刷出站消息
+                                            ByteBuf replyBuf = Unpooled.copiedBuffer("Server reply!\r\n", CharsetUtil.UTF_8);
+                                            ctx.write(replyBuf);
+                                        }
+
+                                        @Override
+                                        public void channelReadComplete(ChannelHandlerContext ctx) throws Exception {
+                                            ctx.writeAndFlush(Unpooled.EMPTY_BUFFER)
+                                                    .addListener(ChannelFutureListener.CLOSE);
                                         }
                                     });
                         }
