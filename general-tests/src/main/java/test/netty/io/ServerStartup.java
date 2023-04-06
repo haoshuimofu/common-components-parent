@@ -11,10 +11,11 @@ public class ServerStartup {
     static int oioPort = 10001;
     static int nioPort = 10002;
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws Exception {
 
 //        oioServer();
-        nioServer();
+//        nioServer();
+        nettyNioServer();
     }
 
     public static void oioServer() throws IOException {
@@ -23,6 +24,10 @@ public class ServerStartup {
 
     public static void nioServer() throws IOException {
         new PlainNioServer().serve(nioPort);
+    }
+
+    public static void nettyNioServer() throws Exception {
+        new NettyNioServer().server(nioPort);
     }
 
 }

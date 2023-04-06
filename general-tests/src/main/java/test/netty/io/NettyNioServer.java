@@ -5,6 +5,7 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
+import io.netty.channel.oio.OioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.util.CharsetUtil;
@@ -20,11 +21,12 @@ public class NettyNioServer {
     public void server(int port) throws Exception {
         final ByteBuf buf = Unpooled.copiedBuffer("Hi!\r\n", CharsetUtil.UTF_8);
         // 为非阻塞模式NioEventLoopGroup
-        EventLoopGroup group = new NioEventLoopGroup();
+        EventLoopGroup bossGroup = new NioEventLoopGroup();
+        EventLoopGroup workerGroup = new NioEventLoopGroup();
         try {
             // 创建Server-Bootstrap
             ServerBootstrap b = new ServerBootstrap();
-            b.group(group)
+            b.group(bossGroup, workerGroup)
                     // 使用OioEventLoopGroup以允许阻塞IO
                     .channel(NioServerSocketChannel.class)
                     // 指定 ChannelInitializer，对于每个已接受的连接都调用它
@@ -47,7 +49,8 @@ public class NettyNioServer {
             ChannelFuture f = b.bind().sync();
             f.channel().closeFuture().sync();
         } finally {
-            group.shutdownGracefully().sync();
+            bossGroup.shutdownGracefully().sync();
+            workerGroup.shutdownGracefully().sync();
         }
     }
 
