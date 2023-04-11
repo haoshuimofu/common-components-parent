@@ -9,7 +9,7 @@ import java.util.HashMap;
 public class LRU<K, V> {
 
     private HashMap<K,V> hash;
-    private
+//    private
 
 
 }
