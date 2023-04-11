@@ -1,5 +1,7 @@
 package test.json.model;
 
+import com.alibaba.fastjson.annotation.JSONField;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.gson.annotations.Expose;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -23,6 +25,8 @@ public class JSONModel {
     @Expose
     private String content;
     @Expose(serialize = false, deserialize = false)
+    @JSONField(format = "MMM dd, yyyy hh:mm:ss a")
+    @JsonIgnore
     private Date now = new Date();
 
     @Override
