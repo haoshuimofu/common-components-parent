@@ -1,0 +1,53 @@
+[
+  {
+    "className": "com.demo.components.desensitized.model.OrderModel",
+    "fields": [
+      {
+        "fieldName": "orderId",
+        "valueType": "default"
+      },
+      {
+        "fieldName": "orderNo",
+        "valueType": "default"
+      }
+    ]
+  },
+  {
+    "className": "com.demo.components.desensitized.model.OrderConsumerModel",
+    "fields": [
+      {
+        "fieldName": "name",
+        "valueType": "PERSON_NAME"
+      },
+      {
+        "fieldName": "phone",
+        "valueType": "MOBILE_PHONE"
+      },
+      {
+        "fieldName": "address",
+        "valueType": "DETAILED_ADDRESS"
+      }
+    ]
+  },
+  {
+    "className": "me.ele.soscore.api.param.CoreOrderCustomerParam",
+    "fields": [
+      {
+        "fieldName": "primaryPhone",
+        "valueType": "phone"
+      },
+      {
+        "fieldName": "secondPhone",
+        "valueType": "phone"
+      },
+      {
+        "fieldName": "address",
+        "valueType": "address"
+      },
+      {
+        "fieldName": "locationText",
+        "valueType": "address"
+      }
+    ]
+  }
+]

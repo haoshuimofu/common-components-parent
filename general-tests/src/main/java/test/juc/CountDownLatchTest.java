@@ -28,10 +28,8 @@ public class CountDownLatchTest {
 
         @Override
         public void run() {
-            synchronized (this) {
-                System.out.println("num = " + num + "; thread = " + Thread.currentThread().getName());
-                latch.countDown();
-            }
+            System.out.println("num = " + num + "; thread = " + Thread.currentThread().getName());
+            latch.countDown();
         }
     }
 
