@@ -5,7 +5,6 @@ import com.alibaba.fastjson.TypeReference;
 import com.demo.components.desensitized.utils.DesensitizedCommonUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -20,7 +19,6 @@ import java.util.Map;
  * @author dewu.de
  * @date 2023-04-14 11:50 上午
  */
-@Component
 public class DesensitizedConfigContainer {
 
     private static final Logger log = LoggerFactory.getLogger(DesensitizedConfigContainer.class);
