@@ -7,7 +7,7 @@ import java.util.Map;
  * @author dewu.de
  * @date 2023-04-14 2:53 下午
  */
-public class DesensitizedCommonUtils {
+public class EmptyUtils {
 
     public static boolean isNotEmptyString(String s) {
         return s != null && s.length() > 0;

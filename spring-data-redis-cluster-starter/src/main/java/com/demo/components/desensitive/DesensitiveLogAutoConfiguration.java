@@ -11,12 +11,12 @@ import org.springframework.context.annotation.Configuration;
 public class DesensitiveLogAutoConfiguration {
 
     @Bean
-    public DesensitiveConfigContainer desensitizedConfigContainer() {
+    public DesensitiveConfigContainer desensitiveConfigContainer() {
         return new DesensitiveConfigContainer();
     }
 
     @Bean
-    public DesensitiveLogHandler desensitizedLogHandler(DesensitiveConfigContainer configContainer) {
+    public DesensitiveLogHandler desensitiveLogHandler(DesensitiveConfigContainer configContainer) {
         return new DesensitiveLogHandler(configContainer);
     }
 

@@ -2,7 +2,7 @@ package com.demo.components.desensitive;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
-import com.demo.components.desensitive.utils.DesensitizedCommonUtils;
+import com.demo.components.desensitive.utils.EmptyUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,7 +55,7 @@ public class DesensitiveConfigContainer {
             Class<?> clazz = loadClass(desensitizedClass.getClassName());
             if (clazz != null) {
                 Map<String, DesensitiveValueType> desensitizedFields = parseDesensitizedFields(desensitizedClass.getFields());
-                if (DesensitizedCommonUtils.isNotEmptyMap(desensitizedFields)) {
+                if (EmptyUtils.isNotEmptyMap(desensitizedFields)) {
                     this.desensitizedClassMap.put(clazz, desensitizedFields);
                 }
             }
@@ -64,7 +64,7 @@ public class DesensitiveConfigContainer {
     }
 
     private Class<?> loadClass(String className) {
-        if (DesensitizedCommonUtils.isNotEmptyString(className)) {
+        if (EmptyUtils.isNotEmptyString(className)) {
             try {
                 return Class.forName(className);
             } catch (ClassNotFoundException e) {
@@ -76,7 +76,7 @@ public class DesensitiveConfigContainer {
     }
 
     private Map<String, DesensitiveValueType> parseDesensitizedFields(List<DesensitiveClass.DesensitizedField> fields) {
-        if (DesensitizedCommonUtils.isNotEmptyCollection(fields)) {
+        if (EmptyUtils.isNotEmptyCollection(fields)) {
             Map<String, DesensitiveValueType> fieldMap = new HashMap<>();
             for (DesensitiveClass.DesensitizedField desensitizedField : fields) {
                 DesensitiveValueType desensitizedValueType = DesensitiveValueType.nameOf(desensitizedField.getValueType());

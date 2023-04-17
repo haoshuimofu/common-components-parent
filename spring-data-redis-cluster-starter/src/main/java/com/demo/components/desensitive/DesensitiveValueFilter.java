@@ -1,8 +1,8 @@
 package com.demo.components.desensitive;
 
 import com.alibaba.fastjson.serializer.ValueFilter;
-import com.demo.components.desensitive.utils.DesensitizedCommonUtils;
-import com.demo.components.desensitive.utils.DesensitizedValueMaskingUtils;
+import com.demo.components.desensitive.utils.EmptyUtils;
+import com.demo.components.desensitive.utils.SensitiveValueMaskingUtils;
 
 import java.util.Map;
 
@@ -22,10 +22,10 @@ public class DesensitiveValueFilter implements ValueFilter {
     public Object process(Object object, String name, Object value) {
         if (value != null && value.getClass() == String.class) {
             Map<String, DesensitiveValueType> desensitizedFields = configMap.get(object.getClass());
-            if (DesensitizedCommonUtils.isNotEmptyMap(desensitizedFields)) {
+            if (EmptyUtils.isNotEmptyMap(desensitizedFields)) {
                 DesensitiveValueType valueType = desensitizedFields.get(name);
                 if (valueType != null) {
-                    return DesensitizedValueMaskingUtils.handle((String) value, valueType);
+                    return SensitiveValueMaskingUtils.handle((String) value, valueType);
                 }
             }
         }

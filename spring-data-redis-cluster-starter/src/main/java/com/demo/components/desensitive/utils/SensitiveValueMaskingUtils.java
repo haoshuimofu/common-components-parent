@@ -9,7 +9,7 @@ import java.util.regex.Pattern;
  * @author dewu.de
  * @date 2023-04-12 2:33 下午
  */
-public class DesensitizedValueMaskingUtils {
+public class SensitiveValueMaskingUtils {
 
     private static final Pattern NUMBER_PATTERN = Pattern.compile("\\d");
 
@@ -27,7 +27,7 @@ public class DesensitizedValueMaskingUtils {
     }
 
     public static String handleEmail(String email) {
-        if (DesensitizedCommonUtils.isNotEmptyString(email)) {
+        if (EmptyUtils.isNotEmptyString(email)) {
             int index = email.lastIndexOf("@");
             if (index != -1) {
                 return email.charAt(0) + COMMON_HIDDEN_VALUE + email.substring(index);
@@ -37,11 +37,11 @@ public class DesensitizedValueMaskingUtils {
     }
 
     public static String handlePersonName(String name) {
-        return DesensitizedCommonUtils.isNotEmptyString(name) ? name.charAt(0) + NAME_HIDDEN_VALUE : name;
+        return EmptyUtils.isNotEmptyString(name) ? name.charAt(0) + NAME_HIDDEN_VALUE : name;
     }
 
     public static String handleDetailedAddress(String detailedAddress) {
-        if (DesensitizedCommonUtils.isNotEmptyString(detailedAddress)) {
+        if (EmptyUtils.isNotEmptyString(detailedAddress)) {
             Matcher matcher = NUMBER_PATTERN.matcher(detailedAddress);
             if (matcher.find()) {
                 int index = matcher.start();
@@ -52,21 +52,21 @@ public class DesensitizedValueMaskingUtils {
     }
 
     public static String hidden(String content) {
-        return DesensitizedCommonUtils.isNotEmptyString(content) ? COMMON_HIDDEN_VALUE : content;
+        return EmptyUtils.isNotEmptyString(content) ? COMMON_HIDDEN_VALUE : content;
     }
 
     public static String handle(String value, DesensitiveValueType valueType) {
         switch (valueType) {
             case PERSON_NAME:
-                return DesensitizedValueMaskingUtils.handlePersonName(value);
+                return SensitiveValueMaskingUtils.handlePersonName(value);
             case EMAIL:
-                return DesensitizedValueMaskingUtils.handleEmail(value);
+                return SensitiveValueMaskingUtils.handleEmail(value);
             case MOBILE_PHONE:
-                return DesensitizedValueMaskingUtils.handlePhone(value);
+                return SensitiveValueMaskingUtils.handlePhone(value);
             case DETAILED_ADDRESS:
-                return DesensitizedValueMaskingUtils.handleDetailedAddress(value);
+                return SensitiveValueMaskingUtils.handleDetailedAddress(value);
             default:
-                return DesensitizedValueMaskingUtils.hidden(value);
+                return SensitiveValueMaskingUtils.hidden(value);
         }
     }
 

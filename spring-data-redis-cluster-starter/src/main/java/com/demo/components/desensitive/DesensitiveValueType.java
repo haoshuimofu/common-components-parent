@@ -1,6 +1,6 @@
 package com.demo.components.desensitive;
 
-import com.demo.components.desensitive.utils.DesensitizedCommonUtils;
+import com.demo.components.desensitive.utils.EmptyUtils;
 
 import java.util.Arrays;
 
@@ -39,7 +39,7 @@ public enum DesensitiveValueType {
      * @return
      */
     public static DesensitiveValueType nameOf(String name) {
-        if (DesensitizedCommonUtils.isNotEmptyString(name)) {
+        if (EmptyUtils.isNotEmptyString(name)) {
             return Arrays.stream(DesensitiveValueType.values())
                     .filter(vt -> vt.name().equalsIgnoreCase(name))
                     .findFirst().orElse(null);
