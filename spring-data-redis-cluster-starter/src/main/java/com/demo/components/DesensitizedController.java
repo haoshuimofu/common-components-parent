@@ -1,9 +1,9 @@
 package com.demo.components;
 
 import com.alibaba.fastjson.JSON;
-import com.demo.components.desensitized.DesensitizedLogHandler;
-import com.demo.components.desensitized.model.OrderConsumerModel;
-import com.demo.components.desensitized.model.OrderModel;
+import com.demo.components.desensitive.DesensitiveLogHandler;
+import com.demo.components.desensitive.model.OrderConsumerModel;
+import com.demo.components.desensitive.model.OrderModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -20,7 +20,7 @@ import java.util.UUID;
 public class DesensitizedController {
 
     @Autowired
-    private DesensitizedLogHandler desensitizedLogHandler;
+    private DesensitiveLogHandler desensitizedLogHandler;
 
     @RequestMapping("test")
     public Object test() {

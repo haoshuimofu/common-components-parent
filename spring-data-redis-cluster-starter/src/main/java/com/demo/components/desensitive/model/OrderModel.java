@@ -1,4 +1,4 @@
-package com.demo.components.desensitized.model;
+package com.demo.components.desensitive.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

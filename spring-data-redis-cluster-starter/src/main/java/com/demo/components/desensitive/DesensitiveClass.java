@@ -1,4 +1,4 @@
-package com.demo.components.desensitized;
+package com.demo.components.desensitive;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -15,7 +15,7 @@ import java.util.List;
 @NoArgsConstructor
 @Getter
 @Setter
-public class DesensitizedClass {
+public class DesensitiveClass {
 
     private String className;
     private List<DesensitizedField> fields;

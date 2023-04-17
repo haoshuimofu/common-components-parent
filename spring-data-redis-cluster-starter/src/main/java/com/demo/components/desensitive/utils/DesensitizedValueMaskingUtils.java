@@ -1,4 +1,6 @@
-package com.demo.components.desensitized.utils;
+package com.demo.components.desensitive.utils;
+
+import com.demo.components.desensitive.DesensitiveValueType;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -51,6 +53,21 @@ public class DesensitizedValueMaskingUtils {
 
     public static String hidden(String content) {
         return DesensitizedCommonUtils.isNotEmptyString(content) ? COMMON_HIDDEN_VALUE : content;
+    }
+
+    public static String handle(String value, DesensitiveValueType valueType) {
+        switch (valueType) {
+            case PERSON_NAME:
+                return DesensitizedValueMaskingUtils.handlePersonName(value);
+            case EMAIL:
+                return DesensitizedValueMaskingUtils.handleEmail(value);
+            case MOBILE_PHONE:
+                return DesensitizedValueMaskingUtils.handlePhone(value);
+            case DETAILED_ADDRESS:
+                return DesensitizedValueMaskingUtils.handleDetailedAddress(value);
+            default:
+                return DesensitizedValueMaskingUtils.hidden(value);
+        }
     }
 
     public static void main(String[] args) {

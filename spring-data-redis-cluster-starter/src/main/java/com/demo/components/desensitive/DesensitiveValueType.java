@@ -1,6 +1,6 @@
-package com.demo.components.desensitized;
+package com.demo.components.desensitive;
 
-import com.demo.components.desensitized.utils.DesensitizedCommonUtils;
+import com.demo.components.desensitive.utils.DesensitizedCommonUtils;
 
 import java.util.Arrays;
 
@@ -8,7 +8,7 @@ import java.util.Arrays;
  * @author dewu.de
  * @date 2023-04-14 2:14 下午
  */
-public enum DesensitizedValueType {
+public enum DesensitiveValueType {
 
     /**
      * 人的姓名
@@ -38,9 +38,9 @@ public enum DesensitizedValueType {
      * @param name
      * @return
      */
-    public static DesensitizedValueType nameOf(String name) {
+    public static DesensitiveValueType nameOf(String name) {
         if (DesensitizedCommonUtils.isNotEmptyString(name)) {
-            return Arrays.stream(DesensitizedValueType.values())
+            return Arrays.stream(DesensitiveValueType.values())
                     .filter(vt -> vt.name().equalsIgnoreCase(name))
                     .findFirst().orElse(null);
         }

@@ -1,2 +1,2 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-com.demo.components.redis.cluster.RedisClusterConfig,com.demo.components.desensitized.DesensitizedLogAutoConfiguration
+com.demo.components.redis.cluster.RedisClusterConfig,com.demo.components.desensitive.DesensitiveLogAutoConfiguration
