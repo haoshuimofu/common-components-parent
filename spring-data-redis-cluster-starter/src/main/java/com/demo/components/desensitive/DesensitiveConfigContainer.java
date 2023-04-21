@@ -2,95 +2,118 @@ package com.demo.components.desensitive;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
-import com.demo.components.desensitive.utils.EmptyUtils;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.MapUtils;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.BeanCreationException;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.support.ResourcePatternResolver;
 
 import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.List;
 
 /**
  * @author dewu.de
  * @date 2023-04-14 11:50 上午
  */
-public class DesensitiveConfigContainer {
+public class DesensitiveConfigContainer implements ApplicationContextAware {
 
-    private static final Logger log = LoggerFactory.getLogger(DesensitiveConfigContainer.class);
-    private static final String DESENSITIZED_LOG_CONFIG = "desensitized_config.json";
+    private static final Logger logger = LoggerFactory.getLogger(DesensitiveConfigContainer.class);
 
-    private final Map<Class<?>, Map<String, DesensitiveValueType>> desensitizedClassMap;
+    private final Map<Class<?>, Map<String, SensitiveValueType>> desensitiveConfig = new HashMap<>();
 
-    public DesensitiveConfigContainer() {
-        this.desensitizedClassMap = new HashMap<>();
-        InputStream is = this.getClass().getClassLoader().getResourceAsStream(DESENSITIZED_LOG_CONFIG);
-        if (is == null) {
-            return;
-        }
-        BufferedReader br = new BufferedReader(new InputStreamReader(is));
-        StringBuilder sb = new StringBuilder();
-        String line;
+    public Map<Class<?>, Map<String, SensitiveValueType>> cachedConfig() {
+        return desensitiveConfig;
+    }
+
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         try {
-            while ((line = br.readLine()) != null) {
-                sb.append(line);
+            Resource[] resources = applicationContext.getResources(ResourcePatternResolver.CLASSPATH_ALL_URL_PREFIX + "desensitive/*.json");
+            if (ArrayUtils.isNotEmpty(resources)) {
+                for (Resource resource : resources) {
+                    Map<Class<?>, Map<String, SensitiveValueType>> singleConfigMap = loadConfig(resource);
+                    if (MapUtils.isNotEmpty(singleConfigMap)) {
+                        desensitiveConfig.putAll(singleConfigMap);
+                    }
+                }
+            } else {
+                logger.warn("没有脱敏文件");
             }
-        } catch (IOException e) {
-            throw new DesensitiveConfigParseException("日志脱敏配置[" + DESENSITIZED_LOG_CONFIG + "]解析异常!", e);
-        } finally {
-            try {
-                br.close();
-            } catch (IOException ignored) {
-            }
+            logger.info("[日志脱敏] 配置解析完成: {}", JSON.toJSONString(desensitiveConfig));
+        } catch (BeanCreationException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new BeanCreationException("[日志脱敏] 配置读取解析失败!", e);
         }
-        String jsonConfig = sb.toString();
-        log.info("日志脱敏配置: {}", jsonConfig);
-        List<DesensitiveClass> desensitizedClasses = JSON.parseObject(jsonConfig, new TypeReference<List<DesensitiveClass>>() {
-        });
-        for (DesensitiveClass desensitizedClass : desensitizedClasses) {
-            Class<?> clazz = loadClass(desensitizedClass.getClassName());
-            if (clazz != null) {
-                Map<String, DesensitiveValueType> desensitizedFields = parseDesensitizedFields(desensitizedClass.getFields());
-                if (EmptyUtils.isNotEmptyMap(desensitizedFields)) {
-                    this.desensitizedClassMap.put(clazz, desensitizedFields);
+    }
+
+    private Map<Class<?>, Map<String, SensitiveValueType>> loadConfig(Resource resource) {
+        if (resource.exists()) {
+            Map<Class<?>, Map<String, SensitiveValueType>> configMap = new HashMap<>();
+            BufferedReader reader = null;
+            try {
+                reader = new BufferedReader(new InputStreamReader(resource.getInputStream()));
+                String jsonConfig = IOUtils.toString(reader);
+                logger.info("[日志脱敏] 配置内容: fileName={}, content={}", resource.getFilename(), jsonConfig);
+                List<SensitiveClass> sensitiveClasses = JSON.parseObject(jsonConfig, new TypeReference<List<SensitiveClass>>() {
+                });
+                for (SensitiveClass sensitiveClass : sensitiveClasses) {
+                    Class<?> clazz = loadClass(sensitiveClass.getClassName());
+                    if (clazz != null) {
+                        Map<String, SensitiveValueType> desensitizedFields = parseSensitiveFields(sensitiveClass.getFields());
+                        if (MapUtils.isNotEmpty(desensitizedFields)) {
+                            configMap.put(clazz, desensitizedFields);
+                        }
+                    }
+                }
+                logger.info("[日志脱敏] 配置解析完成: fileName={}, result={}", resource.getFilename(), JSON.toJSONString(configMap));
+            } catch (Exception e) {
+                throw new BeanCreationException("[日志脱敏] 配置解析失败! fileName=" + resource.getFilename(), e);
+            } finally {
+                if (reader != null) {
+                    IOUtils.closeQuietly(reader);
                 }
             }
         }
-        log.info("日志脱敏配置解析完成! result={}", JSON.toJSONString(desensitizedClassMap));
+        return null;
     }
 
     private Class<?> loadClass(String className) {
-        if (EmptyUtils.isNotEmptyString(className)) {
+        if (StringUtils.isNotEmpty(className)) {
             try {
                 return Class.forName(className);
             } catch (ClassNotFoundException e) {
-                log.error("解析日志脱敏配置错误, 加载不到Class={}", className);
+                logger.error("[日志脱敏] 加载不到脱敏类, class={}", className);
                 return null;
             }
         }
         return null;
     }
 
-    private Map<String, DesensitiveValueType> parseDesensitizedFields(List<DesensitiveClass.DesensitizedField> fields) {
-        if (EmptyUtils.isNotEmptyCollection(fields)) {
-            Map<String, DesensitiveValueType> fieldMap = new HashMap<>();
-            for (DesensitiveClass.DesensitizedField desensitizedField : fields) {
-                DesensitiveValueType desensitizedValueType = DesensitiveValueType.nameOf(desensitizedField.getValueType());
-                if (desensitizedValueType != null) {
-                    fieldMap.put(desensitizedField.getFieldName(), desensitizedValueType);
+    private Map<String, SensitiveValueType> parseSensitiveFields(List<SensitiveClass.SensitiveField> fields) {
+        if (CollectionUtils.isNotEmpty(fields)) {
+            Map<String, SensitiveValueType> fieldMap = new HashMap<>();
+            for (SensitiveClass.SensitiveField field : fields) {
+                SensitiveValueType valueType = SensitiveValueType.nameOf(field.getValueType());
+                if (valueType != null) {
+                    fieldMap.put(field.getFieldName(), valueType);
                 }
             }
             return fieldMap;
         }
         return Collections.emptyMap();
-    }
-
-    public Map<Class<?>, Map<String, DesensitiveValueType>> cachedConfig() {
-        return desensitizedClassMap;
     }
 
 }

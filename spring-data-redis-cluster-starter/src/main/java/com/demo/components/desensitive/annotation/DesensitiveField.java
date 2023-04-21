@@ -1,6 +1,6 @@
 package com.demo.components.desensitive.annotation;
 
-import com.demo.components.desensitive.DesensitiveValueType;
+import com.demo.components.desensitive.SensitiveValueType;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -19,6 +19,6 @@ public @interface DesensitiveField {
 
     boolean desensitized() default true;
 
-    DesensitiveValueType valueType() default DesensitiveValueType.DEFAULT;
+    SensitiveValueType valueType() default SensitiveValueType.DEFAULT;
 
 }

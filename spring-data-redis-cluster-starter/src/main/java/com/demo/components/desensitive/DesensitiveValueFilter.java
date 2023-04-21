@@ -12,18 +12,18 @@ import java.util.Map;
  */
 public class DesensitiveValueFilter implements ValueFilter {
 
-    private final Map<Class<?>, Map<String, DesensitiveValueType>> configMap;
+    private final Map<Class<?>, Map<String, SensitiveValueType>> configMap;
 
-    public DesensitiveValueFilter(Map<Class<?>, Map<String, DesensitiveValueType>> configMap) {
+    public DesensitiveValueFilter(Map<Class<?>, Map<String, SensitiveValueType>> configMap) {
         this.configMap = configMap;
     }
 
     @Override
     public Object process(Object object, String name, Object value) {
         if (value != null && value.getClass() == String.class) {
-            Map<String, DesensitiveValueType> desensitizedFields = configMap.get(object.getClass());
+            Map<String, SensitiveValueType> desensitizedFields = configMap.get(object.getClass());
             if (EmptyUtils.isNotEmptyMap(desensitizedFields)) {
-                DesensitiveValueType valueType = desensitizedFields.get(name);
+                SensitiveValueType valueType = desensitizedFields.get(name);
                 if (valueType != null) {
                     return SensitiveValueMaskingUtils.handle((String) value, valueType);
                 }

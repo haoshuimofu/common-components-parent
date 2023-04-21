@@ -15,16 +15,16 @@ import java.util.List;
 @NoArgsConstructor
 @Getter
 @Setter
-public class DesensitiveClass {
+public class SensitiveClass {
 
     private String className;
-    private List<DesensitizedField> fields;
+    private List<SensitiveField> fields;
 
     @AllArgsConstructor
     @NoArgsConstructor
     @Getter
     @Setter
-    public static class DesensitizedField {
+    public static class SensitiveField {
 
         private String fieldName;
         private String valueType;

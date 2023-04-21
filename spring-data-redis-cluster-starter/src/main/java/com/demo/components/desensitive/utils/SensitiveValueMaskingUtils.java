@@ -1,6 +1,6 @@
 package com.demo.components.desensitive.utils;
 
-import com.demo.components.desensitive.DesensitiveValueType;
+import com.demo.components.desensitive.SensitiveValueType;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -55,7 +55,7 @@ public class SensitiveValueMaskingUtils {
         return EmptyUtils.isNotEmptyString(content) ? COMMON_HIDDEN_VALUE : content;
     }
 
-    public static String handle(String value, DesensitiveValueType valueType) {
+    public static String handle(String value, SensitiveValueType valueType) {
         switch (valueType) {
             case PERSON_NAME:
                 return SensitiveValueMaskingUtils.handlePersonName(value);

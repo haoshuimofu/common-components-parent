@@ -8,7 +8,7 @@ import java.util.Arrays;
  * @author dewu.de
  * @date 2023-04-14 2:14 下午
  */
-public enum DesensitiveValueType {
+public enum SensitiveValueType {
 
     /**
      * 人的姓名
@@ -38,9 +38,9 @@ public enum DesensitiveValueType {
      * @param name
      * @return
      */
-    public static DesensitiveValueType nameOf(String name) {
+    public static SensitiveValueType nameOf(String name) {
         if (EmptyUtils.isNotEmptyString(name)) {
-            return Arrays.stream(DesensitiveValueType.values())
+            return Arrays.stream(SensitiveValueType.values())
                     .filter(vt -> vt.name().equalsIgnoreCase(name))
                     .findFirst().orElse(null);
         }

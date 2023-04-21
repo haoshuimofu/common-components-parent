@@ -6,6 +6,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration;
 import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
 import org.springframework.context.ApplicationContext;
+import org.springframework.core.io.ResourceLoader;
 
 /**
  * @author wude
@@ -18,6 +19,8 @@ public class RedisApplication {
     public static void main(String[] args) {
 
         ApplicationContext ctx = SpringApplication.run(RedisApplication.class, args);
+
+
 
 //        RedisProperties redisProperties = (RedisProperties) ctx.getBean("customRedisProperties");
 //        System.out.println("===> custom redis <===");
