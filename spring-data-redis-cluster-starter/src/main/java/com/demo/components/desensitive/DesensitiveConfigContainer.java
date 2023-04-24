@@ -17,6 +17,8 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Collections;
 import java.util.HashMap;
@@ -50,6 +52,8 @@ public class DesensitiveConfigContainer implements ApplicationContextAware {
             logger.info("[日志脱敏] 配置解析完成: {}", JSON.toJSONString(DESENSITIVE_CONFIG));
         } catch (BeanCreationException e) {
             throw e;
+        } catch (FileNotFoundException e) {
+            logger.error("[日志脱敏] FileNotFoundException, 可能未加载到日志脱敏配置json文件!");
         } catch (Exception e) {
             throw new BeanCreationException("[日志脱敏] 配置读取解析失败!", e);
         }
