@@ -11,11 +11,12 @@ import com.alibaba.fastjson.serializer.ValueFilter;
 public class SensitiveLogUtils {
 
     public static String toDesensitiveJson(Object obj) {
-        return JSON.toJSONString(obj, new SensitiveValueFilter(DesensitiveConfigContainer.DESENSITIVE_CONFIG), SerializerFeature.DisableCircularReferenceDetect);
+//        return JSON.toJSONString(obj, new SensitiveValueFilter(DesensitiveConfigContainer.DESENSITIVE_CONFIG), SerializerFeature.DisableCircularReferenceDetect);
+        return JSON.toJSONString(obj, new SensitiveValueFilter(DesensitiveConfigContainer.DESENSITIVE_CONFIG));
     }
 
     public static String toDesensitiveJson(Object obj, ValueFilter valueFilter) {
-        return JSON.toJSONString(obj, new ValueFilter[]{new SensitiveValueFilter(DesensitiveConfigContainer.DESENSITIVE_CONFIG), valueFilter}, SerializerFeature.DisableCircularReferenceDetect);
+        return JSON.toJSONString(obj, new ValueFilter[]{new SensitiveValueFilter(DesensitiveConfigContainer.DESENSITIVE_CONFIG), valueFilter});
     }
 
 }

@@ -17,6 +17,8 @@ import lombok.Setter;
 @Setter
 public class OrderConsumerModel {
 
+    private OrderModel order;
+
     @SensitiveField(valueType = SensitiveValueType.PERSON_NAME)
     private String name;
     @SensitiveField(valueType = SensitiveValueType.PHONE_NUMBER)

@@ -14,7 +14,7 @@ public abstract class AbstractSensitiveValueFilter implements ValueFilter {
 
     @Override
     public Object process(Object object, String name, Object value) {
-        if (value != null) {
+        if (value != null && value.getClass() == String.class) {
             try {
                 return filter(object, name, value);
             } catch (Exception e) {
@@ -22,7 +22,7 @@ public abstract class AbstractSensitiveValueFilter implements ValueFilter {
                 return value;
             }
         }
-        return null;
+        return value;
     }
 
     protected abstract Object filter(Object object, String name, Object value) throws Exception;

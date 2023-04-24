@@ -3,6 +3,7 @@ package com.demo.components.desensitive;
 import com.demo.components.desensitive.annotation.SensitiveField;
 import com.demo.components.desensitive.utils.SensitiveValueMaskingUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.annotation.AnnotationUtils;
 
 /**
  * @author dewu.de
