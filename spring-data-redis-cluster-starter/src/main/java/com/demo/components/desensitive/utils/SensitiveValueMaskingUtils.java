@@ -61,9 +61,9 @@ public class SensitiveValueMaskingUtils {
                 return SensitiveValueMaskingUtils.handlePersonName(value);
             case EMAIL:
                 return SensitiveValueMaskingUtils.handleEmail(value);
-            case MOBILE_PHONE:
+            case PHONE_NUMBER:
                 return SensitiveValueMaskingUtils.handlePhone(value);
-            case DETAILED_ADDRESS:
+            case ADDRESS:
                 return SensitiveValueMaskingUtils.handleDetailedAddress(value);
             default:
                 return SensitiveValueMaskingUtils.hidden(value);

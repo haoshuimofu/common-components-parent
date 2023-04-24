@@ -1,6 +1,6 @@
 [
   {
-    "className": "com.demo.components.desensitized.model.OrderModel",
+    "className": "com.demo.components.desensitive.model.OrderModel",
     "fields": [
       {
         "fieldName": "orderId",
@@ -13,7 +13,7 @@
     ]
   },
   {
-    "className": "com.demo.components.desensitized.model.OrderConsumerModel",
+    "className": "com.demo.components.desensitive.model.OrderConsumerModel",
     "fields": [
       {
         "fieldName": "name",
@@ -21,11 +21,11 @@
       },
       {
         "fieldName": "phone",
-        "valueType": "MOBILE_PHONE"
+        "valueType": "PHONE_NUMBER"
       },
       {
         "fieldName": "address",
-        "valueType": "DETAILED_ADDRESS"
+        "valueType": "ADDRESS"
       }
     ]
   },
@@ -34,19 +34,19 @@
     "fields": [
       {
         "fieldName": "primaryPhone",
-        "valueType": "phone"
+        "valueType": "PHONE_NUMBER"
       },
       {
         "fieldName": "secondPhone",
-        "valueType": "phone"
+        "valueType": "PHONE_NUMBER"
       },
       {
         "fieldName": "address",
-        "valueType": "address"
+        "valueType": "ADDRESS"
       },
       {
         "fieldName": "locationText",
-        "valueType": "address"
+        "valueType": "ADDRESS"
       }
     ]
   }

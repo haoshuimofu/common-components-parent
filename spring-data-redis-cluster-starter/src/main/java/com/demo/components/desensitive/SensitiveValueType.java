@@ -18,12 +18,12 @@ public enum SensitiveValueType {
     /**
      * 手机号码
      */
-    MOBILE_PHONE,
+    PHONE_NUMBER,
 
     /**
      * 详细地址
      */
-    DETAILED_ADDRESS,
+    ADDRESS,
 
     /**
      * 邮箱

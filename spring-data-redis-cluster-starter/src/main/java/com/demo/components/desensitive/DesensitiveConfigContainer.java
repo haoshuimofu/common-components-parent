@@ -14,7 +14,7 @@ import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.core.io.Resource;
-import org.springframework.core.io.support.ResourcePatternResolver;
+import org.springframework.core.io.ResourceLoader;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -31,27 +31,27 @@ public class DesensitiveConfigContainer implements ApplicationContextAware {
 
     private static final Logger logger = LoggerFactory.getLogger(DesensitiveConfigContainer.class);
 
-    private final Map<Class<?>, Map<String, SensitiveValueType>> desensitiveConfig = new HashMap<>();
+    public static final Map<Class<?>, Map<String, SensitiveValueType>> DESENSITIVE_CONFIG = new HashMap<>();
 
     public Map<Class<?>, Map<String, SensitiveValueType>> cachedConfig() {
-        return desensitiveConfig;
+        return DESENSITIVE_CONFIG;
     }
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         try {
-            Resource[] resources = applicationContext.getResources(ResourcePatternResolver.CLASSPATH_ALL_URL_PREFIX + "desensitive/*.json");
+            Resource[] resources = applicationContext.getResources(ResourceLoader.CLASSPATH_URL_PREFIX + "desensitive/*.json");
             if (ArrayUtils.isNotEmpty(resources)) {
                 for (Resource resource : resources) {
                     Map<Class<?>, Map<String, SensitiveValueType>> singleConfigMap = loadConfig(resource);
                     if (MapUtils.isNotEmpty(singleConfigMap)) {
-                        desensitiveConfig.putAll(singleConfigMap);
+                        DESENSITIVE_CONFIG.putAll(singleConfigMap);
                     }
                 }
             } else {
                 logger.warn("没有脱敏文件");
             }
-            logger.info("[日志脱敏] 配置解析完成: {}", JSON.toJSONString(desensitiveConfig));
+            logger.info("[日志脱敏] 配置解析完成: {}", JSON.toJSONString(DESENSITIVE_CONFIG));
         } catch (BeanCreationException e) {
             throw e;
         } catch (Exception e) {
@@ -61,7 +61,6 @@ public class DesensitiveConfigContainer implements ApplicationContextAware {
 
     private Map<Class<?>, Map<String, SensitiveValueType>> loadConfig(Resource resource) {
         if (resource.exists()) {
-            Map<Class<?>, Map<String, SensitiveValueType>> configMap = new HashMap<>();
             BufferedReader reader = null;
             try {
                 reader = new BufferedReader(new InputStreamReader(resource.getInputStream()));
@@ -69,6 +68,7 @@ public class DesensitiveConfigContainer implements ApplicationContextAware {
                 logger.info("[日志脱敏] 配置内容: fileName={}, content={}", resource.getFilename(), jsonConfig);
                 List<SensitiveClass> sensitiveClasses = JSON.parseObject(jsonConfig, new TypeReference<List<SensitiveClass>>() {
                 });
+                Map<Class<?>, Map<String, SensitiveValueType>> configMap = new HashMap<>();
                 for (SensitiveClass sensitiveClass : sensitiveClasses) {
                     Class<?> clazz = loadClass(sensitiveClass.getClassName());
                     if (clazz != null) {
@@ -79,6 +79,7 @@ public class DesensitiveConfigContainer implements ApplicationContextAware {
                     }
                 }
                 logger.info("[日志脱敏] 配置解析完成: fileName={}, result={}", resource.getFilename(), JSON.toJSONString(configMap));
+                return configMap;
             } catch (Exception e) {
                 throw new BeanCreationException("[日志脱敏] 配置解析失败! fileName=" + resource.getFilename(), e);
             } finally {
@@ -87,7 +88,7 @@ public class DesensitiveConfigContainer implements ApplicationContextAware {
                 }
             }
         }
-        return null;
+        return Collections.emptyMap();
     }
 
     private Class<?> loadClass(String className) {

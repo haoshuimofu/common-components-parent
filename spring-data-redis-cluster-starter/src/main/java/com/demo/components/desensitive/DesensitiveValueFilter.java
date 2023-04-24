@@ -20,7 +20,8 @@ public class DesensitiveValueFilter implements ValueFilter {
 
     @Override
     public Object process(Object object, String name, Object value) {
-        if (value != null && value.getClass() == String.class) {
+        System.err.println("class=" + object.getClass().getName() + ", field=" + name);
+        if (value != null) {
             Map<String, SensitiveValueType> desensitizedFields = configMap.get(object.getClass());
             if (EmptyUtils.isNotEmptyMap(desensitizedFields)) {
                 SensitiveValueType valueType = desensitizedFields.get(name);

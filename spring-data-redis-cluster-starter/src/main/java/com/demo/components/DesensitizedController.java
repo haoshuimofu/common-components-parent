@@ -1,7 +1,9 @@
 package com.demo.components;
 
 import com.alibaba.fastjson.JSON;
+import com.demo.components.desensitive.DesensitiveConfigContainer;
 import com.demo.components.desensitive.DesensitiveLogHandler;
+import com.demo.components.desensitive.DesensitiveValueFilter;
 import com.demo.components.desensitive.model.OrderConsumerModel;
 import com.demo.components.desensitive.model.OrderModel;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,6 +43,7 @@ public class DesensitizedController {
 
         System.out.println(JSON.toJSONString(orderModel));
         System.out.println(desensitizedLogHandler.toDesensitizedJson(orderModel));
+        System.out.println(JSON.toJSONString(orderModel, new DesensitiveValueFilter(DesensitiveConfigContainer.DESENSITIVE_CONFIG)));
         return "success";
 
     }

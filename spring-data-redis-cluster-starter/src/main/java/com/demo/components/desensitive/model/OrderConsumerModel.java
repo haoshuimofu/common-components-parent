@@ -19,12 +19,12 @@ public class OrderConsumerModel {
 
     @DesensitiveField(valueType = SensitiveValueType.PERSON_NAME)
     private String name;
-    @DesensitiveField(valueType = SensitiveValueType.MOBILE_PHONE)
+    @DesensitiveField(valueType = SensitiveValueType.PHONE_NUMBER)
     private String phone;
     private String province;
     private String city;
     private String district;
-    @DesensitiveField(valueType = SensitiveValueType.DETAILED_ADDRESS)
+    @DesensitiveField(valueType = SensitiveValueType.ADDRESS)
     private String address;
 
 
