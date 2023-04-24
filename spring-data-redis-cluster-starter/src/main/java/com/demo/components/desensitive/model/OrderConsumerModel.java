@@ -1,7 +1,7 @@
 package com.demo.components.desensitive.model;
 
 import com.demo.components.desensitive.SensitiveValueType;
-import com.demo.components.desensitive.annotation.DesensitiveField;
+import com.demo.components.desensitive.annotation.SensitiveField;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,14 +17,14 @@ import lombok.Setter;
 @Setter
 public class OrderConsumerModel {
 
-    @DesensitiveField(valueType = SensitiveValueType.PERSON_NAME)
+    @SensitiveField(valueType = SensitiveValueType.PERSON_NAME)
     private String name;
-    @DesensitiveField(valueType = SensitiveValueType.PHONE_NUMBER)
+    @SensitiveField(valueType = SensitiveValueType.PHONE_NUMBER)
     private String phone;
     private String province;
     private String city;
     private String district;
-    @DesensitiveField(valueType = SensitiveValueType.ADDRESS)
+    @SensitiveField(valueType = SensitiveValueType.ADDRESS)
     private String address;
 
 

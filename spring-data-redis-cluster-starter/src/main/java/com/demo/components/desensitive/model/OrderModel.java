@@ -2,7 +2,7 @@ package com.demo.components.desensitive.model;
 
 import com.alibaba.fastjson.JSON;
 import com.demo.components.desensitive.AnnotatedSensitiveValueFilter;
-import com.demo.components.desensitive.annotation.DesensitiveField;
+import com.demo.components.desensitive.annotation.SensitiveField;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,9 +21,9 @@ import java.util.UUID;
 @Setter
 public class OrderModel {
 
-    @DesensitiveField
+    @SensitiveField
     private String orderId;
-    @DesensitiveField
+    @SensitiveField
     private String orderNo;
     private Date createTime;
     private Date payTime;

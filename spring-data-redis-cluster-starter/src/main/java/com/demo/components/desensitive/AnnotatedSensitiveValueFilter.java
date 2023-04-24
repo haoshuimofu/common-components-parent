@@ -1,6 +1,6 @@
 package com.demo.components.desensitive;
 
-import com.demo.components.desensitive.annotation.DesensitiveField;
+import com.demo.components.desensitive.annotation.SensitiveField;
 import com.demo.components.desensitive.utils.SensitiveValueMaskingUtils;
 import lombok.extern.slf4j.Slf4j;
 
@@ -13,7 +13,7 @@ public class AnnotatedSensitiveValueFilter extends AbstractSensitiveValueFilter 
 
     @Override
     public Object filter(Object object, String name, Object value) throws Exception {
-        DesensitiveField dd = object.getClass().getDeclaredField(name).getAnnotation(DesensitiveField.class);
+        SensitiveField dd = object.getClass().getDeclaredField(name).getAnnotation(SensitiveField.class);
         if (dd != null && dd.desensitized()) {
             return SensitiveValueMaskingUtils.handle((String) value, dd.valueType());
         }
