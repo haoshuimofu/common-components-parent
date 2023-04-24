@@ -1,7 +1,7 @@
 package com.demo.components.desensitive.model;
 
 import com.alibaba.fastjson.JSON;
-import com.demo.components.desensitive.AnnotatedDesensitiveValueFilter;
+import com.demo.components.desensitive.AnnotatedSensitiveValueFilter;
 import com.demo.components.desensitive.annotation.DesensitiveField;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -48,7 +48,7 @@ public class OrderModel {
         orderModel.setConsumer(consumerModel);
 
         System.out.println(JSON.toJSONString(orderModel));
-        System.out.println(JSON.toJSONString(orderModel, new AnnotatedDesensitiveValueFilter()));
+        System.out.println(JSON.toJSONString(orderModel, new AnnotatedSensitiveValueFilter()));
     }
 
 

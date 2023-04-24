@@ -1,12 +1,8 @@
-package com.demo.components;
+package com.demo.components.desensitive;
 
 import com.alibaba.fastjson.JSON;
-import com.demo.components.desensitive.DesensitiveConfigContainer;
-import com.demo.components.desensitive.DesensitiveLogHandler;
-import com.demo.components.desensitive.DesensitiveValueFilter;
 import com.demo.components.desensitive.model.OrderConsumerModel;
 import com.demo.components.desensitive.model.OrderModel;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -20,9 +16,6 @@ import java.util.UUID;
 @RestController
 @RequestMapping("desensitized")
 public class DesensitizedController {
-
-    @Autowired
-    private DesensitiveLogHandler desensitizedLogHandler;
 
     @RequestMapping("test")
     public Object test() {
@@ -42,8 +35,8 @@ public class DesensitizedController {
         orderModel.setConsumer(consumerModel);
 
         System.out.println(JSON.toJSONString(orderModel));
-        System.out.println(desensitizedLogHandler.toDesensitizedJson(orderModel));
-        System.out.println(JSON.toJSONString(orderModel, new DesensitiveValueFilter(DesensitiveConfigContainer.DESENSITIVE_CONFIG)));
+        System.out.println(SensitiveLogUtils.toDesensitiveJson(orderModel));
+        System.out.println(JSON.toJSONString(orderModel, new SensitiveValueFilter(DesensitiveConfigContainer.DESENSITIVE_CONFIG)));
         return "success";
 
     }

@@ -33,19 +33,15 @@ public class DesensitiveConfigContainer implements ApplicationContextAware {
 
     public static final Map<Class<?>, Map<String, SensitiveValueType>> DESENSITIVE_CONFIG = new HashMap<>();
 
-    public Map<Class<?>, Map<String, SensitiveValueType>> cachedConfig() {
-        return DESENSITIVE_CONFIG;
-    }
-
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         try {
             Resource[] resources = applicationContext.getResources(ResourceLoader.CLASSPATH_URL_PREFIX + "desensitive/*.json");
             if (ArrayUtils.isNotEmpty(resources)) {
                 for (Resource resource : resources) {
-                    Map<Class<?>, Map<String, SensitiveValueType>> singleConfigMap = loadConfig(resource);
-                    if (MapUtils.isNotEmpty(singleConfigMap)) {
-                        DESENSITIVE_CONFIG.putAll(singleConfigMap);
+                    Map<Class<?>, Map<String, SensitiveValueType>> singleConfig = loadConfig(resource);
+                    if (MapUtils.isNotEmpty(singleConfig)) {
+                        DESENSITIVE_CONFIG.putAll(singleConfig);
                     }
                 }
             } else {

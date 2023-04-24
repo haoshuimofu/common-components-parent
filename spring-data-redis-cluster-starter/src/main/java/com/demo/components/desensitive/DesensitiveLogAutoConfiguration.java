@@ -14,10 +14,5 @@ public class DesensitiveLogAutoConfiguration {
     public DesensitiveConfigContainer desensitiveConfigContainer() {
         return new DesensitiveConfigContainer();
     }
-
-    @Bean
-    public DesensitiveLogHandler desensitiveLogHandler(DesensitiveConfigContainer configContainer) {
-        return new DesensitiveLogHandler(configContainer);
-    }
-
+    
 }
