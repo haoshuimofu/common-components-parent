@@ -1,6 +1,7 @@
 package com.demo.components.desensitive.model;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.annotation.JSONField;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.demo.components.desensitive.AnnotatedSensitiveValueFilter;
 import com.demo.components.desensitive.annotation.SensitiveField;
@@ -26,13 +27,10 @@ public class OrderModel {
     private String orderId;
     @SensitiveField
     private String orderNo;
+    @JSONField(serialize = false)
     private Date createTime;
     private Date payTime;
-
     private OrderConsumerModel consumer;
-
-    private OrderConsumerModel secondConsumer;
-
 
     public static void main(String[] args) {
         OrderModel orderModel = new OrderModel();
@@ -52,7 +50,7 @@ public class OrderModel {
 
 
         orderModel.setConsumer(consumerModel);
-        orderModel.setSecondConsumer(consumerModel);
+//        orderModel.setSecondConsumer(consumerModel);
 
 //        System.out.println(JSON.toJSONString(orderModel, SerializerFeature.DisableCircularReferenceDetect));
 //        System.out.println(JSON.toJSONString(orderModel, new AnnotatedSensitiveValueFilter(), SerializerFeature.DisableCircularReferenceDetect));
