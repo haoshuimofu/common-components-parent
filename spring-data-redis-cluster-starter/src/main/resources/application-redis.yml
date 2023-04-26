@@ -4,7 +4,7 @@ spring:
     cluster:
 #      nodes: 127.0.0.1:6000,127.0.0.1:7000,127.0.0.1:8000
       nodes: 127.0.0.1:6379
-      max-redirects: 8
+      max-redirects: 2 #
     jedis:
       pool:
         max-active: 8
@@ -16,6 +16,10 @@ spring:
       cluster:
 #        nodes: 127.0.0.1:6000,127.0.0.1:7000,127.0.0.1:8000
         nodes: 127.0.0.1:6379
+        #Redis max-redirects 用于限制 Redis 客户端在执行某些操作时可以执行的最大重定向次数。
+        #在 Redis 中，客户端可能会将请求发送到一个 Redis 节点，但由于某些原因，这个节点可能会将请求重定向到另一个节点。
+        #如果客户端在执行某些操作时遇到了多次重定向，可能会出现无限循环的问题。
+        #因此，max-redirects 可以限制客户端执行重定向的次数，以避免出现无限循环的情况。默认情况下，max-redirects 的值为 5。
         max-redirects: 1
       jedis:
         pool:
