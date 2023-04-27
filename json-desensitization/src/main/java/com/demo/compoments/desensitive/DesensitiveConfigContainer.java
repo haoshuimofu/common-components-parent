@@ -1,4 +1,4 @@
-package com.demo.components.desensitive;
+package com.demo.compoments.desensitive;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
@@ -18,7 +18,6 @@ import org.springframework.core.io.ResourceLoader;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Collections;
 import java.util.HashMap;

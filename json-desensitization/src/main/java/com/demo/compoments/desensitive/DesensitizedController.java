@@ -1,8 +1,8 @@
-package com.demo.components.desensitive;
+package com.demo.compoments.desensitive;
 
 import com.alibaba.fastjson.JSON;
-import com.demo.components.desensitive.model.OrderConsumerModel;
-import com.demo.components.desensitive.model.OrderModel;
+import com.demo.compoments.desensitive.model.OrderConsumerModel;
+import com.demo.compoments.desensitive.model.OrderModel;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 

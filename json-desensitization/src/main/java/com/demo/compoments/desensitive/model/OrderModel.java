@@ -1,10 +1,10 @@
-package com.demo.components.desensitive.model;
+package com.demo.compoments.desensitive.model;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.alibaba.fastjson.serializer.SerializerFeature;
-import com.demo.components.desensitive.AnnotatedSensitiveValueFilter;
-import com.demo.components.desensitive.annotation.SensitiveField;
+import com.demo.compoments.desensitive.AnnotatedSensitiveValueFilter;
+import com.demo.compoments.desensitive.annotation.SensitiveField;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

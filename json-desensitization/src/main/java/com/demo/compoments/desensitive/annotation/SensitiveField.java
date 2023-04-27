@@ -1,6 +1,6 @@
-package com.demo.components.desensitive.annotation;
+package com.demo.compoments.desensitive.annotation;
 
-import com.demo.components.desensitive.SensitiveValueType;
+import com.demo.compoments.desensitive.SensitiveValueType;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

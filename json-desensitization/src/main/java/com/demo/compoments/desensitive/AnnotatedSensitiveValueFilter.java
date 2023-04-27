@@ -1,7 +1,7 @@
-package com.demo.components.desensitive;
+package com.demo.compoments.desensitive;
 
-import com.demo.components.desensitive.annotation.SensitiveField;
-import com.demo.components.desensitive.utils.SensitiveValueMaskingUtils;
+import com.demo.compoments.desensitive.annotation.SensitiveField;
+import com.demo.compoments.desensitive.utils.SensitiveValueMaskingUtils;
 import lombok.extern.slf4j.Slf4j;
 
 /**

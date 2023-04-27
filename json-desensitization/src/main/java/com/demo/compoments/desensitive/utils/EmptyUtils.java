@@ -1,4 +1,4 @@
-package com.demo.components.desensitive.utils;
+package com.demo.compoments.desensitive.utils;
 
 import java.util.Collection;
 import java.util.Map;

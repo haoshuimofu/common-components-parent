@@ -23,6 +23,7 @@
         <module>spring-rocketmq</module>
         <module>shardingsphere</module>
         <module>web-test</module>
+        <module>json-desensitization</module>
     </modules>
 
     <properties>

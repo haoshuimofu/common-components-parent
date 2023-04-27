@@ -1,4 +1,4 @@
-package com.demo.components.desensitive;
+package com.demo.compoments.desensitive;
 
 import com.alibaba.fastjson.serializer.ValueFilter;
 import org.slf4j.Logger;

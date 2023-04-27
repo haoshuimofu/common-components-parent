@@ -1,6 +1,6 @@
-package com.demo.components.desensitive;
+package com.demo.compoments.desensitive;
 
-import com.demo.components.desensitive.utils.EmptyUtils;
+import com.demo.compoments.desensitive.utils.EmptyUtils;
 
 import java.util.Arrays;
 
