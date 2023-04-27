@@ -1,4 +1,4 @@
-package com.demo.compoments.desensitive;
+package com.demo.components.desensitive;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

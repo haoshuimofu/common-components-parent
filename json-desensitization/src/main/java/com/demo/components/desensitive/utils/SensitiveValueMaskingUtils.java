@@ -1,6 +1,6 @@
-package com.demo.compoments.desensitive.utils;
+package com.demo.components.desensitive.utils;
 
-import com.demo.compoments.desensitive.SensitiveValueType;
+import com.demo.components.desensitive.SensitiveValueType;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

@@ -1,2 +1,2 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-com.demo.compoments.desensitive.DesensitiveLogAutoConfiguration
+com.demo.components.desensitive.DesensitiveLogAutoConfiguration

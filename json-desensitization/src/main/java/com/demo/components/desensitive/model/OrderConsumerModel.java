@@ -1,7 +1,7 @@
-package com.demo.compoments.desensitive.model;
+package com.demo.components.desensitive.model;
 
-import com.demo.compoments.desensitive.SensitiveValueType;
-import com.demo.compoments.desensitive.annotation.SensitiveField;
+import com.demo.components.desensitive.SensitiveValueType;
+import com.demo.components.desensitive.annotation.SensitiveField;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

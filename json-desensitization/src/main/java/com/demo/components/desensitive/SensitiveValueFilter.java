@@ -1,7 +1,7 @@
-package com.demo.compoments.desensitive;
+package com.demo.components.desensitive;
 
-import com.demo.compoments.desensitive.utils.EmptyUtils;
-import com.demo.compoments.desensitive.utils.SensitiveValueMaskingUtils;
+import com.demo.components.desensitive.utils.EmptyUtils;
+import com.demo.components.desensitive.utils.SensitiveValueMaskingUtils;
 
 import java.util.Map;
 

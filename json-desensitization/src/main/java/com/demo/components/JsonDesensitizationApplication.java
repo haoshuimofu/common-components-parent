@@ -1,6 +1,7 @@
-package com.demo.compoments.desensitive;
+package com.demo.components;
 
 
+import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration;
 
@@ -9,10 +10,10 @@ import org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration;
  * @Create 2019-05-09 15:16
  */
 @SpringBootApplication(exclude = {RedisAutoConfiguration.class})
-public class Application {
+public class JsonDesensitizationApplication {
 
     public static void main(String[] args) {
-
+        SpringApplication.run(JsonDesensitizationApplication.class, args);
     }
 
 }
