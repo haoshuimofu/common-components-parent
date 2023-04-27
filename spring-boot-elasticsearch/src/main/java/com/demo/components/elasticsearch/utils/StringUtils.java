@@ -1,5 +1,7 @@
 package com.demo.components.elasticsearch.utils;
 
+import java.util.Collection;
+
 /**
  * @author wude
  * @date 2020/6/15 17:56
@@ -46,6 +48,21 @@ public class StringUtils {
             return str;
         }
         return null;
+    }
+
+    public static String join(Collection<String> collection, String splitChar) {
+        if (CollectionUtils.isEmpty(collection)) {
+            return EMPTY;
+        }
+        StringBuilder sb = new StringBuilder();
+        int index = 0;
+        for (String str : collection) {
+            sb.append(str);
+            if (index != collection.size() - 1) {
+                sb.append(splitChar);
+            }
+        }
+        return sb.toString();
     }
 
 }

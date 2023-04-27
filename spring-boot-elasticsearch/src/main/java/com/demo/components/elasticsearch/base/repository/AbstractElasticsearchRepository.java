@@ -53,10 +53,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 
 import static org.elasticsearch.client.RequestOptions.DEFAULT;
 
@@ -553,39 +550,39 @@ public abstract class AbstractElasticsearchRepository<T extends BaseIndexModel> 
      */
     private void checkEntityClass() {
         ESDocument esDocument = entityClass.getAnnotation(ESDocument.class);
-        Assert.notNull(esDocument,
-                String.format("索引模型类[%s]缺少文档定义注解[@%s].",
-                        entityClass.getSimpleName(), ESDocument.class.getSimpleName()));
-        Assert.isTrue(esDocument.index().trim().length() > 0,
-                String.format("索引模型类[%s]注解中定义的index无效!", entityClass.getSimpleName()));
+
+        Assert.notNull(esDocument, String.format("索引模型类[%s]缺少文档定义注解[@%s].", entityClass.getSimpleName(), ESDocument.class.getSimpleName()));
+        Assert.isTrue(esDocument.index().trim().length() > 0, String.format("索引模型类[%s]注解中定义的index无效!", entityClass.getSimpleName()));
         // 校验join-field定义
-        com.demo.components.elasticsearch.annotation.JoinField joinField = esDocument.join();
+        JoinField joinField = esDocument.join();
         if (joinField.type() != JoinFieldTypeEnum.NONE) {
             Assert.isTrue(joinField.field().trim().length() > 0,
                     String.format("索引mappings中join-field属性名为空，请在索引模型类[%s]注解中定义!", entityClass.getSimpleName()));
             Assert.isTrue(joinField.name().trim().length() > 0,
                     String.format("索引join-field中name属性值为空, 请在索引模型类[%s]注解中定义!", entityClass.getSimpleName()));
         }
-        Field idField = null;
-        Field routingField = null;
-        Field parentField = null;
+        Set<String> idFields = new HashSet<>();
+        Set<String> routingKeyFields = new HashSet<>();
+        Set<String> parentFields = new HashSet<>();
         for (Field field : entityClass.getDeclaredFields()) {
-            field.setAccessible(true);
             if (field.getAnnotation(ESID.class) != null) {
-                Assert.isTrue(idField == null,
-                        String.format("索引模型类[%s]至多只能有一个被注解[@%s]标注的属性!", entityClass.getSimpleName(), ESID.class.getSimpleName()));
-                idField = field;
+                idFields.add(field.getName());
             }
             if (field.getAnnotation(ESRouting.class) != null) {
-                Assert.isTrue(routingField == null,
-                        String.format("索引模型类[%s]至多只能有一个被注解[@%s]标注的属性!", entityClass.getSimpleName(), ESRouting.class.getSimpleName()));
-                routingField = field;
+                routingKeyFields.add(field.getName());
             }
             if (field.getAnnotation(ESParent.class) != null) {
-                Assert.isTrue(parentField == null,
-                        String.format("索引模型类[%s]至多只能有一个被注解[@%s]标注的属性!", entityClass.getSimpleName(), ESParent.class.getSimpleName()));
-                parentField = field;
+                parentFields.add(field.getName());
             }
+        }
+        if (idFields.size() > 1) {
+            throw new IllegalArgumentException(String.format("ES索引模型类至多只能有一个ID列! class=%s, id fields=[%s]", entityClass.getName(), StringUtils.join(idFields, ",")));
+        }
+        if (routingKeyFields.size() > 1) {
+            throw new IllegalArgumentException(String.format("ES索引模型类至多只能有一个RoutingKey列! class=%s, routing key fields=[%s]", entityClass.getName(), StringUtils.join(routingKeyFields, ",")));
+        }
+        if (parentFields.size() > 1) {
+            throw new IllegalArgumentException(String.format("ES索引模型类至多只能有一个Parent列! class=%s, routing key fields=[%s]", entityClass.getName(), StringUtils.join(parentFields, ",")));
         }
         this.index = esDocument.index();
         this.schema = StringUtils.trimToNull(esDocument.schema());
