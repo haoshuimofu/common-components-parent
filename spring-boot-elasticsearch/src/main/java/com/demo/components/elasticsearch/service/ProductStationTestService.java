@@ -1,7 +1,7 @@
 package com.demo.components.elasticsearch.service;
 
 import com.alibaba.fastjson.JSONObject;
-import com.demo.components.elasticsearch.config.ESRestClient;
+import com.demo.components.elasticsearch.config.ESRestClientBuilder;
 import com.demo.components.elasticsearch.config.ESRestProperties;
 import com.demo.components.elasticsearch.model.Product;
 import com.demo.components.elasticsearch.model.StationProduct;
@@ -15,6 +15,7 @@ import com.demo.components.elasticsearch.utils.ListUtils;
 import org.elasticsearch.action.admin.indices.flush.FlushRequest;
 import org.elasticsearch.action.admin.indices.flush.FlushResponse;
 import org.elasticsearch.client.RequestOptions;
+import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.client.indices.CreateIndexRequest;
 import org.elasticsearch.client.indices.CreateIndexResponse;
 import org.elasticsearch.client.indices.GetIndexRequest;
@@ -72,13 +73,12 @@ public class ProductStationTestService implements InitializingBean {
         ESRestProperties remoteProperties = new ESRestProperties();
         remoteProperties.setSchema(remoteSchema);
         remoteProperties.setServers(remoteAddress);
-        ESRestClient remoteRestClient = new ESRestClient("evn", remoteProperties);
+        RestHighLevelClient remoteRestClient = ESRestClientBuilder.buildRestClient(remoteProperties);
 
         // 先判断source index在destination是否存在，如果不存在，根据source index创建索引
         String sourceIndex = stationProductRepository.getIndex();
         String destinationIndex = "destination_index";
-        boolean isIndexExistsOnDestination = remoteRestClient.getRestClient()
-                .indices().exists(new GetIndexRequest(destinationIndex), RequestOptions.DEFAULT);
+        boolean isIndexExistsOnDestination = remoteRestClient.indices().exists(new GetIndexRequest(destinationIndex), RequestOptions.DEFAULT);
         if (!isIndexExistsOnDestination) {
             // 本来想通过source index直接创建destination index, 但是getSetting getMappings不太方面
             // 假设知道索引结构(settings和mappings)
@@ -230,8 +230,7 @@ public class ProductStationTestService implements InitializingBean {
             if (indexSchemaJson.containsKey("settings")) {
                 createIndexRequest.settings(indexSchemaJson.getJSONObject("settings"));
             }
-            CreateIndexResponse createIndexResponse = remoteRestClient.getRestClient()
-                    .indices().create(createIndexRequest, RequestOptions.DEFAULT);
+            CreateIndexResponse createIndexResponse = remoteRestClient.indices().create(createIndexRequest, RequestOptions.DEFAULT);
             boolean success = createIndexResponse != null && createIndexResponse.isAcknowledged();
             if (!success) {
                 logger.error("### 目标索引创建失败! index=[{}].", destinationIndex);
@@ -268,9 +267,9 @@ public class ProductStationTestService implements InitializingBean {
                 TimeValue.timeValueMillis(3000)
         );
         reindexRequest.setRemoteInfo(remoteInfo);
-        BulkByScrollResponse response = remoteRestClient.getRestClient().reindex(reindexRequest, RequestOptions.DEFAULT);
+        BulkByScrollResponse response = remoteRestClient.reindex(reindexRequest, RequestOptions.DEFAULT);
         FlushRequest flushRequest = new FlushRequest(destinationIndex);
-        FlushResponse flushResponse = remoteRestClient.getRestClient().indices().flush(flushRequest, RequestOptions.DEFAULT);
+        FlushResponse flushResponse = remoteRestClient.indices().flush(flushRequest, RequestOptions.DEFAULT);
         if (flushResponse == null || flushResponse.getStatus() != RestStatus.OK) {
             logger.error("### 目标索引flush失败! index=[{}].", destinationIndex);
         }

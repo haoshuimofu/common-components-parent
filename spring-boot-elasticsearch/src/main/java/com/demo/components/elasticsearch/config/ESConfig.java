@@ -7,8 +7,10 @@ import java.util.Map;
 /**
  * Elasticsearch environment config
  */
-@ConfigurationProperties(prefix = "elasticsearch.config")
+@ConfigurationProperties(prefix = ESConfig.CONFIG_PREFIX)
 public class ESConfig {
+
+    public static final String CONFIG_PREFIX = "elasticsearch.config";
 
     private Map<String, ESRestProperties> clusters;
     private int retryOnConflict = 3;
@@ -28,4 +30,5 @@ public class ESConfig {
     public void setRetryOnConflict(int retryOnConflict) {
         this.retryOnConflict = retryOnConflict;
     }
+
 }

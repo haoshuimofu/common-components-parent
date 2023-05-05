@@ -1,5 +1,6 @@
 package com.demo.components.elasticsearch.config;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -12,9 +13,10 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 @EnableConfigurationProperties(value = {ESConfig.class})
-public class ESRestClientAutoConfig {
+public class ESRestClientAutoConfiguration {
 
     @Bean
+    @ConditionalOnMissingBean(value = ESRestClientContainer.class)
     public ESRestClientContainer restClientContainer(ESConfig esConfig) throws Exception {
         return new ESRestClientContainer(esConfig);
     }

@@ -13,36 +13,17 @@ import org.apache.http.util.Args;
 import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestClientBuilder;
 import org.elasticsearch.client.RestHighLevelClient;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.DisposableBean;
-import org.springframework.util.Assert;
 
 /**
  * Elasticsearch Rest client based on RestHighLevelClient
  */
-public class ESRestClient implements DisposableBean {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(ESRestClient.class);
+public class ESRestClientBuilder {
 
     private static final String DEFAULT_SCHEME_NAME = "http";
-
     private static final String SERVER_SPLIT_CHAR = ";";
     private static final String HOST_PORT_SPLIT_CHAR = ":";
 
-    private String cluster;
-    private ESRestProperties properties;
-    private RestHighLevelClient restClient;
-
-    public ESRestClient(String cluster, ESRestProperties properties) throws IOReactorException {
-        Assert.isTrue(cluster != null && !cluster.isEmpty(), "Elasticsearch cluster is empty!");
-        Assert.notNull(properties, "Elasticsearch rest properties is null!");
-        this.cluster = cluster;
-        this.properties = properties;
-        this.restClient = buildRestClient();
-    }
-
-    private RestHighLevelClient buildRestClient() throws IOReactorException {
+    public static RestHighLevelClient buildRestClient(ESRestProperties properties) throws IOReactorException {
         String schema = properties.getSchema();
         if (schema == null || schema.isEmpty()) {
             schema = DEFAULT_SCHEME_NAME;
@@ -112,19 +93,4 @@ public class ESRestClient implements DisposableBean {
         return new RestHighLevelClient(builder);
     }
 
-    public RestHighLevelClient getRestClient() {
-        return restClient;
-    }
-
-    @Override
-    public void destroy() {
-        if (this.restClient != null) {
-            try {
-                this.restClient.close();
-                LOGGER.info("### Elasticsearch RestClient was destroyed! cluster=[{}].", cluster);
-            } catch (Exception e) {
-                LOGGER.error("### Elasticsearch RestClient destroyed error! cluster=[{}].", cluster, e);
-            }
-        }
-    }
 }
