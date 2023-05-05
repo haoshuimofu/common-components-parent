@@ -1,0 +1,11 @@
+1. JVM内存结构？
+JVM（Java Virtual Machine）内存结构可分为以下5个部分：
+程序计数器（Program Counter Register）：存储当前线程正在执行的指令的地址，每个线程都有自己独立的程序计数器。
+
+Java虚拟机栈（Java Virtual Machine Stacks）：每个线程都有独立的栈空间，用于存储局部变量、方法参数、方法调用和返回等信息。每个方法的调用都会创建一个栈帧（Stack Frame），方法结束后栈帧被销毁。
+
+堆（Heap）：用于存储Java对象，所有线程共享堆空间。在堆中分配内存时，先从新生代（Young Generation）分配，再经过多次回收后，如果对象仍然存活，则会被移动到老年代（Old Generation）。
+
+方法区（Method Area）：用于存储类信息、常量池、静态变量等数据，也是所有线程共享的。方法区也被称为永久代（PermGen）。
+
+本地方法栈（Native Method Stacks）：用于执行本地方法（Native Method）的栈空间。本地方法是使用非Java语言编写的方法，例如C语言。
