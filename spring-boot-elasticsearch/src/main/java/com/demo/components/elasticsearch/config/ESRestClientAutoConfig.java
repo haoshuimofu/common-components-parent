@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 @EnableConfigurationProperties(value = {ESConfig.class})
-public class ESAutoConfiguration {
+public class ESRestClientAutoConfig {
 
     @Bean
     public ESRestClientContainer restClientContainer(ESConfig esConfig) throws Exception {

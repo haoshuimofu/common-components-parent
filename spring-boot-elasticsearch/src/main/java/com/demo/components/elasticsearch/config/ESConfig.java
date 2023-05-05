@@ -10,15 +10,15 @@ import java.util.Map;
 @ConfigurationProperties(prefix = "elasticsearch.config")
 public class ESConfig {
 
-    private Map<String, ESRestProperties> environment;
+    private Map<String, ESRestProperties> clusters;
     private int retryOnConflict = 3;
 
-    public Map<String, ESRestProperties> getEnvironment() {
-        return environment;
+    public Map<String, ESRestProperties> getClusters() {
+        return clusters;
     }
 
-    public void setEnvironment(Map<String, ESRestProperties> environment) {
-        this.environment = environment;
+    public void setClusters(Map<String, ESRestProperties> clusters) {
+        this.clusters = clusters;
     }
 
     public int getRetryOnConflict() {
@@ -28,5 +28,4 @@ public class ESConfig {
     public void setRetryOnConflict(int retryOnConflict) {
         this.retryOnConflict = retryOnConflict;
     }
-
 }

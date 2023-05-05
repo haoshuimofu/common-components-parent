@@ -30,8 +30,8 @@ public class ESRestClientContainer implements DisposableBean {
         LOGGER.info(JSON.toJSONString(esConfig, true));
         LOGGER.info("### --->>> Elasticsearch config <<<---");
 
-        if (esConfig.getEnvironment() != null && !esConfig.getEnvironment().isEmpty()) {
-            for (Map.Entry<String, ESRestProperties> entry : esConfig.getEnvironment().entrySet()) {
+        if (esConfig.getClusters() != null && !esConfig.getClusters().isEmpty()) {
+            for (Map.Entry<String, ESRestProperties> entry : esConfig.getClusters().entrySet()) {
                 restClients.put(entry.getKey(), new ESRestClient(entry.getKey(), entry.getValue()));
             }
         }
@@ -50,7 +50,7 @@ public class ESRestClientContainer implements DisposableBean {
 
     @Override
     public void destroy() throws Exception {
-        if (esConfig.getEnvironment() != null && !esConfig.getEnvironment().isEmpty()) {
+        if (!restClients.isEmpty()) {
             for (Map.Entry<String, ESRestClient> entry : restClients.entrySet()) {
                 entry.getValue().destroy();
             }

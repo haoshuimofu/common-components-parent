@@ -30,14 +30,14 @@ public class ESRestClient implements DisposableBean {
     private static final String SERVER_SPLIT_CHAR = ";";
     private static final String HOST_PORT_SPLIT_CHAR = ":";
 
-    private String environment;
+    private String cluster;
     private ESRestProperties properties;
     private RestHighLevelClient restClient;
 
-    public ESRestClient(String environment, ESRestProperties properties) throws IOReactorException {
-        Assert.isTrue(environment != null && !environment.isEmpty(), "Elasticsearch env is empty!");
+    public ESRestClient(String cluster, ESRestProperties properties) throws IOReactorException {
+        Assert.isTrue(cluster != null && !cluster.isEmpty(), "Elasticsearch cluster is empty!");
         Assert.notNull(properties, "Elasticsearch rest properties is null!");
-        this.environment = environment;
+        this.cluster = cluster;
         this.properties = properties;
         this.restClient = buildRestClient();
     }
@@ -117,13 +117,13 @@ public class ESRestClient implements DisposableBean {
     }
 
     @Override
-    public void destroy() throws Exception {
+    public void destroy() {
         if (this.restClient != null) {
             try {
                 this.restClient.close();
-                LOGGER.info("### Elasticsearch RestClient was destroyed! env=[{}].", environment);
+                LOGGER.info("### Elasticsearch RestClient was destroyed! cluster=[{}].", cluster);
             } catch (Exception e) {
-                LOGGER.error("### Elasticsearch RestClient destroyed error! env=[{}].", environment, e);
+                LOGGER.error("### Elasticsearch RestClient destroyed error! cluster=[{}].", cluster, e);
             }
         }
     }
