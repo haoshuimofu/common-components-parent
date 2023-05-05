@@ -47,6 +47,7 @@ public class ESRestClientBuilder {
                                 properties.getConnectionRequestTimeout() : RestClientBuilder.DEFAULT_CONNECT_TIMEOUT_MILLIS));
 
         final IOReactorConfig ioReactorConfig = IOReactorConfig.custom()
+                .setIoThreadCount(1)
                 .setConnectTimeout(Math.max(properties.getConnectTimeout(), 0))
                 .setSoTimeout(Math.max(properties.getSocketTimeout(), 0))
                 .setSoKeepAlive(true)
