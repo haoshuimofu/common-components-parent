@@ -127,11 +127,9 @@ public class HttpClientTest {
     }
 
     public void keepAlive() {
-        ConnectionKeepAliveStrategy keepAliveStrat = new DefaultConnectionKeepAliveStrategy() {
+        ConnectionKeepAliveStrategy keepAliveStrategy = new DefaultConnectionKeepAliveStrategy() {
             @Override
-            public long getKeepAliveDuration(
-                    HttpResponse response,
-                    HttpContext context) {
+            public long getKeepAliveDuration(HttpResponse response, HttpContext context) {
                 long keepAlive = super.getKeepAliveDuration(response, context);
                 if (keepAlive == -1) {
                     // Keep connections alive 5 seconds if a keep-alive value
@@ -143,7 +141,7 @@ public class HttpClientTest {
 
         };
         CloseableHttpClient httpclient = HttpClients.custom()
-                .setKeepAliveStrategy(keepAliveStrat)
+                .setKeepAliveStrategy(keepAliveStrategy)
                 .build();
     }
 }

@@ -1,15 +1,14 @@
 package com.demo.components.elasticsearch.config;
 
-import org.apache.http.HeaderElement;
-import org.apache.http.HeaderElementIterator;
 import org.apache.http.HttpHost;
+import org.apache.http.HttpResponse;
+import org.apache.http.conn.ConnectionKeepAliveStrategy;
+import org.apache.http.impl.client.DefaultConnectionKeepAliveStrategy;
 import org.apache.http.impl.nio.conn.PoolingNHttpClientConnectionManager;
 import org.apache.http.impl.nio.reactor.DefaultConnectingIOReactor;
 import org.apache.http.impl.nio.reactor.IOReactorConfig;
-import org.apache.http.message.BasicHeaderElementIterator;
 import org.apache.http.nio.reactor.IOReactorException;
-import org.apache.http.protocol.HTTP;
-import org.apache.http.util.Args;
+import org.apache.http.protocol.HttpContext;
 import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestClientBuilder;
 import org.elasticsearch.client.RestHighLevelClient;
@@ -48,7 +47,6 @@ public class ESRestClientBuilder {
                                 properties.getConnectionRequestTimeout() : RestClientBuilder.DEFAULT_CONNECT_TIMEOUT_MILLIS));
 
         final IOReactorConfig ioReactorConfig = IOReactorConfig.custom()
-                .setIoThreadCount(1)
                 .setConnectTimeout(Math.max(properties.getConnectTimeout(), 0))
                 .setSoTimeout(Math.max(properties.getSocketTimeout(), 0))
                 .setSoKeepAlive(true)
@@ -63,23 +61,20 @@ public class ESRestClientBuilder {
         // 设置HttpClientConfigCallback
         builder.setHttpClientConfigCallback(httpClientBuilder -> {
             httpClientBuilder.disableAuthCaching();
-            return httpClientBuilder.setKeepAliveStrategy((response, context) -> {
-                Args.notNull(response, "HTTP response");
-                final HeaderElementIterator it = new BasicHeaderElementIterator(
-                        response.headerIterator(HTTP.CONN_KEEP_ALIVE));
-                while (it.hasNext()) {
-                    final HeaderElement he = it.nextElement();
-                    final String param = he.getName();
-                    final String value = he.getValue();
-                    if (value != null && param.equalsIgnoreCase("timeout")) {
-                        try {
-                            return Long.parseLong(value) * 1000;
-                        } catch (final NumberFormatException ignore) {
-                        }
+            ConnectionKeepAliveStrategy keepAliveStrategy = new DefaultConnectionKeepAliveStrategy() {
+                @Override
+                public long getKeepAliveDuration(HttpResponse response, HttpContext context) {
+                    long keepAliveDuration = super.getKeepAliveDuration(response, context);
+                    if (keepAliveDuration == -1) {
+                        // Keep connections alive 5 seconds if a keep-alive value has not be explicitly set by the server
+                        keepAliveDuration = 5 * 1000L;
                     }
+                    return keepAliveDuration;
                 }
-                return 30 * 1000;
-            }).setConnectionManager(connManager);
+            };
+            return httpClientBuilder
+                    .setKeepAliveStrategy(keepAliveStrategy)
+                    .setConnectionManager(connManager);
             // return httpClientBuilder.setConnectionManager(connManager);
             // 如果没有自定义ConnectionManager则内部实现还是会创建一个, 并发数用一下两个参数
             //.setMaxConnPerRoute(restProperties.getDefaultMaxPerRoute())
@@ -91,7 +86,6 @@ public class ESRestClientBuilder {
             //        .setSocketTimeout(socketTimeout)
             //       .build());
         });
-
         return new RestHighLevelClient(builder);
     }
 
