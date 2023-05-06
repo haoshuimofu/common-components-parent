@@ -2,6 +2,7 @@ package com.demo.components.elasticsearch.config;
 
 import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.conn.ConnectionKeepAliveStrategy;
 import org.apache.http.impl.client.DefaultConnectionKeepAliveStrategy;
 import org.apache.http.impl.nio.conn.PoolingNHttpClientConnectionManager;
@@ -36,30 +37,23 @@ public class ESRestClientBuilder {
             httpHosts[i] = new HttpHost(hostAndPort[0], Integer.parseInt(hostAndPort[1]), schema);
         }
 
-        RestClientBuilder builder = RestClient.builder(httpHosts);
-        builder.setRequestConfigCallback(
-                requestConfigBuilder -> requestConfigBuilder
-                        .setConnectTimeout(properties.getConnectTimeout() > 0 ?
-                                properties.getConnectTimeout() : RestClientBuilder.DEFAULT_CONNECT_TIMEOUT_MILLIS)
-                        .setSocketTimeout(properties.getSocketTimeout() > 0 ?
-                                properties.getSocketTimeout() : RestClientBuilder.DEFAULT_SOCKET_TIMEOUT_MILLIS)
-                        .setConnectionRequestTimeout(properties.getConnectionRequestTimeout() > 0 ?
-                                properties.getConnectionRequestTimeout() : RestClientBuilder.DEFAULT_CONNECT_TIMEOUT_MILLIS));
+        RestClientBuilder restClientBuilder = RestClient.builder(httpHosts);
+        restClientBuilder.setRequestConfigCallback(requestConfigBuilder -> RequestConfig.custom()
+                .setConnectTimeout(properties.getConnectTimeout() > 0 ? properties.getConnectTimeout() : RequestConstants.DEFAULT_CONNECT_TIMEOUT_MILLIS)
+                .setSocketTimeout(properties.getSocketTimeout() > 0 ? properties.getSocketTimeout() : RequestConstants.DEFAULT_SOCKET_TIMEOUT_MILLIS)
+                .setConnectionRequestTimeout(properties.getConnectionRequestTimeout() > 0 ? properties.getConnectionRequestTimeout() : RequestConstants.DEFAULT_CONNECT_TIMEOUT_MILLIS));
 
         final IOReactorConfig ioReactorConfig = IOReactorConfig.custom()
                 .setConnectTimeout(Math.max(properties.getConnectTimeout(), 0))
                 .setSoTimeout(Math.max(properties.getSocketTimeout(), 0))
                 .setSoKeepAlive(true)
                 .build();
-        final PoolingNHttpClientConnectionManager connManager =
-                new PoolingNHttpClientConnectionManager(new DefaultConnectingIOReactor(ioReactorConfig));
-        connManager.setDefaultMaxPerRoute(properties.getDefaultMaxPerRoute() > 0 ?
-                properties.getDefaultMaxPerRoute() : RestClientBuilder.DEFAULT_MAX_CONN_PER_ROUTE);
-        connManager.setMaxTotal(properties.getMaxTotal() > 0 ?
-                properties.getMaxTotal() : RestClientBuilder.DEFAULT_MAX_CONN_TOTAL);
+        PoolingNHttpClientConnectionManager connManager = new PoolingNHttpClientConnectionManager(new DefaultConnectingIOReactor(ioReactorConfig));
+        connManager.setDefaultMaxPerRoute(properties.getDefaultMaxPerRoute() > 0 ? properties.getDefaultMaxPerRoute() : RestClientBuilder.DEFAULT_MAX_CONN_PER_ROUTE);
+        connManager.setMaxTotal(properties.getMaxTotal() > 0 ? properties.getMaxTotal() : RestClientBuilder.DEFAULT_MAX_CONN_TOTAL);
 
         // 设置HttpClientConfigCallback
-        builder.setHttpClientConfigCallback(httpClientBuilder -> {
+        restClientBuilder.setHttpClientConfigCallback(httpClientBuilder -> {
             httpClientBuilder.disableAuthCaching();
             ConnectionKeepAliveStrategy keepAliveStrategy = new DefaultConnectionKeepAliveStrategy() {
                 @Override
@@ -72,9 +66,7 @@ public class ESRestClientBuilder {
                     return keepAliveDuration;
                 }
             };
-            return httpClientBuilder
-                    .setKeepAliveStrategy(keepAliveStrategy)
-                    .setConnectionManager(connManager);
+            return httpClientBuilder.setKeepAliveStrategy(keepAliveStrategy).setConnectionManager(connManager);
             // return httpClientBuilder.setConnectionManager(connManager);
             // 如果没有自定义ConnectionManager则内部实现还是会创建一个, 并发数用一下两个参数
             //.setMaxConnPerRoute(restProperties.getDefaultMaxPerRoute())
@@ -86,7 +78,7 @@ public class ESRestClientBuilder {
             //        .setSocketTimeout(socketTimeout)
             //       .build());
         });
-        return new RestHighLevelClient(builder);
+        return new RestHighLevelClient(restClientBuilder);
     }
 
 }
