@@ -16,6 +16,8 @@ import org.elasticsearch.client.RestHighLevelClient;
 
 /**
  * Elasticsearch Rest client based on RestHighLevelClient
+ * connectionTimeout: 建立TCP连接的超时时间。客户端尝试向服务端发起连接，如果在指定的时间内没有得到服务器的响应，则会抛出连接超时异常。
+ * connectionRequestTimeout: 从连接池中获取连接的超时时间。当客户端向连接池请求连接时，如果在指定的时间内没有获得空闲可用的连接，则会抛出连接请求超时异常。
  */
 public class ESRestClientBuilder {
 
@@ -31,8 +33,7 @@ public class ESRestClientBuilder {
         String[] servers = properties.getServers().split(SERVER_SPLIT_CHAR);
         HttpHost[] httpHosts = new HttpHost[servers.length];
         for (int i = 0; i < servers.length; i++) {
-            String server = servers[i];
-            String[] hostAndPort = server.split(HOST_PORT_SPLIT_CHAR);
+            String[] hostAndPort = servers[i].split(HOST_PORT_SPLIT_CHAR);
             httpHosts[i] = new HttpHost(hostAndPort[0], Integer.parseInt(hostAndPort[1]), schema);
         }
 

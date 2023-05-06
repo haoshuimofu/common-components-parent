@@ -40,7 +40,7 @@ public class ESRestClientContainer implements DisposableBean {
                     }
                     restClients.put(entry.getKey(), client);
                 } catch (IOException e) {
-//                    throw new BeanCreationException(String.format("Elasticsearch cluster ping failed, cluster=%s", entry.getKey()), e);
+                    throw new BeanCreationException(String.format("Elasticsearch cluster ping failed, cluster=%s", entry.getKey()), e);
                 }
             }
         }
