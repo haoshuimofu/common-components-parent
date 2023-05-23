@@ -1,17 +1,21 @@
 package com.demo.components.rabbitmq;
 
+import com.alibaba.fastjson.JSON;
 import com.demo.components.rabbitmq.bind.BinderCollectors;
 import com.demo.components.rabbitmq.bind.Binders;
 import com.demo.components.rabbitmq.bind.BindingInfo;
 import com.demo.components.rabbitmq.utils.MessageBodyUtils;
+import com.rabbitmq.client.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.BindingBuilder;
 import org.springframework.amqp.core.Exchange;
+import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.config.SimpleRabbitListenerContainerFactory;
 import org.springframework.amqp.rabbit.core.RabbitAdmin;
 import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer;
 import org.springframework.amqp.rabbit.listener.adapter.MessageListenerAdapter;
+import org.springframework.amqp.rabbit.listener.api.ChannelAwareMessageListener;
 import org.springframework.amqp.support.converter.MessageConverter;
 import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.factory.DisposableBean;
@@ -23,7 +27,7 @@ import java.lang.reflect.ParameterizedType;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public abstract class BaseConsumerService<T extends BaseMessageBody> implements BeanNameAware, InitializingBean, DisposableBean {
+public abstract class BaseConsumerService<T extends BaseMessageBody> implements ChannelAwareMessageListener, BeanNameAware, InitializingBean, DisposableBean {
 
     private static final Logger logger = LoggerFactory.getLogger(BaseConsumerService.class);
 
@@ -52,6 +56,14 @@ public abstract class BaseConsumerService<T extends BaseMessageBody> implements 
      * @param messageBody
      */
     public abstract void handleMessage(T messageBody);
+
+    @Override
+    public void onMessage(Message message, Channel channel) throws Exception {
+        T t = JSON.parseObject(message.getBody(), actualMessageBodyClass);
+        // todo do something
+        handleMessage(t);
+//        channel.basicAck(;);
+    }
 
     @Override
     public void setBeanName(String name) {
