@@ -110,11 +110,11 @@ public abstract class BaseConsumerService<T extends BaseMessageBody> implements 
         binderCollectors.putDeclaredBinders(actualMessageBodyClass, binders);
 
         // 为当前消费者启动一个消息监听器
-        MessageListenerAdapter listenerAdapter = new MessageListenerAdapter(this);
-        listenerAdapter.setDefaultListenerMethod(HANDLE_MESSAGE_METHOD);
-        listenerAdapter.setMessageConverter(messageConverter); // 一定要设置，否则消费参数类型是byte[]
+//        MessageListenerAdapter listenerAdapter = new MessageListenerAdapter(this);
+//        listenerAdapter.setDefaultListenerMethod(HANDLE_MESSAGE_METHOD);
+//        listenerAdapter.setMessageConverter(messageConverter); // 一定要设置，否则消费参数类型是byte[]
         listenerContainer = listenerContainerFactory.createListenerContainer();
-        listenerContainer.setMessageListener(listenerAdapter);
+        listenerContainer.setMessageListener(this);
         listenerContainer.setConcurrency("10");
         listenerContainer.setQueueNames(binders.getQueue().getName());
         listenerContainer.start();
