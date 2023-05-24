@@ -1,4 +1,4 @@
-package com.demo.components.rabbitmq;
+package com.demo.components.rabbitmq.test;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

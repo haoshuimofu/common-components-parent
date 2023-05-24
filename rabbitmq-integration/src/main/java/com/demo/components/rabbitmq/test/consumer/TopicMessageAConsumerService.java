@@ -1,9 +1,9 @@
-package com.demo.components.rabbitmq.consumer;
+package com.demo.components.rabbitmq.test.consumer;
 
 import com.alibaba.fastjson.JSON;
 import com.demo.components.rabbitmq.BaseConsumerService;
 import com.demo.components.rabbitmq.annotation.ConsumerService;
-import com.demo.components.rabbitmq.messagebody.TopicMessageABody;
+import com.demo.components.rabbitmq.test.messagebody.TopicMessageABody;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

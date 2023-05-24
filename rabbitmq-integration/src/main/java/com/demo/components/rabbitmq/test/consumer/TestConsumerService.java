@@ -1,4 +1,4 @@
-package com.demo.components.rabbitmq.consumer;
+package com.demo.components.rabbitmq.test.consumer;
 
 /**
  * @author ddmc

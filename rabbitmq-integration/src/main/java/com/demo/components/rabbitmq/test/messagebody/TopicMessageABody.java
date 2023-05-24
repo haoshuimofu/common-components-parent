@@ -1,4 +1,4 @@
-package com.demo.components.rabbitmq.messagebody;
+package com.demo.components.rabbitmq.test.messagebody;
 
 import com.demo.components.rabbitmq.BaseMessageBody;
 import com.demo.components.rabbitmq.annotation.Binding;

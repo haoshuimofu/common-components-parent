@@ -1,7 +1,8 @@
-package com.demo.components.rabbitmq;
+package com.demo.components.rabbitmq.test;
 
-import com.demo.components.rabbitmq.messagebody.TopicMessageABody;
-import com.demo.components.rabbitmq.messagebody.TopicMessageBBody;
+import com.demo.components.rabbitmq.RabbitmqProducer;
+import com.demo.components.rabbitmq.test.messagebody.TopicMessageABody;
+import com.demo.components.rabbitmq.test.messagebody.TopicMessageBBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -42,15 +43,4 @@ public class MessageTestController {
         return bBody;
     }
 
-    @PostConstruct
-    private void init() {
-        while (true) {
-            System.err.println(System.currentTimeMillis());
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-    }
 }
