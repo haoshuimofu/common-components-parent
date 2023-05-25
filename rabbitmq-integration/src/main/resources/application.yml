@@ -4,9 +4,9 @@ spring:
   rabbitmq:
     host: localhost
     port: 5672
-    username: admin
-    password: admin
-    virtual-host: /ddmc
+    username: guest
+    password: guest
+    virtual-host: /
     connection-timeout: 60000
     redeclare: true
 

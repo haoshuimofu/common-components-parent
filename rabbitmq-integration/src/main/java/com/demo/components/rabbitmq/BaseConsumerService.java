@@ -62,6 +62,7 @@ public abstract class BaseConsumerService<T extends BaseMessageBody> implements 
         T t = JSON.parseObject(message.getBody(), actualMessageBodyClass);
         // todo do something
         handleMessage(t);
+        System.out.println(message.getMessageProperties().getDeliveryTag());
 //        channel.basicAck(;);
     }
 
