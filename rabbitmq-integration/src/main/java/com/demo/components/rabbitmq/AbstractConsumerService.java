@@ -1,7 +1,6 @@
 package com.demo.components.rabbitmq;
 
 import com.alibaba.fastjson.JSON;
-import com.demo.components.rabbitmq.bind.BinderCollectors;
 import com.demo.components.rabbitmq.bind.Binders;
 import com.demo.components.rabbitmq.bind.BindingInfo;
 import com.demo.components.rabbitmq.utils.MessageBodyUtils;
@@ -36,7 +35,7 @@ public abstract class AbstractConsumerService<T extends BaseMessageBody> impleme
     @Autowired
     private SimpleRabbitListenerContainerFactory listenerContainerFactory;
     @Autowired
-    private BinderCollectors binderCollectors;
+    private MessageBinderMappingContainer messageBinderMappingContainer;
 
     private String beanName;
     private Class<? extends BaseMessageBody> messageClass;
@@ -101,7 +100,7 @@ public abstract class AbstractConsumerService<T extends BaseMessageBody> impleme
         rabbitAdmin.declareBinding(BindingBuilder.bind(binders.getDlqQueue())
                 .to(binders.getDlxExchange())
                 .with(binders.getQueue().getName()));
-        binderCollectors.putDeclaredBinders(messageClass, binders);
+        messageBinderMappingContainer.putDeclaredBinders(messageClass, binders);
 
         listenerContainer = listenerContainerFactory.createListenerContainer();
         listenerContainer.setMessageListener(this);

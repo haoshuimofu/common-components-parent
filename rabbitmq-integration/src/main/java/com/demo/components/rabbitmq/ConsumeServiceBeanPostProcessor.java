@@ -23,21 +23,21 @@ public class ConsumeServiceBeanPostProcessor implements BeanPostProcessor, Smart
 
     private static final Logger logger = LoggerFactory.getLogger(ConsumeServiceBeanPostProcessor.class);
 
-    private final AtomicInteger mqConsumerServiceBeanCount = new AtomicInteger(0);
+    private final AtomicInteger CONSUMER_BEAN_COUNTER = new AtomicInteger(0);
 
     @Override
     public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
         Class<?> beanClass = AopUtils.getTargetClass(bean);
         ConsumerService consumerService = beanClass.getAnnotation(ConsumerService.class);
         if (consumerService != null) {
-            Assert.isTrue(bean instanceof AbstractConsumerService, "MQ-消费者Bean必须要继承自基类(" + AbstractConsumerService.class.getTypeName() + ")");
-            mqConsumerServiceBeanCount.incrementAndGet();
+            Assert.isTrue(bean instanceof AbstractConsumerService, "[RabbitMQ]-ConsumerBean必须要继承自基类(" + AbstractConsumerService.class.getTypeName() + ")");
+            CONSUMER_BEAN_COUNTER.incrementAndGet();
         }
         return bean;
     }
 
     @Override
     public void afterSingletonsInstantiated() {
-        logger.info("### MQ-共有<<<{}>>>个消费者初始化且其消息监听器启动成功!", mqConsumerServiceBeanCount.get());
+        logger.info("[RabbitMQ] 共有{}个ConsumerBean初始化完成!", CONSUMER_BEAN_COUNTER.get());
     }
 }

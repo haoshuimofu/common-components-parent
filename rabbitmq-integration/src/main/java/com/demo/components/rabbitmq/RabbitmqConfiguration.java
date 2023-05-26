@@ -1,6 +1,5 @@
 package com.demo.components.rabbitmq;
 
-import com.demo.components.rabbitmq.bind.BinderCollectors;
 import com.demo.components.rabbitmq.retry.RepublishMessageRecoverer;
 import org.springframework.amqp.core.AcknowledgeMode;
 import org.springframework.amqp.rabbit.config.SimpleRabbitListenerContainerFactory;
@@ -11,7 +10,6 @@ import org.springframework.amqp.rabbit.connection.ConnectionNameStrategy;
 import org.springframework.amqp.rabbit.connection.SimplePropertyValueConnectionNameStrategy;
 import org.springframework.amqp.rabbit.core.RabbitAdmin;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import org.springframework.amqp.support.converter.MessageConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.amqp.RabbitProperties;
@@ -38,8 +36,8 @@ public class RabbitmqConfiguration {
     private RabbitProperties rabbitProperties;
 
     @Bean
-    public BinderCollectors binderCollectors() {
-        return new BinderCollectors();
+    public MessageBinderMappingContainer binderCollectors() {
+        return new MessageBinderMappingContainer();
     }
 
     @Bean
@@ -135,8 +133,8 @@ public class RabbitmqConfiguration {
 
     @Bean
     @ConditionalOnBean(RabbitAdmin.class)
-    public RabbitmqProducer rabbitmqProducer(RabbitAdmin rabbitAdmin, RabbitTemplate rabbitTemplate, BinderCollectors binderCollectors) {
-        return new RabbitmqProducer(rabbitAdmin, rabbitTemplate, binderCollectors);
+    public RabbitmqProducer rabbitmqProducer(RabbitAdmin rabbitAdmin, RabbitTemplate rabbitTemplate, MessageBinderMappingContainer messageBinderMappingContainer) {
+        return new RabbitmqProducer(rabbitAdmin, rabbitTemplate, messageBinderMappingContainer);
     }
 
 }

@@ -3,7 +3,6 @@ package com.demo.components.rabbitmq;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.util.IOUtils;
 import com.demo.components.rabbitmq.bind.Binders;
-import com.demo.components.rabbitmq.bind.BinderCollectors;
 import com.demo.components.rabbitmq.utils.MessageBodyUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,13 +27,13 @@ public class RabbitmqProducer implements RabbitTemplate.ConfirmCallback, RabbitT
     private static final Logger logger = LoggerFactory.getLogger(RabbitmqProducer.class);
     private final RabbitAdmin rabbitAdmin;
     private final RabbitTemplate rabbitTemplate;
-    private final BinderCollectors binderCollectors;
+    private final MessageBinderMappingContainer messageBinderMappingContainer;
     private final Object lock = new Object();
 
-    public RabbitmqProducer(RabbitAdmin rabbitAdmin, RabbitTemplate rabbitTemplate, BinderCollectors binderCollectors) {
+    public RabbitmqProducer(RabbitAdmin rabbitAdmin, RabbitTemplate rabbitTemplate, MessageBinderMappingContainer messageBinderMappingContainer) {
         this.rabbitAdmin = rabbitAdmin;
         this.rabbitTemplate = rabbitTemplate;
-        this.binderCollectors = binderCollectors;
+        this.messageBinderMappingContainer = messageBinderMappingContainer;
     }
 
     public <T extends BaseMessageBody> void send(T messageBody) {
@@ -71,10 +70,10 @@ public class RabbitmqProducer implements RabbitTemplate.ConfirmCallback, RabbitT
      */
     private <T extends BaseMessageBody> Binders getBinders(T messageBody) {
         Class<? extends BaseMessageBody> messageBodyClass = messageBody.getClass();
-        Binders binders = binderCollectors.getDeclaredBinders(messageBodyClass);
+        Binders binders = messageBinderMappingContainer.getDeclaredBinders(messageBodyClass);
         if (binders == null) {
             synchronized (lock) {
-                binders = binderCollectors.getDeclaredBinders(messageBodyClass);
+                binders = messageBinderMappingContainer.getDeclaredBinders(messageBodyClass);
                 if (binders == null) {
                     binders = MessageBodyUtils.generateBinders(MessageBodyUtils.parseBindingInfo(messageBodyClass));
                     rabbitAdmin.declareExchange(binders.getExchange());
@@ -83,7 +82,7 @@ public class RabbitmqProducer implements RabbitTemplate.ConfirmCallback, RabbitT
                     rabbitAdmin.declareExchange(binders.getDlxExchange());
                     rabbitAdmin.declareQueue(binders.getDlqQueue());
                     rabbitAdmin.declareBinding(binders.getDlxBinding());
-                    binderCollectors.putDeclaredBinders(messageBodyClass, binders);
+                    messageBinderMappingContainer.putDeclaredBinders(messageBodyClass, binders);
                     logger.info("### MQ-发送时消息体类组件declare: queue=[{}], {}Exchange=[{}], routingKey=[{}], messageBodyClass=[{}].",
                             binders.getQueue().getName(), binders.getExchange().getType(),
                             binders.getExchange().getName(), binders.getBinding().getRoutingKey(), messageBody.getClass().getTypeName());
