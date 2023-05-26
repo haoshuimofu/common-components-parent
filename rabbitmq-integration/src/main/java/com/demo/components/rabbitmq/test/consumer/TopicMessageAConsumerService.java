@@ -1,6 +1,7 @@
 package com.demo.components.rabbitmq.test.consumer;
 
 import com.alibaba.fastjson.JSON;
+import com.demo.components.rabbitmq.AbstractConsumerService;
 import com.demo.components.rabbitmq.annotation.ConsumerService;
 import com.demo.components.rabbitmq.test.messagebody.TopicMessageABody;
 import org.slf4j.Logger;
@@ -11,9 +12,9 @@ import org.slf4j.LoggerFactory;
  * @Create 2019-05-29 13:48
  */
 @ConsumerService
-public class AbstractConsumerService extends AbstractConsumerService<TopicMessageABody> {
+public class TopicMessageAConsumerService extends AbstractConsumerService<TopicMessageABody> {
 
-    private static final Logger logger = LoggerFactory.getLogger(AbstractConsumerService.class);
+    private static final Logger logger = LoggerFactory.getLogger(TopicMessageAConsumerService.class);
 
     @Override
     public void handleMessage(TopicMessageABody messageBody) {

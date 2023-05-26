@@ -44,6 +44,8 @@ public class RabbitmqProducer implements RabbitTemplate.ConfirmCallback, RabbitT
         messageProperties.setMessageId(UUID.randomUUID().toString());
         messageProperties.setContentType(MessageProperties.CONTENT_TYPE_JSON);
         messageProperties.setContentEncoding(IOUtils.UTF8.name());
+
+
         Message message = new Message(JSON.toJSONBytes(messageBody), messageProperties);
         CorrelationDataExtends correlationData = new CorrelationDataExtends();
         correlationData.setId(messageProperties.getMessageId());

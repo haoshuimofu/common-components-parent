@@ -65,18 +65,9 @@ public class RabbitmqConfiguration {
     }
 
     @Bean
-    public MessageConverter messageConverter() {
-        // Jackson2JsonMessageConverter messageConverter = new Jackson2JsonMessageConverter();
-        FastJsonMessageConverter messageConverter = new FastJsonMessageConverter();
-        messageConverter.setCreateMessageIds(true);
-        return messageConverter;
-    }
-
-    @Bean
     @ConditionalOnMissingBean(RabbitTemplate.class)
-    public RabbitTemplate rabbitTemplate(@Qualifier("rabbitConnectionFactory") ConnectionFactory connectionFactory, MessageConverter messageConverter) {
+    public RabbitTemplate rabbitTemplate(@Qualifier("rabbitConnectionFactory") ConnectionFactory connectionFactory) {
         RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory);
-        rabbitTemplate.setMessageConverter(messageConverter);
         rabbitTemplate.setMandatory(true);
         rabbitTemplate.setUserCorrelationId(true);
         // 避免Producer和Consumer因为Connection产生死锁,
@@ -125,17 +116,14 @@ public class RabbitmqConfiguration {
      *
      * @param connectionFactory
      * @param retryOperationsInterceptorFactoryBean
-     * @param messageConverter
      * @return
      */
     @Bean
     public SimpleRabbitListenerContainerFactory rabbitListenerContainerFactory(
             ConnectionFactory connectionFactory,
-            StatelessRetryOperationsInterceptorFactoryBean retryOperationsInterceptorFactoryBean,
-            MessageConverter messageConverter) {
+            StatelessRetryOperationsInterceptorFactoryBean retryOperationsInterceptorFactoryBean) {
         SimpleRabbitListenerContainerFactory listenerContainerFactory = new SimpleRabbitListenerContainerFactory();
         listenerContainerFactory.setConnectionFactory(connectionFactory);
-        listenerContainerFactory.setMessageConverter(messageConverter);
         listenerContainerFactory.setAcknowledgeMode(AcknowledgeMode.MANUAL); // 转发至死信队列时确认消息，不然原始队列会阻塞
         // 消费失败拦截
         // 正常情况下: Queue.arguments带上了x-dead-letter-exchange 和 x-dead-letter-routing-key, 消息消费失败reject时会自动进入死信队列

@@ -15,7 +15,6 @@ import org.springframework.amqp.rabbit.config.SimpleRabbitListenerContainerFacto
 import org.springframework.amqp.rabbit.core.RabbitAdmin;
 import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer;
 import org.springframework.amqp.rabbit.listener.api.ChannelAwareMessageListener;
-import org.springframework.amqp.support.converter.MessageConverter;
 import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
@@ -31,20 +30,17 @@ public abstract class AbstractConsumerService<T extends BaseMessageBody> impleme
     private static final Logger logger = LoggerFactory.getLogger(AbstractConsumerService.class);
 
     private static final Map<String, Exchange> DECLARED_EXCHANGES = new ConcurrentHashMap<>();
-    private static final String HANDLE_MESSAGE_METHOD = "handleMessage"; // 消息处理方法
 
     @Autowired
     private RabbitAdmin rabbitAdmin;
     @Autowired
     private SimpleRabbitListenerContainerFactory listenerContainerFactory;
     @Autowired
-    private MessageConverter messageConverter;
-    @Autowired
     private BinderCollectors binderCollectors;
 
     private String beanName;
-    private Class<? extends BaseMessageBody> actualMessageBodyClass; // 实际消息体类
-    private SimpleMessageListenerContainer listenerContainer;        // 消息监听器容器实例
+    private Class<? extends BaseMessageBody> messageClass;
+    private SimpleMessageListenerContainer listenerContainer;
 
     @Value("${spring.rabbitmq.redeclare:false}")
     private boolean redeclare;
@@ -58,11 +54,11 @@ public abstract class AbstractConsumerService<T extends BaseMessageBody> impleme
 
     @Override
     public void onMessage(Message message, Channel channel) throws Exception {
-        T t = JSON.parseObject(message.getBody(), actualMessageBodyClass);
+        System.out.println(new String(message.getBody()));
+        T t = JSON.parseObject(message.getBody(), messageClass);
         // todo do something
         handleMessage(t);
-        System.out.println(message.getMessageProperties().getDeliveryTag());
-//        channel.basicAck(;);
+        channel.basicAck(message.getMessageProperties().getDeliveryTag(), true);
     }
 
     @Override
@@ -73,17 +69,15 @@ public abstract class AbstractConsumerService<T extends BaseMessageBody> impleme
     @SuppressWarnings("unchecked")
     @Override
     public void afterPropertiesSet() throws Exception {
-        actualMessageBodyClass = (Class<? extends BaseMessageBody>)
+        messageClass = (Class<? extends BaseMessageBody>)
                 ((ParameterizedType) this.getClass().getGenericSuperclass()).getActualTypeArguments()[0];
         start();
     }
 
     private void start() {
         // 根据消息体实际类型解析queue exchange routing 和 binding信息, 然后declare后启动消息监听器
-        BindingInfo bindingInfo = MessageBodyUtils.parseBindingInfo(actualMessageBodyClass);
+        BindingInfo bindingInfo = MessageBodyUtils.parseBindingInfo(messageClass);
         Binders binders = MessageBodyUtils.generateBinders(bindingInfo);
-        // 保存queue和messageBodyClass映射关系，便于后续消息反序列化成java对象
-        ((FastJsonMessageConverter) messageConverter).mappedQueueMessageBodyClass(bindingInfo.getQueue(), actualMessageBodyClass);
         Exchange exchange = DECLARED_EXCHANGES.get(binders.getExchange().getName());
         if (exchange == null) {
             rabbitAdmin.declareExchange(binders.getExchange());
@@ -107,12 +101,8 @@ public abstract class AbstractConsumerService<T extends BaseMessageBody> impleme
         rabbitAdmin.declareBinding(BindingBuilder.bind(binders.getDlqQueue())
                 .to(binders.getDlxExchange())
                 .with(binders.getQueue().getName()));
-        binderCollectors.putDeclaredBinders(actualMessageBodyClass, binders);
+        binderCollectors.putDeclaredBinders(messageClass, binders);
 
-        // 为当前消费者启动一个消息监听器
-//        MessageListenerAdapter listenerAdapter = new MessageListenerAdapter(this);
-//        listenerAdapter.setDefaultListenerMethod(HANDLE_MESSAGE_METHOD);
-//        listenerAdapter.setMessageConverter(messageConverter); // 一定要设置，否则消费参数类型是byte[]
         listenerContainer = listenerContainerFactory.createListenerContainer();
         listenerContainer.setMessageListener(this);
         listenerContainer.setConcurrency("10");
