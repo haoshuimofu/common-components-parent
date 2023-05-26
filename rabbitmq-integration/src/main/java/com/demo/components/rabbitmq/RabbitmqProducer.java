@@ -52,7 +52,7 @@ public class RabbitmqProducer implements RabbitTemplate.ConfirmCallback, RabbitT
         correlationData.setReturnedMessage(message);
         correlationData.setExchange(binders.getExchange().getName());
         correlationData.setRoutingKey(binders.getBinding().getRoutingKey());
-        rabbitTemplate.send(binders.getExchange().getName(), binders.getBinding().getRoutingKey(), message, correlationData);
+        rabbitTemplate.sendAndReceive(binders.getExchange().getName(), binders.getBinding().getRoutingKey(), message, correlationData);
     }
 
     public <T extends BaseMessageBody> void convertAndSend(T messageBody) {

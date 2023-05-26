@@ -105,7 +105,7 @@ public abstract class AbstractConsumerService<T extends BaseMessageBody> impleme
 
         listenerContainer = listenerContainerFactory.createListenerContainer();
         listenerContainer.setMessageListener(this);
-        listenerContainer.setConcurrency("10");
+        listenerContainer.setConcurrency("2");
         listenerContainer.setQueueNames(binders.getQueue().getName());
         listenerContainer.start();
         logger.info("### MQ-消息监听器启动...bean=[{}], queue=[{}], {}Exchange=[{}], routingKey=[{}], dlqQueue=[{}], dlxExchange=[{}], dlxRoutingKey=[{}].",

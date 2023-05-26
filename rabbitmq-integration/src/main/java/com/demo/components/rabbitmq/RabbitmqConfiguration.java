@@ -59,7 +59,7 @@ public class RabbitmqConfiguration {
         connectionFactory.setCacheMode(CachingConnectionFactory.CacheMode.CHANNEL);
         // connectionFactory.setChannelCacheSize(1024); max is 2048 per connection
         connectionFactory.setConnectionNameStrategy(connectionNameStrategy);
-        connectionFactory.setPublisherConfirms(true);
+        connectionFactory.setPublisherConfirmType(CachingConnectionFactory.ConfirmType.SIMPLE);
         connectionFactory.setPublisherReturns(true);
         return connectionFactory;
     }
@@ -72,7 +72,7 @@ public class RabbitmqConfiguration {
         rabbitTemplate.setUserCorrelationId(true);
         // 避免Producer和Consumer因为Connection产生死锁,
         // @See https://docs.spring.io/spring-amqp/docs/2.1.6.RELEASE/reference/html/#_blocked_connections_and_resource_constraints
-        rabbitTemplate.setUsePublisherConnection(true);
+//        rabbitTemplate.setUsePublisherConnection(false);
         // rabbitTemplate.setBeforePublishPostProcessors(new GZipPostProcessor()); // 消息发送之前进行gzip压缩
         return rabbitTemplate;
     }

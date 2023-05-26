@@ -27,12 +27,13 @@ public class MessageTestController {
     @RequestMapping("send")
     public Object send() throws UnsupportedEncodingException {
         TopicMessageABody aBody = new TopicMessageABody();
-        rabbitmqProducer.convertAndSend(aBody);
+//        rabbitmqProducer.convertAndSend(aBody); // 需要设置MessageConverter
+        rabbitmqProducer.send(aBody);
         return aBody;
     }
 
     @RequestMapping("send1")
-    public Object send1() throws UnsupportedEncodingException {
+    public Object send1() {
         TopicMessageBBody bBody = new TopicMessageBBody();
         StringBuffer sb = new StringBuffer();
         int len = 100;
