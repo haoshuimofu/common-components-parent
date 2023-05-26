@@ -14,7 +14,6 @@ import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.config.SimpleRabbitListenerContainerFactory;
 import org.springframework.amqp.rabbit.core.RabbitAdmin;
 import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer;
-import org.springframework.amqp.rabbit.listener.adapter.MessageListenerAdapter;
 import org.springframework.amqp.rabbit.listener.api.ChannelAwareMessageListener;
 import org.springframework.amqp.support.converter.MessageConverter;
 import org.springframework.beans.factory.BeanNameAware;
@@ -27,9 +26,9 @@ import java.lang.reflect.ParameterizedType;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public abstract class BaseConsumerService<T extends BaseMessageBody> implements ChannelAwareMessageListener, BeanNameAware, InitializingBean, DisposableBean {
+public abstract class AbstractConsumerService<T extends BaseMessageBody> implements ChannelAwareMessageListener, BeanNameAware, InitializingBean, DisposableBean {
 
-    private static final Logger logger = LoggerFactory.getLogger(BaseConsumerService.class);
+    private static final Logger logger = LoggerFactory.getLogger(AbstractConsumerService.class);
 
     private static final Map<String, Exchange> DECLARED_EXCHANGES = new ConcurrentHashMap<>();
     private static final String HANDLE_MESSAGE_METHOD = "handleMessage"; // 消息处理方法

@@ -30,7 +30,7 @@ public class ConsumeServiceBeanPostProcessor implements BeanPostProcessor, Smart
         Class<?> beanClass = AopUtils.getTargetClass(bean);
         ConsumerService consumerService = beanClass.getAnnotation(ConsumerService.class);
         if (consumerService != null) {
-            Assert.isTrue(bean instanceof BaseConsumerService, "MQ-消费者Bean必须要继承自基类(" + BaseConsumerService.class.getTypeName() + ")");
+            Assert.isTrue(bean instanceof AbstractConsumerService, "MQ-消费者Bean必须要继承自基类(" + AbstractConsumerService.class.getTypeName() + ")");
             mqConsumerServiceBeanCount.incrementAndGet();
         }
         return bean;

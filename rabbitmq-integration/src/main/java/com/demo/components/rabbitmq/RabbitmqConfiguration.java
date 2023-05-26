@@ -136,7 +136,7 @@ public class RabbitmqConfiguration {
         SimpleRabbitListenerContainerFactory listenerContainerFactory = new SimpleRabbitListenerContainerFactory();
         listenerContainerFactory.setConnectionFactory(connectionFactory);
         listenerContainerFactory.setMessageConverter(messageConverter);
-        listenerContainerFactory.setAcknowledgeMode(AcknowledgeMode.AUTO); // 转发至死信队列时确认消息，不然原始队列会阻塞
+        listenerContainerFactory.setAcknowledgeMode(AcknowledgeMode.MANUAL); // 转发至死信队列时确认消息，不然原始队列会阻塞
         // 消费失败拦截
         // 正常情况下: Queue.arguments带上了x-dead-letter-exchange 和 x-dead-letter-routing-key, 消息消费失败reject时会自动进入死信队列
         // 这里我们拦截失败消费(重试次数已经达到maxAttempts), 把错误栈信息放到Header里, 然后手动发送到死信交换机
