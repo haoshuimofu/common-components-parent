@@ -52,7 +52,8 @@ public class RabbitmqProducer implements RabbitTemplate.ConfirmCallback, RabbitT
         correlationData.setReturnedMessage(message);
         correlationData.setExchange(binders.getExchange().getName());
         correlationData.setRoutingKey(binders.getBinding().getRoutingKey());
-        rabbitTemplate.sendAndReceive(binders.getExchange().getName(), binders.getBinding().getRoutingKey(), message, correlationData);
+        Message receivedMessage = rabbitTemplate.sendAndReceive(binders.getExchange().getName(), binders.getBinding().getRoutingKey(), message, correlationData);
+        System.out.println(JSON.toJSONString(receivedMessage));
     }
 
     public <T extends BaseMessageBody> void convertAndSend(T messageBody) {
@@ -142,7 +143,7 @@ public class RabbitmqProducer implements RabbitTemplate.ConfirmCallback, RabbitT
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        rabbitTemplate.setConfirmCallback(this);
+//        rabbitTemplate.setConfirmCallback(this);
         // mandatory 参数告诉服务器至少将该消息路由到一个队列中， 否则将消息返 回给生产者。
         rabbitTemplate.setMandatory(true);
         rabbitTemplate.setReturnCallback(this);
