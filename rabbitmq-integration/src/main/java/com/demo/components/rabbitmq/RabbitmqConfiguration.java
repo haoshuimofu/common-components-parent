@@ -13,7 +13,6 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.amqp.RabbitProperties;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -57,7 +56,7 @@ public class RabbitmqConfiguration {
         connectionFactory.setCacheMode(CachingConnectionFactory.CacheMode.CHANNEL);
         // connectionFactory.setChannelCacheSize(1024); max is 2048 per connection
         connectionFactory.setConnectionNameStrategy(connectionNameStrategy);
-        connectionFactory.setPublisherConfirmType(CachingConnectionFactory.ConfirmType.SIMPLE);
+        connectionFactory.setPublisherConfirmType(CachingConnectionFactory.ConfirmType.CORRELATED);
         connectionFactory.setPublisherReturns(true);
         return connectionFactory;
     }
@@ -129,12 +128,6 @@ public class RabbitmqConfiguration {
         listenerContainerFactory.setAdviceChain(retryOperationsInterceptorFactoryBean.getObject());
         // listenerContainerFactory.setAfterReceivePostProcessors(new GUnzipPostProcessor());
         return listenerContainerFactory;
-    }
-
-    @Bean
-    @ConditionalOnBean(RabbitAdmin.class)
-    public RabbitmqProducer rabbitmqProducer(RabbitAdmin rabbitAdmin, RabbitTemplate rabbitTemplate, MessageBinderMappingContainer messageBinderMappingContainer) {
-        return new RabbitmqProducer(rabbitAdmin, rabbitTemplate, messageBinderMappingContainer);
     }
 
 }

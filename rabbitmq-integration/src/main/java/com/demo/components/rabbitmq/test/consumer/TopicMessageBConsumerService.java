@@ -2,7 +2,7 @@ package com.demo.components.rabbitmq.test.consumer;
 
 import com.alibaba.fastjson.JSON;
 import com.demo.components.rabbitmq.AbstractConsumerService;
-import com.demo.components.rabbitmq.test.messagebody.TopicMessageBBody;
+import com.demo.components.rabbitmq.test.message.TopicMessageBBody;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
