@@ -16,8 +16,6 @@ import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-
 import java.lang.reflect.ParameterizedType;
 import java.util.HashMap;
 import java.util.List;
@@ -35,9 +33,6 @@ public abstract class AbstractConsumerService<T> implements ChannelAwareMessageL
     private String beanName;
     private Class<T> messageClass;
     private SimpleMessageListenerContainer listenerContainer;
-
-    @Value("${spring.rabbitmq.redeclare:false}")
-    private boolean redeclare;
 
     /**
      * 消息消费业务方法
@@ -79,10 +74,10 @@ public abstract class AbstractConsumerService<T> implements ChannelAwareMessageL
     @Override
     public void afterPropertiesSet() throws Exception {
         messageClass = (Class<T>) ((ParameterizedType) this.getClass().getGenericSuperclass()).getActualTypeArguments()[0];
-        start();
+        consumerStarting();
     }
 
-    private void start() {
+    private void consumerStarting() {
         ConsumerService consumerService = this.getClass().getAnnotation(ConsumerService.class);
         if (consumerService != null) {
             TopicExchange exchange = new TopicExchange(consumerService.exchange(), true, false);

@@ -25,7 +25,7 @@ public enum MessageHeadersKey {
      */
     X_EXCEPTION_STACKTRACE("x-exception-stacktrace");
 
-    private String key;
+    private final String key;
 
     MessageHeadersKey(String key) {
         this.key = key;
@@ -34,4 +34,5 @@ public enum MessageHeadersKey {
     public String getKey() {
         return key;
     }
+
 }
