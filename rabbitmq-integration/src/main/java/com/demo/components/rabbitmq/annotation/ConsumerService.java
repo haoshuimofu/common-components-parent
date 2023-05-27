@@ -16,4 +16,10 @@ import java.lang.annotation.*;
 @Component
 public @interface ConsumerService {
 
+    String exchange();
+
+    String routingKey();
+
+    String queue();
+
 }

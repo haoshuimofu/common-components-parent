@@ -8,7 +8,6 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.SmartInitializingSingleton;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.stereotype.Component;
-import org.springframework.util.Assert;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -30,7 +29,6 @@ public class ConsumeServiceBeanPostProcessor implements BeanPostProcessor, Smart
         Class<?> beanClass = AopUtils.getTargetClass(bean);
         ConsumerService consumerService = beanClass.getAnnotation(ConsumerService.class);
         if (consumerService != null) {
-            Assert.isTrue(bean instanceof AbstractConsumerService, "[RabbitMQ]-ConsumerBean必须要继承自基类(" + AbstractConsumerService.class.getTypeName() + ")");
             CONSUMER_BEAN_COUNTER.incrementAndGet();
         }
         return bean;

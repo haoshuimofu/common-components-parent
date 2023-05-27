@@ -29,15 +29,10 @@ import org.springframework.retry.support.RetryTemplate;
  */
 @Configuration
 @EnableConfigurationProperties(value = {RabbitProperties.class})
-public class RabbitmqConfiguration {
+public class RabbitAutoConfiguration {
 
     @Autowired
     private RabbitProperties rabbitProperties;
-
-    @Bean
-    public MessageBinderMappingContainer binderCollectors() {
-        return new MessageBinderMappingContainer();
-    }
 
     @Bean
     public ConnectionNameStrategy connectionNameStrategy() {
@@ -56,7 +51,7 @@ public class RabbitmqConfiguration {
         connectionFactory.setCacheMode(CachingConnectionFactory.CacheMode.CHANNEL);
         // connectionFactory.setChannelCacheSize(1024); max is 2048 per connection
         connectionFactory.setConnectionNameStrategy(connectionNameStrategy);
-        connectionFactory.setPublisherConfirmType(CachingConnectionFactory.ConfirmType.CORRELATED);
+        connectionFactory.setPublisherConfirmType(CachingConnectionFactory.ConfirmType.SIMPLE);
         connectionFactory.setPublisherReturns(true);
         return connectionFactory;
     }
@@ -65,8 +60,8 @@ public class RabbitmqConfiguration {
     @ConditionalOnMissingBean(RabbitTemplate.class)
     public RabbitTemplate rabbitTemplate(@Qualifier("rabbitConnectionFactory") ConnectionFactory connectionFactory) {
         RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory);
-        rabbitTemplate.setMandatory(true);
-        rabbitTemplate.setUserCorrelationId(true);
+//        rabbitTemplate.setMandatory(true);
+//        rabbitTemplate.setUserCorrelationId(true);
         // 避免Producer和Consumer因为Connection产生死锁,
         // @See https://docs.spring.io/spring-amqp/docs/2.1.6.RELEASE/reference/html/#_blocked_connections_and_resource_constraints
 //        rabbitTemplate.setUsePublisherConnection(false);

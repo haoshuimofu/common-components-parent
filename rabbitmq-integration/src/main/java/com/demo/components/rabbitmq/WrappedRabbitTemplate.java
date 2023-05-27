@@ -46,16 +46,23 @@ public class WrappedRabbitTemplate implements RabbitTemplate.ConfirmCallback, Ra
                     logger.error("### 消息发送至交换机失败: 存至DB等待补发!");
                 }
             }
+        } else {
+            logger.info("### Rabbit 消息发送至Exchange成功!: ack={}, cause={}, correlationData={}.", false, cause, JSON.toJSONString(correlationData));
         }
     }
 
     @Override
     public void returnedMessage(Message message, int replyCode, String replyText, String exchange, String routingKey) {
+        logger.info("Rabbit returnCallback: exchange={}, routingKey={}, replyCode={}, replyText={}",
+                exchange, routingKey, replyCode, replyText);
 
     }
 
     @Override
     public void afterPropertiesSet() throws Exception {
         rabbitTemplate.setConfirmCallback(this);
+        //强制消息投递至queue
+        rabbitTemplate.setMandatory(true);
+        rabbitTemplate.setReturnCallback(this);
     }
 }
