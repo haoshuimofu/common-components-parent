@@ -19,7 +19,6 @@
         <module>rocketmq</module>
         <module>httpclient</module>
         <module>spring-cloud-stream-multi-binder</module>
-        <module>spring-session</module>
         <module>spring-rocketmq</module>
         <module>shardingsphere</module>
         <module>json-desensitization</module>
