@@ -87,4 +87,10 @@ public class DemoIndexController {
         return JsonResult.success(demoService.count());
     }
 
+    @RequestMapping("init/test/data")
+    public JsonResult initTestData() {
+        demoService.initTestData();
+        return JsonResult.success();
+    }
+
 }

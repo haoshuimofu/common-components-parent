@@ -2,20 +2,25 @@ package com.demo.components.elasticsearch.service;
 
 import com.demo.components.elasticsearch.PageResult;
 import com.demo.components.elasticsearch.model.Demo;
+import com.demo.components.elasticsearch.model.Demo1;
 import com.demo.components.elasticsearch.model.DemoDetail;
 import com.demo.components.elasticsearch.model.DemoItem;
 import com.demo.components.elasticsearch.repositories.DemoRepository;
+import com.demo.components.elasticsearch.repositories.DemoRepository1;
 import com.demo.components.elasticsearch.utils.StringUtils;
 import org.elasticsearch.client.core.CountRequest;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * @author wude
@@ -28,6 +33,8 @@ public class DemoService {
 
     @Autowired
     private DemoRepository demoRepository;
+    @Autowired
+    private DemoRepository1 demoRepository1;
 
     public boolean saveDemoIndex(Demo demo, boolean async) {
         DemoDetail demoDetail = new DemoDetail();
@@ -135,6 +142,39 @@ public class DemoService {
         CountRequest request = new CountRequest();
         request.query(QueryBuilders.matchAllQuery());
         return demoRepository.count(request);
+    }
+
+    public void initTestData() {
+        int batch = 100000;
+        for (int i = 0; i < batch; i++) {
+            Demo demo = new Demo();
+            demo.setId("id_" + i);
+            demo.setName("name_" + demo.getId());
+            demo.setTitle("title_" + demo.getTitle());
+            demo.setStatus(1);
+            demo.setTimestamp(new Date());
+
+            DemoDetail demoDetail = new DemoDetail();
+            demoDetail.setTitle("detail_title_" + demo.getId());
+            demoDetail.setDetail("detail_" + demo.getId());
+            demo.setDetail(demoDetail);
+
+            DemoItem item1 = new DemoItem();
+            item1.setItemName("item1_name_" + demo.getId());
+            item1.setItemTitle("item1_title_" + demo.getId());
+            DemoItem item2 = new DemoItem();
+            item1.setItemName("item2_name_" + demo.getId());
+            item1.setItemTitle("item2_title_" + demo.getId());
+            demo.setItems(Arrays.asList(item1, item2));
+            try {
+                demoRepository.save(demo);
+                Demo1 demo1 = new Demo1();
+                BeanUtils.copyProperties(demo, demo1);
+                demoRepository1.save(demo1);
+            } catch (Exception e) {
+                logger.error("### Demo索引初始化Test数据出错了!", e);
+            }
+        }
     }
 
 }
