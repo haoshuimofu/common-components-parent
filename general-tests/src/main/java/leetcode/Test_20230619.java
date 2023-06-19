@@ -53,4 +53,26 @@ public class Test_20230619 {
         }
     }
 
+
+    public static boolean isPalindrome(int x) {
+        if (x < 0) {
+            return false;
+        } else if (x <= 9) {
+            return true;
+        }
+        String s = String.valueOf(x);
+        int low = 0;
+        int high = s.length() - 1;
+        boolean flag = true;
+        while (low < high) {
+            if (s.charAt(low) != s.charAt(high)) {
+                flag = false;
+                break;
+            }
+            low++;
+            high--;
+        }
+        return flag;
+    }
+
 }
