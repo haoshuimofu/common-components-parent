@@ -6,8 +6,12 @@ public class Test_20230620 {
     public static void main(String[] args) {
         System.out.println("123".substring(0, 0));
 
-        String[] strs = new String[]{"flower", "flow", "flight"};
-        System.out.println(longestCommonPrefix(strs));
+//        String[] strs = new String[]{"flower", "flow", "flight"};
+//        System.out.println(longestCommonPrefix(strs));
+
+        String[] strs = new String[]{"ab", "a"};
+        System.out.println(longestCommonPrefix1(strs));
+
     }
 
     /**
@@ -104,34 +108,38 @@ public class Test_20230620 {
         } else if (strs.length == 1) {
             return strs[0];
         }
-        int len = strs[0].length();
-        int index = 0;
-        for (int i = 1; i < strs.length; i++) {
-            if (strs[i].length() < len) {
+        int index = -1;
+        int len = 0;
+        for (int i = 0; i < strs.length; i++) {
+            if (index == -1) {
                 index = i;
+                len = strs[i].length();
+            } else if (strs[i].length() < len) {
+                index = i;
+                len = strs[i].length();
             }
         }
-        if (strs[index] == null) {
-            return null;
-        } else if (strs[index].length() == 0) {
+        if (len == 0) {
             return "";
         }
-
-        while (true) {
-            for (int i = strs[index].length() - 1; i >= 0; i--) {
-                int low = index - 1;
-                int high = index + 1;
-                while (low >= 0 || high < strs.length) {
-                    if (low >= 0) {
-                    }
-
-
+        for (int i = 0; i < len; i++) {
+            int prev = index - 1;
+            int next = index + 1;
+            boolean flag = true;
+            while (prev >= 0 || next < strs.length) {
+                if ((prev >= 0 && strs[prev].charAt(i) != strs[index].charAt(i))
+                        || (next < strs.length && strs[next].charAt(i) != strs[index].charAt(i))) {
+                    flag = false;
+                    break;
                 }
+                prev--;
+                next++;
             }
-
-
+            if (!flag) {
+                return strs[index].substring(0, i);
+            }
         }
-
+        return strs[index].substring(0, len);
     }
 
 }
