@@ -6,7 +6,7 @@ import java.util.LinkedHashSet;
  * @author dewu.de
  * @date 2023-06-16 1:56 下午
  */
-public class Test20230616 {
+public class Test_20230616 {
 
 
     public static void main(String[] args) {
