@@ -4,6 +4,7 @@ package leetcode;
 import com.alibaba.fastjson.JSON;
 
 import java.util.ArrayList;
+import java.util.Stack;
 
 /**
  * 基于数组实现循环队列
@@ -47,9 +48,11 @@ public class Test_20230628 {
 
 
         System.out.println();
-//        System.out.println(isValid("()[]{}"));
-//        System.out.println(isValid("(]"));
         System.out.println(isValid("[({(())}[()])]"));
+
+        int[] temperatures = new int[]{73,74,75,71,69,72,76,73};
+        int[] days = dailyTemperatures(temperatures);
+        System.out.println(JSON.toJSONString(days));
     }
 
     /**
@@ -205,38 +208,43 @@ public class Test_20230628 {
         if (s == null || s.length() < 2 || s.length() % 2 != 0) {
             return false;
         }
-        StringBuilder sb = new StringBuilder();
-        int index = 0;
-        while (index < s.length()) {
-            if (index == s.length() - 1) {
-                sb.append(s.charAt(index));
-                break;
+        Stack<Integer> stack = new Stack<>();
+        for (int i = 0; i < s.length(); i++) {
+            char ch = s.charAt(i);
+            if (ch == '{') {
+                stack.push((int) '}');
+            } else if (ch == '[') {
+                stack.push((int) ']');
+            } else if (ch == '(') {
+                stack.push((int) ')');
             } else {
-                if (match(s.charAt(index), s.charAt(index + 1))) {
-                    index += 2;
+                if (i == 0 || stack.isEmpty()) {
+                    return false;
+                }
+                if (stack.peek() == (int) ch) {
+                    stack.pop();
                 } else {
-                    sb.append(s.charAt(index));
-                    index++;
+                    return false;
                 }
             }
         }
-        if (sb.length() == 0) {
-            return true;
-        }
-        int start = 0;
-        int end = sb.length() - 1;
-        while (start < end) {
-            if (!match(sb.charAt(start), sb.charAt(end))) {
-                return false;
-            }
-            start++;
-            end--;
-        }
-        return true;
+        return stack.isEmpty();
     }
 
-    private static boolean match(char ch1, char ch2) {
-        return (ch1 == '{' && ch2 == '}') || (ch1 == '[' && ch2 == ']') || (ch1 == '(' && ch2 == ')');
+    public static int[] dailyTemperatures(int[] temperatures) {
+        Stack<Integer> stack = new Stack<>();
+        int[] res = new int[temperatures.length];
+        for (int i = 0; i < temperatures.length - 1; i++) {
+            if (temperatures[i] < temperatures[i] + 1) {
+                res[i] = 1;
+                while (!stack.isEmpty() && temperatures[i] > temperatures[stack.peek()]) {
+                    res[stack.peek()] = stack.pop() - i;
+                }
+            } else {
+                stack.push(i);
+            }
+        }
+        return res;
     }
 
 }
