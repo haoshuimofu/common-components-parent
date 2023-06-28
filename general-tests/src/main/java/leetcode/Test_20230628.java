@@ -44,6 +44,12 @@ public class Test_20230628 {
         System.out.println("getMin=" + ms.getMin());
         ms.pop();
         System.out.println("getMin=" + ms.getMin());
+
+
+        System.out.println();
+//        System.out.println(isValid("()[]{}"));
+//        System.out.println(isValid("(]"));
+        System.out.println(isValid("[({(())}[()])]"));
     }
 
     /**
@@ -193,6 +199,44 @@ public class Test_20230628 {
             }
             return min;
         }
+    }
+
+    public static boolean isValid(String s) {
+        if (s == null || s.length() < 2 || s.length() % 2 != 0) {
+            return false;
+        }
+        StringBuilder sb = new StringBuilder();
+        int index = 0;
+        while (index < s.length()) {
+            if (index == s.length() - 1) {
+                sb.append(s.charAt(index));
+                break;
+            } else {
+                if (match(s.charAt(index), s.charAt(index + 1))) {
+                    index += 2;
+                } else {
+                    sb.append(s.charAt(index));
+                    index++;
+                }
+            }
+        }
+        if (sb.length() == 0) {
+            return true;
+        }
+        int start = 0;
+        int end = sb.length() - 1;
+        while (start < end) {
+            if (!match(sb.charAt(start), sb.charAt(end))) {
+                return false;
+            }
+            start++;
+            end--;
+        }
+        return true;
+    }
+
+    private static boolean match(char ch1, char ch2) {
+        return (ch1 == '{' && ch2 == '}') || (ch1 == '[' && ch2 == ']') || (ch1 == '(' && ch2 == ')');
     }
 
 }
