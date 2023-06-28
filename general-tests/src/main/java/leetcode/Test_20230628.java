@@ -1,5 +1,10 @@
 package leetcode;
 
+
+import com.alibaba.fastjson.JSON;
+
+import java.util.ArrayList;
+
 /**
  * 基于数组实现循环队列
  *
@@ -20,6 +25,25 @@ public class Test_20230628 {
         System.out.println("delete 2 from queue: " + queue.deQueue());
         System.out.println("delete 3 from queue: " + queue.deQueue());
         System.out.println("delete 4 from queue: " + queue.deQueue());
+
+        System.out.println();
+
+        /**
+         * ["MinStack","push","push","push","push","getMin","pop","getMin","pop","getMin","pop","getMin"]
+         * [[],[2],[0],[3],[0],[],[],[],[],[],[],[]]
+         */
+        MinStack ms = new MinStack();
+        ms.push(2);
+        ms.push(0);
+        ms.push(3);
+        ms.push(0);
+        System.out.println("getMin=" + ms.getMin());
+        ms.pop();
+        System.out.println("getMin=" + ms.getMin());
+        ms.pop();
+        System.out.println("getMin=" + ms.getMin());
+        ms.pop();
+        System.out.println("getMin=" + ms.getMin());
     }
 
     /**
@@ -112,6 +136,62 @@ public class Test_20230628 {
                 return false;
             }
             return (tail + 1) % data.length == head;
+        }
+    }
+
+    /**
+     * ["MinStack","push","push","push","push","getMin","pop","getMin","pop","getMin","pop","getMin"]
+     * [[],[2],[0],[3],[0],[],[],[],[],[],[],[]]
+     */
+    static class MinStack {
+
+        ArrayList<Integer> data;
+        int head = -1;
+        int tail = -1;
+
+
+        public MinStack() {
+            data = new ArrayList<>();
+        }
+
+        public void push(int val) {
+            if (head == -1) {
+                head = 0;
+            }
+            data.add(val);
+            tail++;
+            System.out.println("push后: head=" + head + ", tail=" + tail + ", data=" + JSON.toJSONString(data));
+        }
+
+        public void pop() {
+            if (tail != -1) {
+                data.remove(tail);
+                if (head == tail) {
+                    head = -1;
+                    tail = -1;
+                } else {
+                    tail--;
+                }
+            }
+            System.out.println("pop后: head=" + head + ", tail=" + tail + ", data=" + JSON.toJSONString(data));
+        }
+
+        public int top() {
+            if (tail == -1) {
+                return 0;
+            }
+            return data.get(tail);
+        }
+
+        public int getMin() {
+            if (tail == -1) {
+                return 0;
+            }
+            int min = data.get(head);
+            for (int i = head + 1; i <= tail; i++) {
+                min = Math.min(min, data.get(i));
+            }
+            return min;
         }
     }
 
