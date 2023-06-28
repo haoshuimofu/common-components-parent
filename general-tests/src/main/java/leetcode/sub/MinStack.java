@@ -8,6 +8,7 @@ public class MinStack {
 
     Node head;
     Node tail;
+    Integer min = null;
 
     public MinStack() {
     }
@@ -17,10 +18,14 @@ public class MinStack {
         if (tail == null) {
             tail = node;
             head = node;
+            min = val;
         } else {
             tail.next = node;
             node.prev = tail;
             tail = node;
+            if (min != null) {
+                min = Math.min(min, val);
+            }
         }
     }
 
@@ -29,7 +34,11 @@ public class MinStack {
             if (head == tail) {
                 head = null;
                 tail = null;
+                min = null;
             } else {
+                if (min != null && tail.value <= min) {
+                    min = null;
+                }
                 Node prev = tail.prev;
                 prev.next = null;
                 tail = prev;
@@ -42,8 +51,10 @@ public class MinStack {
     }
 
     public int getMin() {
+        if (min != null) {
+            return min;
+        }
         Node node = head;
-        Integer min = null;
         while (node != null) {
             if (min == null) {
                 min = node.value;
