@@ -1,5 +1,6 @@
 package leetcode;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -74,9 +75,21 @@ public class Test_20230630 {
     /**
      * 层序遍历, 借助于队列实现
      * <p>
-     * [3,9,20,null,null,15,7]
-     * [[3],[9,20],[15,7]]
-     * [[3]]
+     * [1,2,3,4,5,6,7]
+     *      1
+     *   2     3
+     * 4  5  6   7
+     *
+     *
+     * 队列首部逐一弹出, 追加其子节点到尾部
+     * -> 1
+     * -> 2 3
+     * -> 3 4 5
+     * -> 4 5 6 7
+     *
+     * -> 1
+     * -> 2 3 -> 3 4 5 -> 4 5 6 7
+     * -> 4 5 6 7
      *
      * @param root
      * @return
@@ -86,33 +99,33 @@ public class Test_20230630 {
             return Collections.emptyList();
         }
         List<List<Integer>> vals = new ArrayList<>();
-        LinkedBlockingDeque<TreeNode> queue = new LinkedBlockingDeque<>();
+
+//        LinkedBlockingDeque<TreeNode> queue = new LinkedBlockingDeque<>();
+        // ArrayDeque比LinkedDeque/LinkedBlockingDeque高效很多
+        ArrayDeque<TreeNode> queue = new ArrayDeque<>();
         // 将root首次添加到队列
         queue.offer(root);
         vals.add(Collections.singletonList(root.val));
         while (!queue.isEmpty()) {
-            // 获取并删除队列首节点, 如果队列为空则返回null
-            TreeNode node = queue.pollFirst();
-            List<Integer> tempVals = new ArrayList<>();
-            // 如果左子节点存在, 把左子节点加到队列尾
-            if (node.left != null) {
-                queue.offerLast(node.left);
-                tempVals.add(node.left.val);
+            int size = queue.size();
+            List<Integer> levelVals = new ArrayList<>();
+            for (int i = 0; i < size; i++) {
+                // 获取并删除队列首节点, 如果队列为空则返回null
+                TreeNode node = queue.poll();
+                // 如果左子节点存在, 把左子节点加到队列尾
+                if (node.left != null) {
+                    queue.offerLast(node.left);
+                    levelVals.add(node.left.val);
+                }
+                // 如果右子节点存在, 把右子节点加到队列尾
+                if (node.right != null) {
+                    queue.offerLast(node.right);
+                    levelVals.add(node.right.val);
+                }
             }
-            // 如果右子节点存在, 把右子节点加到队列尾
-            if (node.right != null) {
-                queue.offerLast(node.right);
-                tempVals.add(node.right.val);
-            }
-            // 当前节点的左右子节点都已经连续加到队列尾, 把当前节点从队首删除
-            // 继续循环，下个节点要么是兄弟节点, 要么是子节点
-            //queue.pollFirst();
-            if (!tempVals.isEmpty()) {
-                vals.add(tempVals);
-            }
+            vals.add(levelVals);
         }
         return vals;
     }
-
 
 }
