@@ -54,9 +54,9 @@ public class Test_20230630 {
 
     private void inorder(TreeNode node, List<Integer> vals) {
         if (node != null) {
-            preorder(node.left, vals);
+            inorder(node.left, vals);
             vals.add(node.val);
-            preorder(node.right, vals);
+            inorder(node.right, vals);
         }
     }
 
