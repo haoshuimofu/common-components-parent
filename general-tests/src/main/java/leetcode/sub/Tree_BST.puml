@@ -1,0 +1,39 @@
+@startuml
+top to bottom direction
+
+circle 120
+circle 70
+circle 140
+circle 50
+circle 100
+circle 130
+circle 160
+circle 20
+circle 55
+circle 75
+circle 110
+circle 119
+circle 135
+circle 150
+circle 200
+
+120 --> 70
+120 --> 140
+70 --> 50
+70 --> 100
+140 --> 130
+140 --> 160
+50 --> 20
+50 --> 55
+100 --> 75
+100 --> 110
+130 --> 119
+130 --> 135
+160 --> 150
+160 --> 200
+
+
+
+
+
+@enduml
