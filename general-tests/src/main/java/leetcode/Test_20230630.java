@@ -4,13 +4,21 @@ import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.LinkedBlockingDeque;
 
 /**
  * @author dewu.de
  * @date 2023-06-30 10:22 上午
  */
 public class Test_20230630 {
+
+    public static void main(String[] args) {
+        TreeNode root = TreeNode_Init.init();
+        Test_20230630 test = new Test_20230630();
+        List<Integer> vals = test.inorderTraversal(root);
+        for (Integer val : vals) {
+            System.out.print(val + " ");
+        }
+    }
 
     /**
      * 前序遍历: 根 -> 左子节点 -> 右子节点
@@ -76,17 +84,17 @@ public class Test_20230630 {
      * 层序遍历, 借助于队列实现
      * <p>
      * [1,2,3,4,5,6,7]
-     *      1
-     *   2     3
+     * 1
+     * 2     3
      * 4  5  6   7
-     *
-     *
+     * <p>
+     * <p>
      * 队列首部逐一弹出, 追加其子节点到尾部
      * -> 1
      * -> 2 3
      * -> 3 4 5
      * -> 4 5 6 7
-     *
+     * <p>
      * -> 1
      * -> 2 3 -> 3 4 5 -> 4 5 6 7
      * -> 4 5 6 7

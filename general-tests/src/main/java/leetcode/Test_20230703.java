@@ -7,15 +7,12 @@ package leetcode;
 public class Test_20230703 {
 
     public static void main(String[] args) {
-        TreeNode root = new TreeNode(1);
-        TreeNode right = new TreeNode(1);
-        root.right = right;
-        System.out.println(isValidBST(root));
     }
 
     /**
      * 验证二叉树是BST
-     *[120,70,140,50,100,130,160,20,55,75,110,119,135,150,200]
+     * [120,70,140,50,100,130,160,20,55,75,110,119,135,150,200]
+     *
      * @param root
      * @return
      */
@@ -24,6 +21,20 @@ public class Test_20230703 {
             return false;
         }
         return validate(root.left, root, true) && validate(root.right, root, false);
+    }
+
+    public static TreeNode validateByInorder(TreeNode node, TreeNode prev) {
+        if (node.left == null) {
+            if (prev == null) {
+                prev = node;
+            }
+        } else {
+            prev = validateByInorder(node, prev);
+
+        }
+        prev = validateByInorder(node, prev);
+        validateByInorder(node.right, prev);
+        return null;
     }
 
     /**
@@ -52,7 +63,7 @@ public class Test_20230703 {
                     return false;
                 }
             }
-        }  else {
+        } else {
             if (node.val <= parent.val) {
                 return false;
             }
