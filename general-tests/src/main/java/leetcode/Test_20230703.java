@@ -6,7 +6,11 @@ package leetcode;
  */
 public class Test_20230703 {
 
+    static TreeNode prev = null;
+
     public static void main(String[] args) {
+        TreeNode root = TreeNode_Init.init();
+        System.out.println(isValidBST(root));
     }
 
     /**
@@ -18,66 +22,21 @@ public class Test_20230703 {
      */
     public static boolean isValidBST(TreeNode root) {
         if (root == null) {
-            return false;
-        }
-        return validate(root.left, root, true) && validate(root.right, root, false);
-    }
-
-    public static TreeNode validateByInorder(TreeNode node, TreeNode prev) {
-        if (node.left == null) {
-            if (prev == null) {
-                prev = node;
-            }
-        } else {
-            prev = validateByInorder(node, prev);
-
-        }
-        prev = validateByInorder(node, prev);
-        validateByInorder(node.right, prev);
-        return null;
-    }
-
-    /**
-     * 参考 Tree_BST.puml
-     *
-     * @param node
-     * @param parent
-     * @param isLeft
-     * @return
-     */
-    private static boolean validate(TreeNode node, TreeNode parent, boolean isLeft) {
-        if (node == null) {
             return true;
         }
-        if (isLeft) {
-            if (node.val >= parent.val) {
+        if (!isValidBST(root.left)) {
+            return false;
+        }
+        if (prev != null) {
+            if (root.val >= prev.val) {
                 return false;
-            }
-            if (node.left != null) {
-                if (node.left.val >= node.val) {
-                    return false;
-                }
-            }
-            if (node.right != null) {
-                if (node.right.val <= node.val || node.right.val >= parent.val) {
-                    return false;
-                }
             }
         } else {
-            if (node.val <= parent.val) {
-                return false;
-            }
-            if (node.left != null) {
-                if (node.left.val >= node.val || node.left.val <= parent.val) {
-                    return false;
-                }
-            }
-            if (node.right != null) {
-                if (node.right.val <= node.val) {
-                    return false;
-                }
-            }
+            prev = root;
         }
-        return validate(node.left, node, true) && validate(node.right, node, false);
+        return isValidBST(root.right);
+
     }
+
+
 }
