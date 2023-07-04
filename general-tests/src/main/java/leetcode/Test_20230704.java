@@ -22,4 +22,26 @@ public class Test_20230704 {
         }
         return null;
     }
+
+    /**
+     * 中序遍历, 找到第一个大于val的节点
+     *
+     * @param root
+     * @param val
+     * @return
+     */
+    public TreeNode insertIntoBST(TreeNode root, int val) {
+        if (root == null) {
+            return new TreeNode(val);
+        }
+        return null;
+    }
+
+    public TreeNode[] findFirstMaxNode(TreeNode node, int val) {
+        TreeNode[] nodes = findFirstMaxNode(node.left, val);
+
+        return null;
+    }
 }
+
+
