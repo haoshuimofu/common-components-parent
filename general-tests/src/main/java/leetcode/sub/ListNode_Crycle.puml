@@ -1,0 +1,16 @@
+@startuml
+left to right direction
+
+circle "3"
+circle "0"
+circle "2"
+circle "-4"
+
+
+"3" --> "2"
+"2" --> "0"
+"0" ---> "-4"
+"-4" ---> "2"
+
+
+@enduml
