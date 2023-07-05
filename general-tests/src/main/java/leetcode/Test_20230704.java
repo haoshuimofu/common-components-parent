@@ -31,6 +31,7 @@ public class Test_20230704 {
 
     /**
      * 接雨水
+     * 快慢指针: slow=0, fast=1
      *
      * @param height
      * @return
@@ -42,24 +43,23 @@ public class Test_20230704 {
         }
         int sum = 0;
         int slow = 0;
+        int fast = -1;
         while (slow < height.length - 1) {
-            int fast = slow + 1;
+            fast = slow + 1;
             if (height[slow] == 0 || height[fast] >= height[slow]) {
                 slow++;
                 continue;
             }
-            int nearMax = -1; // 比slow值最大最近的下标
-            int nearMin = -1; // 比slow值小且最接近slow值且距slow最远的下标
+            int nearMax = -1;  // 第一个 >= slow值 的下标
+            int closeMin = -1; // 值 < slow值 且 值最接近 slow值的下标
             while (fast < height.length) {
-                // 第一个比slow值大的且不相邻的下标
                 if (height[fast] >= height[slow]) {
                     nearMax = fast;
                     break;
                 }
-                // 比slow值小且值最近slow的下标
                 if (height[fast] < height[slow] && height[fast] > 0 && fast - slow > 1) {
-                    if (nearMin == -1 || height[fast] >= height[nearMin]) {
-                        nearMin = fast;
+                    if (closeMin == -1 || height[fast] >= height[closeMin]) {
+                        closeMin = fast;
                     }
                 }
                 fast++;
@@ -69,13 +69,13 @@ public class Test_20230704 {
                     sum += (height[slow] - height[i]);
                 }
                 slow = nearMax;
-            } else if (nearMin != -1) {
-                for (int i = slow + 1; i < nearMin; i++) {
-                    if (height[i] < height[nearMin]) {
-                        sum += (height[nearMin] - height[i]);
+            } else if (closeMin != -1) {
+                for (int i = slow + 1; i < closeMin; i++) {
+                    if (height[i] < height[closeMin]) {
+                        sum += (height[closeMin] - height[i]);
                     }
                 }
-                slow = nearMin;
+                slow = closeMin;
             } else {
                 break;
             }
