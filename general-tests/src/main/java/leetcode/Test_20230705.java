@@ -1,6 +1,8 @@
 package leetcode;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -20,6 +22,18 @@ public class Test_20230705 {
         node_0.next = node__4;
         node__4.next = node_2;
         System.out.println(detectCycle(node_3));
+
+
+        ListNode n_1 = new ListNode(1);
+        ListNode n_2 = new ListNode(2);
+        ListNode n_3 = new ListNode(3);
+        ListNode n_4 = new ListNode(4);
+        n_1.next = n_2;
+        n_2.next = n_3;
+        n_3.next = n_4;
+
+        reorderList(n_1);
+
     }
 
 
@@ -118,5 +132,41 @@ public class Test_20230705 {
             slow = slow.next;
         }
         return slow;
+    }
+
+    /**
+     * 重排链表
+     * TODO 不是最优解
+     *
+     * @param head
+     */
+    public static void reorderList(ListNode head) {
+        if (head == null || head.next == null) {
+            return;
+        }
+        List<ListNode> nodes = new ArrayList<>();
+        ListNode node = head;
+        ListNode next;
+        while (node != null) {
+            next = node.next;
+            node.next = null;
+            nodes.add(node);
+            node = next;
+        }
+        int low = 0;
+        int high = nodes.size() - 1;
+        ListNode prev = null;
+        while (low < high) {
+            if (prev != null) {
+                prev.next = nodes.get(low);
+            }
+            nodes.get(low).next = nodes.get(high);
+            prev = nodes.get(high);
+            low++;
+            high--;
+        }
+        if (low == high) {
+            prev.next = nodes.get(low);
+        }
     }
 }
