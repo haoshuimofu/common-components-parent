@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 public class MurmurHash3Test {
 
     public static void main(String[] args) {
-        int max = 512;
+        int max = 17;
 
         List<Group> groups = new ArrayList<>();
         for (int i = 1; i <= max; i++) {
@@ -37,6 +37,8 @@ public class MurmurHash3Test {
             groups.add(new Group(Math.abs(md5Hash) % 4, i));
         }
         System.out.println(JSON.toJSONString(groups.stream().collect(Collectors.groupingBy(Group::getNodeId, Collectors.counting())), true));
+
+
 
 
     }
