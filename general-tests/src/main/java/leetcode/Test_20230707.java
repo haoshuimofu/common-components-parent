@@ -96,7 +96,15 @@ public class Test_20230707 {
     public int fib1(int n) {
         if (n == 0) return 0;
         if (n == 1) return 1;
-        return fib(n - 1) + fib(n - 2);
+        int n_2 = 0;
+        int n_1 = 1;
+        int val = 0;
+        for (int i = 2; i <= n; i++) {
+            val = n_1 + n_2;
+            n_2 = n_1;
+            n_1 = val;
+        }
+        return val;
     }
 
 }
