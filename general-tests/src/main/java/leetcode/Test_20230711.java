@@ -110,9 +110,7 @@ public class Test_20230711 {
                 dp[i] = Math.max(dp[i - 2], dp[i - 3]) + nums[i];
             }
         }
-        System.out.println(JSON.toJSONString(dp));
         return Math.max(dp[dp.length - 1], dp[dp.length - 2]);
-
     }
 
     public static void main(String[] args) {
