@@ -59,7 +59,7 @@ public class Test_20230711 {
                 low = high;
                 high = low + 1;
             } else {
-                if (low == prices.length - 1) {
+                if (high == prices.length - 1) {
                     profit += (prices[high] - prices[low]);
                 }
                 high++;
