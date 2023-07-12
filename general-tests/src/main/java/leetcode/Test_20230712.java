@@ -14,6 +14,9 @@ public class Test_20230712 {
         cost = new int[]{1, 100};
         System.out.println(minCostClimbingStairs1(cost));
         System.out.println(minCostClimbingStairs1(cost));
+
+        // 面试题 05.03. 翻转数位
+        System.out.println(reverseBits(0));
     }
 
     /**
@@ -49,5 +52,47 @@ public class Test_20230712 {
             dp[i] = Math.min(dp[i - 1] + cost[i - 1], dp[i - 2] + cost[i - 2]);
         }
         return dp[cost.length];
+    }
+
+
+    /**
+     * 面试题 05.03. 翻转数位
+     *
+     * @param num
+     * @return
+     */
+    public static int reverseBits(int num) {
+        String bStr = Integer.toBinaryString(num);
+        System.out.println(bStr + ".length() = " + bStr.length());
+//        if (bStr.length() < 32) {
+//            bStr = "0" + bStr;
+//        }
+        int start = -2;
+        int zeroIndex = -2;
+        // 正数不满32位首位补0, 特别设置-1, 后面计算相当于+1
+        if (bStr.length() < 32) {
+            start = -1;
+            zeroIndex = -1;
+        }
+        int max = 0;
+        for (int i = 0; i < bStr.length(); i++) {
+            if (start == -2) {
+                start = i;
+            }
+            if (bStr.charAt(i) == '0') {
+                if (zeroIndex != -2) {
+                    max = Math.max(max, i - start);
+                    start = zeroIndex + 1;
+                } else {
+                    if (i == bStr.length() - 1) {
+                        max = Math.max(max, i - start + 1);
+                    }
+                }
+                zeroIndex = i;
+            } else if (i == bStr.length() - 1) {
+                max = Math.max(max, i - start + 1);
+            }
+        }
+        return max;
     }
 }
