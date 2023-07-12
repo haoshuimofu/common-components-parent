@@ -121,4 +121,28 @@ public class Test_20230711 {
         int[] msgs = new int[]{2, 7, 9, 3, 1};
         System.out.println(massage(msgs));
     }
+
+    /**
+     * 剑指 Offer 42. 连续子数组的最大和
+     *
+     * @param nums
+     * @return
+     */
+    public int maxSubArray(int[] nums) {
+        int max = nums[0];
+        int result = max;
+        if (nums.length > 1) {
+            for (int i = 1; i < nums.length; i++) {
+                if (nums[i] + max < nums[i]) {
+                    max = nums[i];
+                } else {
+                    max += nums[i];
+                }
+                if (max > result) {
+                    result = max;
+                }
+            }
+        }
+        return result;
+    }
 }
