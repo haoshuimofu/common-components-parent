@@ -93,4 +93,10 @@ public class DemoIndexController {
         return JsonResult.success();
     }
 
+    @RequestMapping("test/routing")
+    public JsonResult testRouting() {
+        demoService.initTestDataWithRouting();
+        return JsonResult.success();
+    }
+
 }

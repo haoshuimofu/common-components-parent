@@ -177,4 +177,34 @@ public class DemoService {
         }
     }
 
+    public void initTestDataWithRouting() {
+        int total = 17;
+        for (int i = 1; i <= 17; i++) {
+            Demo demo = new Demo();
+            demo.setId(i + "");
+            demo.setName("name_" + i);
+            demo.setTitle("title_" + i);
+            demo.setStatus(1);
+            demo.setTimestamp(new Date());
+
+            DemoDetail demoDetail = new DemoDetail();
+            demoDetail.setTitle("detail_title_" + i);
+            demoDetail.setDetail("detail_" + i);
+            demo.setDetail(demoDetail);
+
+            DemoItem item1 = new DemoItem();
+            item1.setItemName("item1_name_" + i);
+            item1.setItemTitle("item1_title_" + i);
+            DemoItem item2 = new DemoItem();
+            item1.setItemName("item2_name_" + i);
+            item1.setItemTitle("item2_title_" + i);
+            demo.setItems(Arrays.asList(item1, item2));
+            try {
+                demoRepository.save(demo);
+            } catch (Exception e) {
+                logger.error("### Demo索引初始化Test数据出错了!", e);
+            }
+        }
+    }
+
 }
