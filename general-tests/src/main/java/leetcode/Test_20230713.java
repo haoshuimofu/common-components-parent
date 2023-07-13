@@ -111,6 +111,7 @@ public class Test_20230713 {
     /**
      * 931. 下降路径最小和
      * 37 + 8 的击败率，有待提高。
+     * 75 + 24, 单次冒泡比 Arrays.sort效率高多了
      *
      * @param matrix
      * @return
@@ -138,7 +139,13 @@ public class Test_20230713 {
                 }
             }
         }
-        Arrays.sort(dp[m - 1]);
-        return dp[m - 1][0];
+        // Arrays.sort(dp[m - 1]);
+        int min = dp[m - 1][0];
+        for (int i = 1; i < n; i++) {
+            if (dp[m - 1][i] < min) {
+                min = dp[m - 1][i];
+            }
+        }
+        return min;
     }
 }
