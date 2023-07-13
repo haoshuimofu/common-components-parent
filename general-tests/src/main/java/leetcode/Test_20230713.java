@@ -1,5 +1,6 @@
 package leetcode;
 
+import java.util.Arrays;
 import java.util.Stack;
 
 /**
@@ -105,5 +106,39 @@ public class Test_20230713 {
         // 去环
         tail.next = null;
         return slow;
+    }
+
+    /**
+     * 931. 下降路径最小和
+     * 37 + 8 的击败率，有待提高。
+     *
+     * @param matrix
+     * @return
+     */
+    public int minFallingPathSum(int[][] matrix) {
+        if (matrix == null || matrix.length == 0) {
+            return 0;
+        }
+        int m = matrix.length;
+        int n = matrix[0].length;
+        int[][] dp = new int[m][n];
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                if (i == 0) {
+                    dp[i][j] = matrix[i][j];
+                } else {
+                    int min = dp[i - 1][j];
+                    if (j > 0) {
+                        min = Math.min(min, dp[i - 1][j - 1]);
+                    }
+                    if (j < n - 1) {
+                        min = Math.min(min, dp[i - 1][j + 1]);
+                    }
+                    dp[i][j] = min + matrix[i][j];
+                }
+            }
+        }
+        Arrays.sort(dp[m - 1]);
+        return dp[m - 1][0];
     }
 }
