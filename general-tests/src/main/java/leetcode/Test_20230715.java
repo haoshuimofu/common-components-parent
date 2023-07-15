@@ -11,9 +11,67 @@ public class Test_20230715 {
 
     public static void main(String[] args) {
         int[] nums = new int[]{1000000000, 1000000000, 1000000000, 1000000000};
-        System.out.println(Integer.MIN_VALUE);
         System.out.println(JSON.toJSONString(fourSum(nums, -294967296)));
 
+        nums = new int[]{1, 3, 5, 7};
+        System.out.println(searchInsert(nums, 7));
+
+    }
+
+    /**
+     * 268. 丢失的数字
+     * 给定一个包含 [0, n] 中 n 个数的数组 nums ，找出 [0, n] 这个范围内没有出现在数组中的那个数。
+     *
+     * @param nums
+     * @return
+     */
+    public int missingNumber(int[] nums) {
+        int[] flags = new int[nums.length +1];
+        for (int i = 0; i < nums.length; i++) {
+            flags[nums[i]] = 1;
+        }
+        for (int i = 0; i < flags.length; i++) {
+            if (flags[i] == 0) {
+                return i;
+            }
+        }
+        return -1;
+
+    }
+
+    /**
+     * 35. 搜索插入位置
+     *
+     * @param nums
+     * @param target
+     * @return
+     */
+    public static int searchInsert(int[] nums, int target) {
+        int low = 0;
+        int high = nums.length - 1;
+        int index = -1;
+        while (low <= high) {
+            int mid = (low + high) / 2;
+            if (nums[mid] == target) {
+                index = mid;
+                break;
+            } else if (nums[mid] > target) {
+                high = mid - 1;
+            } else {
+                low = mid + 1;
+            }
+        }
+        if (index != -1) {
+            while (index >= 1) {
+                if (nums[index] != nums[index - 1]) {
+                    break;
+                }
+                index--;
+            }
+            return index;
+        } else {
+            return low;
+        }
     }
 
     /**
