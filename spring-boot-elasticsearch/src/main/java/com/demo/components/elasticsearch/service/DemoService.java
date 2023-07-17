@@ -1,5 +1,8 @@
 package com.demo.components.elasticsearch.service;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.demo.components.elasticsearch.PageResult;
 import com.demo.components.elasticsearch.model.Demo;
 import com.demo.components.elasticsearch.model.Demo1;
@@ -8,18 +11,30 @@ import com.demo.components.elasticsearch.model.DemoItem;
 import com.demo.components.elasticsearch.repositories.DemoRepository;
 import com.demo.components.elasticsearch.repositories.DemoRepository1;
 import com.demo.components.elasticsearch.utils.StringUtils;
+import org.apache.commons.codec.digest.DigestUtils;
+import org.elasticsearch.action.search.SearchRequest;
+import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.client.RequestOptions;
+import org.elasticsearch.client.Requests;
 import org.elasticsearch.client.core.CountRequest;
 import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.search.SearchHit;
+import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -177,28 +192,35 @@ public class DemoService {
         }
     }
 
-    public void initTestDataWithRouting() {
-        int total = 17;
-        for (int i = 1; i <= 17; i++) {
+    public void initTestDataWithRouting() throws Exception {
+        File file = new File("/Users/eleme/project-repo-mine/common-components-parent/spring-boot-elasticsearch/src/main/resources/buckets.json");
+
+        BufferedReader br = new BufferedReader(new FileReader(file));
+        StringBuilder sb = new StringBuilder();
+        String line;
+        while ((line = br.readLine()) != null) {
+            sb.append(line);
+        }
+
+        JSONArray buckets = JSON.parseArray(sb.toString());
+        Map<String, Integer> map = new HashMap<>();
+        for (Object bucket : buckets) {
+            JSONObject b = (JSONObject) bucket;
+            map.put(b.getString("k"), b.getIntValue("v"));
+        }
+        map.remove("0");
+        System.out.println(map.size());
+        for (Map.Entry<String, Integer> entry : map.entrySet()) {
             Demo demo = new Demo();
-            demo.setId(i + "");
-            demo.setName("name_" + i);
-            demo.setTitle("title_" + i);
+            demo.setId(entry.getKey());
+//            demo.set_routing(DigestUtils.md5Hex(entry.getKey()));
+            demo.set_routing(entry.getKey());
+//            demo.set_routing(stationId(entry.getKey()));
+
+            demo.setName("count=" + entry.getValue());
+            demo.setTitle(demo.getName());
             demo.setStatus(1);
             demo.setTimestamp(new Date());
-
-            DemoDetail demoDetail = new DemoDetail();
-            demoDetail.setTitle("detail_title_" + i);
-            demoDetail.setDetail("detail_" + i);
-            demo.setDetail(demoDetail);
-
-            DemoItem item1 = new DemoItem();
-            item1.setItemName("item1_name_" + i);
-            item1.setItemTitle("item1_title_" + i);
-            DemoItem item2 = new DemoItem();
-            item1.setItemName("item2_name_" + i);
-            item1.setItemTitle("item2_title_" + i);
-            demo.setItems(Arrays.asList(item1, item2));
             try {
                 demoRepository.save(demo);
             } catch (Exception e) {
@@ -207,4 +229,79 @@ public class DemoService {
         }
     }
 
+    private static String stationId(String stationId) {
+        if (stationId.length() <= 5) {
+            return stationId;
+        } else {
+            return stationId.substring(stationId.length() - 5, stationId.length());
+        }
+
+//        StringBuilder sb = new StringBuilder();
+//        int diff = 10 - stationId.length();
+//        if (diff > 0) {
+//            int hash = stationId.hashCode() % 10;
+//            for (int i = 0; i < diff; i++) {
+//                sb.append((char) (hash + 48));
+//            }
+//        }
+//        for (int i = 0; i < stationId.length(); i++) {
+//            sb.append((char) (stationId.charAt(i) + 48));
+//        }
+//        return sb.toString();
+    }
+
+    public static void main(String[] args) {
+        System.out.println(stationId("17447280"));
+    }
+
+    public void searchCountRouting() throws IOException {
+        SearchSourceBuilder searchSourceBuilder = SearchSourceBuilder.searchSource().query(QueryBuilders.matchAllQuery());
+        searchSourceBuilder.from(0).size(10000);
+        SearchRequest searchRequest = Requests.searchRequest(demoRepository.getIndex()).source(searchSourceBuilder);
+        searchRequest.preference("_shards:0");
+        SearchResponse searchResponse = demoRepository.getClient().search(searchRequest, RequestOptions.DEFAULT);
+        System.out.println("shard_index=0, total=" + total(searchResponse));
+
+        searchRequest.preference("_shards:1");
+        searchResponse = demoRepository.getClient().search(searchRequest, RequestOptions.DEFAULT);
+        System.out.println("shard_index=1, total=" + total(searchResponse));
+
+        searchRequest.preference("_shards:2");
+        searchResponse = demoRepository.getClient().search(searchRequest, RequestOptions.DEFAULT);
+        System.out.println("shard_index=2, total=" + total(searchResponse));
+
+        searchRequest.preference("_shards:3");
+        searchResponse = demoRepository.getClient().search(searchRequest, RequestOptions.DEFAULT);
+        System.out.println("shard_index=3, total=" + total(searchResponse));
+
+        searchRequest.preference("_shards:4");
+        searchResponse = demoRepository.getClient().search(searchRequest, RequestOptions.DEFAULT);
+        System.out.println("shard_index=4, total=" + total(searchResponse));
+
+        searchRequest.preference("_shards:5");
+        searchResponse = demoRepository.getClient().search(searchRequest, RequestOptions.DEFAULT);
+        System.out.println("shard_index=5, total=" + total(searchResponse));
+
+        searchRequest.preference("_shards:6");
+        searchResponse = demoRepository.getClient().search(searchRequest, RequestOptions.DEFAULT);
+        System.out.println("shard_index=6, total=" + total(searchResponse));
+
+        searchRequest.preference("_shards:7");
+        searchResponse = demoRepository.getClient().search(searchRequest, RequestOptions.DEFAULT);
+        System.out.println("shard_index=7, total=" + total(searchResponse));
+
+        searchRequest.preference("_shards:8");
+        searchResponse = demoRepository.getClient().search(searchRequest, RequestOptions.DEFAULT);
+        System.out.println("shard_index=8, total=" + total(searchResponse));
+
+    }
+
+    private int total(SearchResponse searchResponse) {
+        int sum = 0;
+        for (SearchHit hit : searchResponse.getHits().getHits()) {
+            String name = (String) hit.getSourceAsMap().get("name");
+            sum += Integer.valueOf(name.split("=")[1]);
+        }
+        return sum;
+    }
 }

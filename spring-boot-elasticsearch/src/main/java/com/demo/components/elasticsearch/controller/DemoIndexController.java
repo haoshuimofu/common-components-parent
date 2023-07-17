@@ -94,8 +94,14 @@ public class DemoIndexController {
     }
 
     @RequestMapping("test/routing")
-    public JsonResult testRouting() {
+    public JsonResult testRouting() throws Exception {
         demoService.initTestDataWithRouting();
+        return JsonResult.success();
+    }
+
+    @RequestMapping("test/searchCountRouting")
+    public JsonResult testSearchCountRouting() throws Exception {
+        demoService.searchCountRouting();
         return JsonResult.success();
     }
 

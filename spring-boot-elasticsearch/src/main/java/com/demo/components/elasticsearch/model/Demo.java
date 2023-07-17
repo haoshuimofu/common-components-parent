@@ -15,7 +15,6 @@ public class Demo extends BaseIndexModel {
 
     @ESID
     @ESTransient
-    @ESRouting
     private String id;
     private String name;
     private String title;

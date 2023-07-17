@@ -3,7 +3,8 @@ elasticsearch:
     clusters:
       default:
         schema: http
-        servers: 127.0.0.1:9201;127.0.0.1:9202
+#        servers: 127.0.0.1:9201;127.0.0.1:9202
+        servers: 127.0.0.1:9200
         connectTimeout: 1
         socketTimeout: 1
         connectPoolingEnabled: true
