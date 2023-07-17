@@ -14,6 +14,8 @@ public class Test_20230717 {
         System.out.println(addStrings("456", "77"));
         System.out.println(addStrings("0", "0"));
 
+        System.out.println("----");
+
         char[][] grid = new char[4][5];
         grid[0] = new char[]{'1', '1', '0', '0', '0'};
         grid[1] = new char[]{'1', '1', '0', '0', '0'};
@@ -24,7 +26,13 @@ public class Test_20230717 {
         grid[0] = new char[]{'0', '1', '0'};
         grid[1] = new char[]{'1', '0', '1'};
         grid[2] = new char[]{'0', '1', '0'};
-        System.out.println("岛屿数 = " + numIslands(grid));
+
+        grid = new char[4][5];
+        grid[0] = new char[]{'1', '1', '0', '0', '0'};
+        grid[1] = new char[]{'1', '1', '0', '0', '0'};
+        grid[2] = new char[]{'0', '0', '1', '0', '0'};
+        grid[3] = new char[]{'0', '0', '0', '1', '1'};
+        System.out.println("岛屿数 = " + bfs(grid));
     }
 
     /**
@@ -50,24 +58,32 @@ public class Test_20230717 {
         int[][] visit = new int[m][n];
         ArrayDeque<int[]> queue = new ArrayDeque<>();
         queue.addFirst(new int[]{0, 0});
-        boolean hasIsland = false;
+        boolean lastLevelHasIsland = false; // 上一层是否有岛
         int numIslands = 0;
         while (!queue.isEmpty()) {
-            // 这一层孤立岛, 孤立岛 = 上下左右全部0 & 自己是1
-            boolean levelHasIsland = false;
+            boolean currLevelHasIslandWithLastLevel = false; // 这一层是否有岛屿与上一层岛屿相连
+            boolean currLevelHasIslandWithNextLevel = false; // 这一层是否有岛屿与下一层岛屿相连
             int size = queue.size();
             for (int k = 0; k < size; k++) {
                 int[] node = queue.pollFirst();
                 int i = node[0];
                 int j = node[1];
-                // 首先看
                 if (visit[i][j] == 0) {
-                    if (grid[i][j] == '1') {
-                        hasIsland = true;
-                        levelHasIsland = true;
-                    }
-//                    System.out.print(grid[i][j] + " ");
+                    System.out.print(grid[i][j] + " ");
                     visit[i][j] = 1;
+                    if (grid[i][j] == '1') {
+                        // 岛屿与上一层岛屿相连
+                        if ((i > 0 && grid[i - 1][j] == '1') || (j > 0 && grid[i][j - 1] == '1')) {
+                            currLevelHasIslandWithLastLevel = true;
+                        }
+                        // 岛屿是否与下一层岛屿相连
+                        if ((i < m - 1 && grid[i + 1][j] == '1') || (j < n - 1 && grid[i][j + 1] == '1')) {
+                            currLevelHasIslandWithNextLevel = true;
+                        }
+                        if ((!currLevelHasIslandWithLastLevel && !currLevelHasIslandWithNextLevel) || (i == m - 1 && j == n - 1)) {
+                            numIslands++;
+                        }
+                    }
                     if (i < m - 1 && visit[i + 1][j] == 0) {
                         queue.addLast(new int[]{i + 1, j});
                     }
@@ -76,16 +92,17 @@ public class Test_20230717 {
                     }
                 }
             }
-            if (hasIsland && !levelHasIsland) {
-                numIslands++;
+            if (lastLevelHasIsland) {
+                if (!currLevelHasIslandWithLastLevel) {
+                    numIslands++;
+                    lastLevelHasIsland = false;
+                }
+            } else {
+                if (currLevelHasIslandWithNextLevel) {
+                    lastLevelHasIsland = true;
+                }
             }
-            if (!levelHasIsland) {
-                hasIsland = false;
-            }
-//            System.out.println();
-        }
-        if (hasIsland) {
-            numIslands++;
+            System.out.println();
         }
         return numIslands;
     }
