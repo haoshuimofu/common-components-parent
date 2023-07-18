@@ -1,7 +1,6 @@
 package leetcode;
 
 import java.util.ArrayDeque;
-import java.util.Stack;
 
 /**
  * @author dewu.de
@@ -20,10 +19,13 @@ public class Test_20230717 {
         grid[2] = new char[]{'0', '0', '1', '0', '0'};
         grid[3] = new char[]{'0', '0', '0', '1', '1'};
 
-        grid = new char[3][3];
-        grid[0] = new char[]{'0', '1', '0'};
-        grid[1] = new char[]{'1', '0', '1'};
-        grid[2] = new char[]{'0', '1', '0'};
+//        grid = new char[3][3];
+//        grid[0] = new char[]{'0', '1', '0'};
+//        grid[1] = new char[]{'1', '0', '1'};
+//        grid[2] = new char[]{'0', '1', '0'};
+
+        grid = new char[1][7];
+        grid[0] = new char[]{'1', '0', '1', '1', '0', '1', '1'};
         System.out.println("岛屿数 = " + numIslands(grid));
     }
 
@@ -41,10 +43,109 @@ public class Test_20230717 {
      * @return
      */
     public static int numIslands(char[][] grid) {
-        return bfs(grid);
+        if (grid == null || grid.length == 0) {
+            return 0;
+        }
+        return dfs(grid);
     }
 
+    /**
+     * dfs效率高, 没有额外的数据结果, bfs需要借助queue层序遍历
+     *
+     * @param grid
+     * @return
+     */
+    public static int dfs(char[][] grid) {
+        int m = grid.length;
+        int n = grid[0].length;
+        int numOfIsland = 0;
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                if (grid[i][j] == '1') {
+                    numOfIsland++;
+                    subDfs(grid, i, j);
+                }
+            }
+        }
+        return numOfIsland;
+    }
+
+    private static void subDfs(char[][] grid, int i, int j) {
+        if (grid[i][j] == '0') {
+            return;
+        }
+        grid[i][j] = '0';
+        if (i > 0 && grid[i - 1][j] == '1') {
+            subDfs(grid, i - 1, j);
+        }
+        if (i < grid.length - 1 && grid[i + 1][j] == '1') {
+            subDfs(grid, i + 1, j);
+        }
+        if (j > 0 && grid[i][j - 1] == '1') {
+            subDfs(grid, i, j - 1);
+        }
+        if (j < grid[0].length - 1 && grid[i][j + 1] == '1') {
+            subDfs(grid, i, j + 1);
+        }
+    }
+
+    /**
+     * bfs效率不高
+     *
+     * @param grid
+     * @return
+     */
     public static int bfs(char[][] grid) {
+        int m = grid.length;
+        int n = grid[0].length;
+        int numOfIsland = 0;
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                if (grid[i][j] == '1') {
+                    numOfIsland++;
+                    subBfs(grid, i, j);
+                }
+            }
+        }
+        return numOfIsland;
+    }
+
+    private static void subBfs(char[][] grid, int i, int j) {
+        if (grid[i][j] == '0') {
+            return;
+        }
+        ArrayDeque<int[]> queue = new ArrayDeque<>();
+        queue.addFirst(new int[]{i, j});
+        while (!queue.isEmpty()) {
+            int size = queue.size();
+            for (int k = 0; k < size; k++) {
+                int[] point = queue.removeLast();
+                int row = point[0];
+                int column = point[1];
+                grid[row][column] = '0';
+                if (row < grid.length - 1 && grid[row + 1][column] == '1') {
+                    queue.addLast(new int[]{row + 1, column});
+                }
+                if (row > 0 && grid[row - 1][column] == '1') {
+                    queue.addLast(new int[]{row - 1, column});
+                }
+                if (column < grid[0].length - 1 && grid[row][column + 1] == '1') {
+                    queue.addLast(new int[]{row, column + 1});
+                }
+                if (column > 0 && grid[row][column - 1] == '1') {
+                    queue.addLast(new int[]{row, column - 1});
+                }
+            }
+        }
+    }
+
+    /**
+     * 200. 岛屿数量 ERROR
+     *
+     * @param grid
+     * @return
+     */
+    public static int bfsError(char[][] grid) {
         int m = grid.length;
         int n = grid[0].length;
         int[][] visit = new int[m][n];
@@ -66,7 +167,7 @@ public class Test_20230717 {
                         hasIsland = true;
                         levelHasIsland = true;
                     }
-//                    System.out.print(grid[i][j] + " ");
+                    System.out.print(grid[i][j] + " ");
                     visit[i][j] = 1;
                     if (i < m - 1 && visit[i + 1][j] == 0) {
                         queue.addLast(new int[]{i + 1, j});
@@ -82,7 +183,7 @@ public class Test_20230717 {
             if (!levelHasIsland) {
                 hasIsland = false;
             }
-//            System.out.println();
+            System.out.println();
         }
         if (hasIsland) {
             numIslands++;
