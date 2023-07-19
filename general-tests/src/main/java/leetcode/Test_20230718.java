@@ -30,6 +30,9 @@ public class Test_20230718 {
 
         Node node = cloneGraph(node_1);
         System.out.println(node.val);
+
+        node = cloneGraph1(node_1);
+        System.out.println(node.val);
     }
 
     /**
@@ -74,11 +77,42 @@ public class Test_20230718 {
         }
     }
 
+    public static Node cloneGraph1(Node node) {
+        if (node == null) {
+            return null;
+        }
+        Node[] nodes = new Node[101];
+        int[] visit = new int[101];
+        Node newNode = new Node(node.val, new ArrayList<>(node.neighbors.size()));
+        nodes[0] = newNode;
+        cloneNode1(node, newNode, nodes, visit);
+        return newNode;
+    }
+
+    public static void cloneNode1(Node node, Node newNode, Node[] nodes, int[] visit) {
+        if (visit[node.val] == 1) {
+            return;
+        }
+        for (Node neighbor : node.neighbors) {
+            Node newNeighbor = nodes[neighbor.val];
+            if (newNeighbor == null) {
+                newNeighbor = new Node(neighbor.val, new ArrayList<>(neighbor.neighbors.size()));
+                nodes[neighbor.val] = newNeighbor;
+            }
+            newNode.neighbors.add(newNeighbor);
+        }
+        visit[node.val] = 1;
+        nodes[node.val] = node;
+        for (Node neighbor : node.neighbors) {
+            cloneNode1(neighbor, nodes[neighbor.val], nodes, visit);
+        }
+    }
+
 
     /**
      * 克隆图
      */
-    public Node cloneGraph1(Node node) {
+    public Node cloneGraph2(Node node) {
         if (node == null) {
             return null;
         }
