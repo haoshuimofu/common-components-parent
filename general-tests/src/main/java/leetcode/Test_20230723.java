@@ -50,8 +50,10 @@ public class Test_20230723 {
         if (nums == null || nums.length == 0) {
             return 0;
         }
+        // 第一轮求最大和, 其实就是另一题【53. 最大子数组和】
         int max = nums[0];
         int sum = max;
+        int allSum = sum;
         for (int i = 1; i < nums.length; i++) {
             if (sum < 0) {
                 sum = nums[i];
@@ -59,16 +61,20 @@ public class Test_20230723 {
                 sum += nums[i];
             }
             max = Math.max(max, sum);
+            allSum += nums[i];
         }
-        // 从 nums[nums.length - 1]再走一遍
-        sum = nums[nums.length - 1];
-        for (int i = nums.length; i < 2 * nums.length - 1; i++) {
-            if (sum < 0) {
-                sum = nums[i % nums.length];
-            } else {
-                sum += nums[i % nums.length];
+        // 第一轮已经把非循环状态下最大值求出来了
+        for (int i = 1; i < nums.length; i++) {
+            allSum -= nums[i - 1];
+            sum = allSum;
+            for (int j = nums.length; j < nums.length + i; j++) {
+                if (sum < 0) {
+                    sum = nums[j % nums.length];
+                } else {
+                    sum += nums[j % nums.length];
+                }
+                max = Math.max(max, sum);
             }
-            max = Math.max(max, sum);
         }
         return max;
     }
