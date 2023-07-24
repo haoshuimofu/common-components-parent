@@ -1,7 +1,5 @@
 package leetcode;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Arrays;
 
 public class Test_20230723 {
@@ -14,9 +12,11 @@ public class Test_20230723 {
         System.out.println("//////////////////");
 
         int[] nums = new int[]{5, -3, 5};
+        nums = new int[]{2, -2, 2, 7, 8, 0};
         System.out.println(maxSubarraySumCircular(nums));
-        nums = new int[]{1, -2, 3, -2};
-        System.out.println(maxSubarraySumCircular(nums));
+        System.out.println(maxSubarraySumCircular1(nums));
+//        nums = new int[]{1, -2, 3, -2};
+//        System.out.println(maxSubarraySumCircular(nums));
     }
 
 
@@ -41,6 +41,7 @@ public class Test_20230723 {
 
     /**
      * 918. 环形子数组的最大和
+     * 暴力解法-超时
      *
      * @param nums
      * @return
@@ -49,17 +50,66 @@ public class Test_20230723 {
         if (nums == null || nums.length == 0) {
             return 0;
         }
-        int len = nums.length;
-        int max = Integer.MIN_VALUE;
-        for (int i = 0; i < len; i++) {
-            int sum = Integer.MIN_VALUE;
-            for (int j = i; j < len + i; j++) {
-                if (sum == Integer.MIN_VALUE || sum + nums[j % len] < nums[j % len]) {
-                    sum = nums[j % len];
-                } else {
-                    sum += nums[j % len];
-                }
-                max = Math.max(max, sum);
+        int max = nums[0];
+        int sum = max;
+        for (int i = 1; i < nums.length; i++) {
+            if (sum < 0) {
+                sum = nums[i];
+            } else {
+                sum += nums[i];
+            }
+            max = Math.max(max, sum);
+        }
+        // 从 nums[nums.length - 1]再走一遍
+        sum = nums[nums.length - 1];
+        for (int i = nums.length; i < 2 * nums.length - 1; i++) {
+            if (sum < 0) {
+                sum = nums[i % nums.length];
+            } else {
+                sum += nums[i % nums.length];
+            }
+            max = Math.max(max, sum);
+        }
+        return max;
+    }
+
+    public static int mergeZero(int[] nums) {
+        int mergeCount = 0;
+        for (int i = 0; i < nums.length; i++) {
+            if (i > 0 && nums[i - 1] == 0 && nums[i] == nums[i - 1]) {
+                mergeCount++;
+            } else {
+                nums[i - mergeCount] = nums[i];
+            }
+        }
+        return nums.length - mergeCount;
+    }
+
+    //=====================================================
+
+    public static int maxSubarraySumCircular1(int[] nums) {
+        if (nums == null || nums.length == 0) {
+            return 0;
+        }
+        int len = 2 * nums.length - 1;
+        int max = nums[0];
+        int sum = max;
+        int startIndex = 0;
+        int toIndex = 1;
+        while (startIndex < nums.length && toIndex < len) {
+            if (sum + nums[toIndex % nums.length] < nums[toIndex % nums.length]) {
+                sum = nums[toIndex % nums.length];
+                startIndex = toIndex;
+            } else {
+                sum += nums[toIndex % nums.length];
+            }
+            max = Math.max(max, sum);
+            if (toIndex - startIndex == nums.length - 1 && startIndex < nums.length - 1) {
+                startIndex++;
+                sum = nums[startIndex];
+                toIndex = startIndex + 1;
+            } else {
+                toIndex++;
             }
         }
         return max;
@@ -75,7 +125,6 @@ public class Test_20230723 {
     public int[] intersection(int[] nums1, int[] nums2) {
         Arrays.sort(nums1);
         Arrays.sort(nums2);
-        List<Integer> res = new ArrayList<>();
         int[] tempResult = new int[Math.max(nums1.length, nums2.length)];
         int count = 0;
         for (int i = 0; i < nums2.length; i++) {
