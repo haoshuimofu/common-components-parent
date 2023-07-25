@@ -15,6 +15,8 @@ public class Test_20230723 {
         nums = new int[]{2, -2, 2, 7, 8, 0};
         System.out.println(maxSubarraySumCircular(nums));
         System.out.println(maxSubarraySumCircular1(nums));
+        System.out.println();
+        System.out.println(maxSubarraySumCircular2(nums));
 //        nums = new int[]{1, -2, 3, -2};
 //        System.out.println(maxSubarraySumCircular(nums));
     }
@@ -79,16 +81,27 @@ public class Test_20230723 {
         return max;
     }
 
-    public static int mergeZero(int[] nums) {
-        int mergeCount = 0;
-        for (int i = 0; i < nums.length; i++) {
-            if (i > 0 && nums[i - 1] == 0 && nums[i] == nums[i - 1]) {
-                mergeCount++;
-            } else {
-                nums[i - mergeCount] = nums[i];
-            }
+    public static int maxSubarraySumCircular2(int[] nums) {
+        if (nums == null || nums.length == 0) {
+            return 0;
         }
-        return nums.length - mergeCount;
+        int max = nums[0];
+        int min = max;
+        int totalSum = max;
+        int tempMax = max;
+        int tempMin = min;
+        for (int i = 1; i < nums.length; i++) {
+            totalSum += nums[i];
+            tempMax = Math.max(tempMax + nums[i], nums[i]);
+            tempMin = Math.min(tempMin + nums[i], nums[i]);
+
+            max = Math.max(max, tempMax);
+            min = Math.min(min, tempMin);
+        }
+        if (min == totalSum) {
+            return max;
+        }
+        return Math.max(max, totalSum - min);
     }
 
     //=====================================================
@@ -120,6 +133,8 @@ public class Test_20230723 {
         }
         return max;
     }
+
+    // ==================================================================
 
     /**
      * 349. 两个数组的交集
