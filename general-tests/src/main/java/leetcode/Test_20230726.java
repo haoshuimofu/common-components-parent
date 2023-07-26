@@ -15,6 +15,11 @@ public class Test_20230726 {
         System.out.println(jump(nums));
         nums = new int[]{1, 2, 1, 1, 1};
         System.out.println(jump(nums));
+
+        System.out.println("///////////////");
+        System.out.println(firstBadVersion(2126753390));
+        System.out.println("///////////////");
+        System.out.println(hammingWeight(-3));
     }
 
     /**
@@ -51,5 +56,60 @@ public class Test_20230726 {
         }
         return minSteps[nums.length - 1];
     }
+
+
+    /**
+     * 278. 第一个错误的版本
+     *
+     * @param n
+     * @return
+     */
+    public static int firstBadVersion(int n) {
+        int low = 1;
+        int high = n;
+        while (low >= 1 && low <= high) {
+            int mid = low + ((high - low) >> 1);
+            if (isBadVersion(mid)) {
+                if (mid == 1 || !isBadVersion(mid - 1)) {
+                    return mid;
+                } else {
+                    high = mid - 1;
+                }
+            } else {
+                low = mid + 1;
+            }
+        }
+        return 0;
+    }
+
+    public static boolean isBadVersion(int version) {
+        return version >= 1702766719;
+    }
+
+
+    /**
+     * 191. 位1的个数
+     */
+    // you need to treat n as an unsigned value
+    public static int hammingWeight(int n) {
+//       String bStr =  Integer.toBinaryString(n);
+//       int count = 0;
+//        for (int i = 0; i < bStr.length(); i++) {
+//            if (bStr.charAt(i) == '1') {
+//                count++;
+//            }
+//        }
+//        return count;
+
+        int ret = 0;
+        for (int i = 0; i < 32; i++) {
+            if ((n & (1 << i)) != 0) {
+                ret++;
+            }
+        }
+        return ret;
+
+    }
+
 
 }
