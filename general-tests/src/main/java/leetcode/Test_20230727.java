@@ -23,7 +23,7 @@ public class Test_20230727 {
         nums = new int[]{-1, -1, -1, -1, 0, 0};
         System.out.println(pivotIndex(nums));
         System.out.println("/////////");
-        System.out.println(getRow(5));
+        System.out.println(getRow(3));
     }
 
 
@@ -148,9 +148,9 @@ public class Test_20230727 {
      * @return
      */
     public static List<Integer> getRow(int rowIndex) {
-        int[][] matrix = new int[rowIndex > 1 ? 2 : 1][rowIndex];
+        int[][] matrix = new int[rowIndex > 0 ? 2 : 1][rowIndex + 1];
         matrix[0][0] = 1;
-        for (int i = 1; i < rowIndex; i++) {
+        for (int i = 1; i <= rowIndex; i++) {
             for (int j = 0; j <= i; j++) {
                 matrix[1][j] = 0;
                 if (j > 0) {
@@ -164,8 +164,8 @@ public class Test_20230727 {
             matrix[0] = matrix[1];
             matrix[1] = curr;
         }
-        List<Integer> res = new ArrayList<>(rowIndex);
-        for (int i = 0; i < rowIndex; i++) {
+        List<Integer> res = new ArrayList<>(rowIndex+1);
+        for (int i = 0; i <= rowIndex; i++) {
             res.add(matrix[0][i]);
         }
         return res;
