@@ -2,6 +2,9 @@ package leetcode;
 
 import com.alibaba.fastjson.JSON;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * @author dewu.de
  * @date 2023-07-27 1:15 下午
@@ -19,6 +22,8 @@ public class Test_20230727 {
 //        System.out.println(pivotIndex(nums));
         nums = new int[]{-1, -1, -1, -1, 0, 0};
         System.out.println(pivotIndex(nums));
+        System.out.println("/////////");
+        System.out.println(getRow(5));
     }
 
 
@@ -132,5 +137,37 @@ public class Test_20230727 {
             }
         }
         return -1;
+    }
+
+    /**
+     * 杨辉三角 II
+     * <p>
+     * mat[i][j] = mat[i-1][j-1] + mat[i-1][j]
+     *
+     * @param rowIndex
+     * @return
+     */
+    public static List<Integer> getRow(int rowIndex) {
+        int[][] matrix = new int[rowIndex > 1 ? 2 : 1][rowIndex];
+        matrix[0][0] = 1;
+        for (int i = 1; i < rowIndex; i++) {
+            for (int j = 0; j <= i; j++) {
+                matrix[1][j] = 0;
+                if (j > 0) {
+                    matrix[1][j] += matrix[0][j - 1];
+                }
+                if (j < i) {
+                    matrix[1][j] += matrix[0][j];
+                }
+            }
+            int[] curr = matrix[0];
+            matrix[0] = matrix[1];
+            matrix[1] = curr;
+        }
+        List<Integer> res = new ArrayList<>(rowIndex);
+        for (int i = 0; i < rowIndex; i++) {
+            res.add(matrix[0][i]);
+        }
+        return res;
     }
 }
