@@ -3,6 +3,7 @@ package leetcode;
 import com.alibaba.fastjson.JSON;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -164,10 +165,31 @@ public class Test_20230727 {
             matrix[0] = matrix[1];
             matrix[1] = curr;
         }
-        List<Integer> res = new ArrayList<>(rowIndex+1);
+        List<Integer> res = new ArrayList<>(rowIndex + 1);
         for (int i = 0; i <= rowIndex; i++) {
             res.add(matrix[0][i]);
         }
         return res;
+    }
+
+    /**
+     * 2500. 删除每行中的最大值
+     *
+     * @param grid
+     * @return
+     */
+    public int deleteGreatestValue(int[][] grid) {
+        for (int[] ints : grid) {
+            Arrays.sort(ints);
+        }
+        int sum = 0;
+        for (int i = grid[0].length - 1; i >= 0; i--) {
+            int max = Integer.MIN_VALUE;
+            for (int j = 0; j < grid.length; j++) {
+                max = Math.max(max, grid[j][i]);
+            }
+            sum += max;
+        }
+        return sum;
     }
 }
