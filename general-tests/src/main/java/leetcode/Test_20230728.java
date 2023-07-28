@@ -162,4 +162,48 @@ public class Test_20230728 {
         return result;
     }
 
+    /**
+     * 剑指 Offer II 074. 合并区间
+     *
+     * @param intervals
+     * @return
+     */
+    public static int[][] merge1(int[][] intervals) {
+        if (intervals.length == 1) {
+            return intervals;
+        }
+        Arrays.sort(intervals, new Comparator<int[]>() {
+            @Override
+            public int compare(int[] o1, int[] o2) {
+                return Integer.compare(o1[0], o2[0]);
+            }
+        });
+        int[][] resIntervals = new int[intervals.length][2];
+        int count = 0;
+        int startNum = 0;
+        int endNum = 0;
+        int index = 0;
+        while (index < intervals.length) {
+            int[] currInterval = intervals[index];
+            if (index == 0) {
+                startNum = currInterval[0];
+                endNum = currInterval[currInterval.length - 1];
+            } else {
+                if (currInterval[0] <= endNum) {
+                    endNum = Math.max(endNum, currInterval[currInterval.length - 1]);
+                } else {
+                    resIntervals[count] = new int[]{startNum, endNum};
+                    count++;
+                    startNum = currInterval[0];
+                    endNum = currInterval[currInterval.length - 1];
+                }
+            }
+            if (index == intervals.length - 1) {
+                resIntervals[count] = new int[]{startNum, endNum};
+            }
+            index++;
+        }
+        return Arrays.copyOf(resIntervals, count);
+    }
+
 }
