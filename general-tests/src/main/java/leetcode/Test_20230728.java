@@ -1,5 +1,12 @@
 package leetcode;
 
+import com.alibaba.fastjson.JSON;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
+
 /**
  * @author dewu.de
  * @date 2023-07-28 2:01 下午
@@ -17,6 +24,15 @@ public class Test_20230728 {
 
         System.out.println(isPalindrome("A man, a plan, a canal: Panama"));
         System.out.println(isPalindrome1("A man, a plan, a canal: Panama"));
+
+        System.out.println("////////");
+
+        int[][] intervals = new int[4][2];
+        intervals[0] = new int[]{1, 3};
+        intervals[1] = new int[]{2, 6};
+        intervals[2] = new int[]{8, 10};
+        intervals[3] = new int[]{15, 18};
+        System.out.println(JSON.toJSONString(merge(intervals)));
 
     }
 
@@ -99,6 +115,51 @@ public class Test_20230728 {
 
     public static boolean isNumberOrLowerChar(char ch) {
         return isNumberChar(ch) || isLowerChar(ch);
+    }
+
+    // ======================================================
+
+    /**
+     * 56. 合并区间
+     *
+     * @param intervals
+     * @return
+     */
+    public static int[][] merge(int[][] intervals) {
+        Arrays.sort(intervals, new Comparator<int[]>() {
+            @Override
+            public int compare(int[] o1, int[] o2) {
+                return Integer.compare(o1[0], o2[0]);
+            }
+        });
+        List<int[]> intervalList = new ArrayList<>();
+        int startNum = Integer.MIN_VALUE;
+        int endNum = 0;
+        int index = 0;
+        while (index < intervals.length) {
+            int[] currInterval = intervals[index];
+            if (startNum == Integer.MIN_VALUE) {
+                startNum = currInterval[0];
+                endNum = currInterval[currInterval.length - 1];
+            } else {
+                if (currInterval[0] <= endNum) {
+                    endNum = Math.max(endNum, currInterval[currInterval.length - 1]);
+                } else {
+                    intervalList.add(new int[]{startNum, endNum});
+                    startNum = currInterval[0];
+                    endNum = currInterval[currInterval.length - 1];
+                }
+            }
+            if (index == intervals.length - 1) {
+                intervalList.add(new int[]{startNum, endNum});
+            }
+            index++;
+        }
+        int[][] result = new int[intervalList.size()][2];
+        for (int i = 0; i < intervalList.size(); i++) {
+            result[i] = intervalList.get(i);
+        }
+        return result;
     }
 
 }
