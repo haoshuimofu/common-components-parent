@@ -1,0 +1,24 @@
+【JVM】
+JVM Memory committed
+	Data   Node: 64 * 0.4578125 = 29.3 - NT范围[29.3, 30.2]
+	Master Node: 16 * 0.609375  = 9.75 - NT一致
+
+yong VS survivor VS old
+	young    : 6G
+	survivor : 768MB
+	old      : 22G
+
+Young
+	Eden(1)     -> S0
+	Survivor(2) -> S1
+Old
+	Old generation
+
+
+Yong generation : 6GB + 2*768MB = 7.5GB
+Old generation  : 22GB
+Young Size / Old Size = 0.34, 新生代占Heap空间 1/4
+
+【ES】
+query_cache : 1GB
+hit命中率抽样: 34%, 偏低, 官方建议query_cache size设为节点可用内存的【10%~15%】，对应30G内存约【3-4.5】GB

@@ -16,6 +16,7 @@ public class Test_20230728 {
         System.out.println((int) '9');
 
         System.out.println(isPalindrome("A man, a plan, a canal: Panama"));
+        System.out.println(isPalindrome1("A man, a plan, a canal: Panama"));
 
     }
 
@@ -61,5 +62,43 @@ public class Test_20230728 {
         return (int) ch >= 48 && (int) ch <= 57;
     }
 
+    //===========================================
+
+    public static boolean isPalindrome1(String s) {
+        int low = 0;
+        int high = s.length() - 1;
+        int lowCount = 0;
+        int highCount = 0;
+        while (low <= high) {
+            char lowCh = toLowerChar(s.charAt(low));
+            char highCh = toLowerChar(s.charAt(high));
+            if (isNumberOrLowerChar(lowCh) && !isNumberOrLowerChar(highCh)) {
+                high--;
+            } else if (!isNumberOrLowerChar(lowCh) && isNumberOrLowerChar(highCh)) {
+                low++;
+            } else if (isNumberOrLowerChar(lowCh) && isNumberOrLowerChar(highCh)) {
+                if (lowCh != highCh) {
+                    return false;
+                }
+                low++;
+                high--;
+            } else {
+                low++;
+                high--;
+            }
+        }
+        return true;
+    }
+
+    public static char toLowerChar(char ch) {
+        if (isUpperChar(ch)) {
+            return (char) ((int) ch + 32);
+        }
+        return ch;
+    }
+
+    public static boolean isNumberOrLowerChar(char ch) {
+        return isNumberChar(ch) || isLowerChar(ch);
+    }
 
 }
