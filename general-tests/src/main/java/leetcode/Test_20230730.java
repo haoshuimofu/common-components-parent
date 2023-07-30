@@ -68,4 +68,49 @@ public class Test_20230730 {
         return false;
     }
 
+    /**
+     * 剑指 Offer 05. 替换空格
+     *
+     * @param s
+     * @return
+     */
+    public String replaceSpace(String s) {
+        char[] chs = new char[30000];
+        int count = 0;
+        for (int i = 0; i < s.length(); i++) {
+            if (s.charAt(i) == ' ') {
+                chs[count++] = '%';
+                chs[count++] = '2';
+                chs[count++] = '0';
+            } else {
+                chs[count++] = s.charAt(i);
+            }
+        }
+        return new String(chs, 0, count);
+    }
+
+    public String replaceSpace1(String s) {
+        StringBuilder sb = new StringBuilder();
+        int from = -1;
+        int to = -1;
+        for (int i = 0; i < s.length(); i++) {
+            if (s.charAt(i) != ' ') {
+                if (from == -1) {
+                    from = i;
+                    to = i + 1;
+                } else {
+                    to++;
+                }
+                if (i == s.length() - 1) {
+                    sb.append(s, from, to);
+                }
+            } else if (to > from) {
+                sb.append(s, from, to);
+                from = -1;
+                to = -1;
+            }
+        }
+        return sb.toString();
+    }
+
 }
