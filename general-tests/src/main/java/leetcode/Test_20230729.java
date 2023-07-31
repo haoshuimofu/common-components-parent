@@ -16,7 +16,14 @@ public class Test_20230729 {
         System.out.println(exist(board1, "cdba"));
     }
 
-
+    /**
+     * 剑指 Offer 12. 矩阵中的路径
+     * 解题思路: DFS + 回溯
+     *
+     * @param board
+     * @param word
+     * @return
+     */
     public static boolean exist(char[][] board, String word) {
         int m = board.length - 1;
         int n = board[0].length - 1;
