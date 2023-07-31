@@ -1,8 +1,5 @@
 package leetcode;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class Test_20230729 {
 
     public static void main(String[] args) {
@@ -23,10 +20,11 @@ public class Test_20230729 {
     public static boolean exist(char[][] board, String word) {
         int m = board.length - 1;
         int n = board[0].length - 1;
+        int[][] visit = new int[m + 1][n + 1];
         for (int i = 0; i <= m; i++) {
             for (int j = 0; j <= n; j++) {
                 if (board[i][j] == word.charAt(0)) {
-                    boolean result = discovery(board, m, n, i, j, new ArrayList<>(), word, 0);
+                    boolean result = discovery(board, m, n, i, j, word, 0, visit);
                     if (result) {
                         return true;
                     }
@@ -37,33 +35,30 @@ public class Test_20230729 {
     }
 
     public static boolean discovery(char[][] board, int m, int n,
-                                    int i, int j, List<int[]> path,
-                                    String word, int charIndex) {
-        if (i > m || j > n
-                || charIndex >= word.length()
-                || path.stream().anyMatch(arr -> arr[0] == i && arr[1] == j)) {
+                                    int i, int j,
+                                    String word, int charIndex,
+                                    int[][] visit) {
+        if (i > m || j > n || charIndex >= word.length() || visit[i][j] == 1) {
             return false;
         }
+        // 标记已访问
+        visit[i][j] = 1;
         char ch = word.charAt(charIndex);
         if (board[i][j] != ch) {
+            // 此路不通, 回撤, 恢复标记位
+            visit[i][j] = 0;
             return false;
         }
-        path.add(new int[]{i, j});
         if (charIndex == word.length() - 1) {
             return true;
         }
-        boolean match = false;
-        if (i > 0 && board[i - 1][j] == word.charAt(charIndex + 1)) {
-            match = discovery(board, m, n, i - 1, j, new ArrayList<>(path), word, charIndex + 1);
-        }
-        if (!match && i < m && board[i + 1][j] == word.charAt(charIndex + 1)) {
-            match = discovery(board, m, n, i + 1, j, new ArrayList<>(path), word, charIndex + 1);
-        }
-        if (!match && j > 0 && board[i][j - 1] == word.charAt(charIndex + 1)) {
-            match = discovery(board, m, n, i, j - 1, new ArrayList<>(path), word, charIndex + 1);
-        }
-        if (!match && j < n && board[i][j + 1] == word.charAt(charIndex + 1)) {
-            match = discovery(board, m, n, i, j + 1, new ArrayList<>(path), word, charIndex + 1);
+        boolean match = (i > 0 && discovery(board, m, n, i - 1, j, word, charIndex + 1, visit))
+                || (i < m && discovery(board, m, n, i + 1, j, word, charIndex + 1, visit))
+                || (j > 0 && discovery(board, m, n, i, j - 1, word, charIndex + 1, visit))
+                || (j < n && discovery(board, m, n, i, j + 1, word, charIndex + 1, visit));
+        if (!match) {
+            // 上下左右四路不通, 回撤, 恢复标记位
+            visit[i][j] = 0;
         }
         return match;
     }
