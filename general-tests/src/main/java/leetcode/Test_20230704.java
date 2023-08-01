@@ -26,7 +26,10 @@ public class Test_20230704 {
 
     public static void main(String[] args) {
         int[] nums = new int[]{0, 1, 0, 2, 1, 0, 1, 3, 2, 1, 2, 1};
+        nums = new int[]{2, 3, 1, 4, 3};
+        nums = new int[]{5, 2, 1, 2, 1, 5};
         System.out.println("雨水=" + trap(nums));
+        System.out.println("雨水=" + trap1(nums));
     }
 
     /**
@@ -81,6 +84,48 @@ public class Test_20230704 {
             }
         }
         return sum;
+    }
+
+    public static int trap1(int[] height) {
+        // 长度小于3接不了雨水
+        if (height == null || height.length < 3) {
+            return 0;
+        }
+        // 找最高位置
+        int maxHeightIndex = -1;
+        int maxHeight = Integer.MIN_VALUE;
+        for (int i = 0; i < height.length; i++) {
+            if (height[i] > maxHeight) {
+                maxHeight = height[i];
+                maxHeightIndex = i;
+            }
+        }
+        int result = 0;
+        int lastMax = 0;
+        // 从左到最高位置, 一层一层计算
+        for (int i = 0; i < maxHeightIndex; i++) {
+            if (height[i] > lastMax) {
+                for (int j = i + 1; j < maxHeightIndex; j++) {
+                    if (height[j] < height[i]) {
+                        result += height[j] >= lastMax ? (height[i] - height[j]) : (height[i] - lastMax);
+                    }
+                }
+                lastMax = height[i];
+            }
+        }
+        lastMax = 0;
+        // 从末尾向左到最高位置, 一层一层计算
+        for (int i = height.length - 1; i > maxHeightIndex; i--) {
+            if (height[i] > lastMax) {
+                for (int j = i - 1; j > maxHeightIndex; j--) {
+                    if (height[j] < height[i]) {
+                        result += (height[j] > lastMax ? (height[i] - height[j]) : (height[i] - lastMax));
+                    }
+                }
+                lastMax = height[i];
+            }
+        }
+        return result;
     }
 }
 
