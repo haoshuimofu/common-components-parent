@@ -1,5 +1,6 @@
 package leetcode;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -136,7 +137,7 @@ public class Test_20230705 {
 
     /**
      * 重排链表
-     * TODO 不是最优解
+     * 不是最优解
      *
      * @param head
      */
@@ -167,6 +168,41 @@ public class Test_20230705 {
         }
         if (low == high) {
             prev.next = nodes.get(low);
+        }
+    }
+
+    /**
+     * 重排链表
+     * 也不是最优解
+     *
+     * @param head
+     */
+    public static void reorderList1(ListNode head) {
+        if (head == null || head.next == null) {
+            return;
+        }
+        ArrayDeque<ListNode> queue = new ArrayDeque<>();
+        ListNode node = head;
+        while (node != null) {
+            ListNode next = node.next;
+            node.next = null;
+            queue.addLast(node);
+            node = next;
+        }
+        head = queue.removeFirst();
+        head.next = queue.removeLast();
+        ListNode prev = head.next;
+        while (!queue.isEmpty()) {
+            ListNode low = queue.pollFirst();
+            if (low != null) {
+                prev.next = low;
+                prev = low;
+            }
+            ListNode high = queue.pollLast();
+            if (high != null) {
+                prev.next = high;
+                prev = high;
+            }
         }
     }
 }
