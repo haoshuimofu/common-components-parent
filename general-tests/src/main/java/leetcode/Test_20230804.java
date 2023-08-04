@@ -121,5 +121,28 @@ public class Test_20230804 {
         }
     }
 
+    /**
+     * 剑指 Offer 28. 对称的二叉树
+     *
+     * @param root
+     * @return
+     */
+    public boolean isSymmetric(TreeNode root) {
+        if (root == null) {
+            return false;
+        }
+        return isSymmetric1(root.left, root.right);
+    }
+
+    public boolean isSymmetric1(TreeNode node1, TreeNode node2) {
+        if (node1 == null && node2 == null) {
+            return true;
+        } else if (node1 != null && node2 != null && node1.val == node2.val) {
+            return isSymmetric1(node1.left, node2.right) && isSymmetric1(node1.right, node2.left);
+        } else {
+            return false;
+        }
+    }
+
 
 }
