@@ -19,7 +19,7 @@ public class Test_20230802 {
             System.out.println(JSON.toJSONString(list));
         }
 
-        nums = new int[]{1,1,2};
+        nums = new int[]{1, 1, 2};
         res = permuteUnique(nums);
         for (List<Integer> list : res) {
             System.out.println(JSON.toJSONString(list));
@@ -73,16 +73,18 @@ public class Test_20230802 {
             permutes.add(new ArrayList<>(path));
             return;
         }
-        for (int i = 0; i < nums.length; i++) {
-            if (visit[i] == false && (i == 0 || nums[i] != nums[i - 1])) {
-                path.add(nums[i]);
-                visit[i] = true;
-                System.out.println("dfs递归之前路径: " + JSON.toJSONString(path));
-                dfs(nums, count + 1, visit, path, permutes);
 
-                visit[i] = false;
-                path.remove(path.size() - 1);
+        for (int i = 0; i < nums.length; i++) {
+            if (visit[i]
+                    || (i > 0 && nums[i] == nums[i - 1] && !visit[i - 1])) {
+                continue;
             }
+            path.add(nums[i]);
+            visit[i] = true;
+            System.out.println("dfs递归之前路径: " + JSON.toJSONString(path));
+            dfs2(nums, count + 1, visit, path, permutes);
+            path.remove(path.size() - 1);
+            visit[i] = false;
         }
     }
 }
