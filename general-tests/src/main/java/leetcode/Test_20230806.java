@@ -4,6 +4,8 @@ public class Test_20230806 {
 
     public static void main(String[] args) {
         System.out.println(numWays(4));
+        System.out.println(cuttingRope(120));
+
     }
 
     /**
@@ -29,13 +31,34 @@ public class Test_20230806 {
     }
 
     /**
-     * 343. 整数拆分
+     * 剑指 Offer 14- II. 剪绳子 II
      *
      * @param n
      * @return
      */
-    public int integerBreak(int n) {
+    public static int cuttingRope(int n) {
+        long max = 0;
+        for (int i = 2; i <= n; i++) {
+            max = Math.max(max, maxSplitInt(n, i));
+            System.out.println(maxSplitInt(n, i));
+        }
+        return (int) (max % 1000000007);
+    }
 
+    public static long maxSplitInt(int n, int k) {
+        int base = n / k;
+        int delta = n % k;
+        int count = 0;
+        long total = 1;
+        for (int i = 0; i < k; i++) {
+            int subVal = base;
+            if (count < delta) {
+                subVal += 1;
+                count++;
+            }
+            total = total * subVal;
+        }
+        return total;
     }
 
 }
