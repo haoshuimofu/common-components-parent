@@ -2,9 +2,7 @@ package leetcode;
 
 import com.alibaba.fastjson.JSON;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 /**
  * @author dewu.de
@@ -22,6 +20,10 @@ public class Test_20230807 {
             test.subsets(nums, i, subsets);
         }
         System.out.println(JSON.toJSONString(subsets));
+
+
+        int[] temperatures = new int[]{73, 74, 75, 71, 69, 72, 76, 73};
+        System.out.println(JSON.toJSONString(test.dailyTemperatures(temperatures)));
     }
 
     /**
@@ -103,24 +105,23 @@ public class Test_20230807 {
             return null;
         }
         int[] res = new int[temperatures.length];
-        res[0] = 0;
-        int slow = 0;
-        int fast = 1;
-        while (fast < temperatures.length) {
-            if (slow == fast) {
-                fast++;
-            } else {
-                if (temperatures[fast] > temperatures[fast - 1]) {
-                    res[fast - 1] = 1;
-                }
-                if (temperatures[fast] > temperatures[slow]) {
-                    if (temperatures[slow] == 0) {
-                        res[slow] = fast - slow;
+        Stack<Integer> stack = new Stack<>();
+        stack.add(0);
+        for (int i = 1; i < temperatures.length; i++) {
+            if (temperatures[i] > temperatures[i - 1]) {
+                res[i - 1] = 1;
+                int size = stack.size();
+                for (int j = 0; j < size; j++) {
+                    int target = stack.peek();
+                    if (temperatures[i] > temperatures[target]) {
+                        res[stack.pop()] = i - target;
+                    } else {
+                        // 当遇到当前值小栈顶元素则中断
+                        break;
                     }
-                    slow++;
-                } else {
-                    fast++;
                 }
+            } else {
+                stack.push(i - 1);
             }
         }
         return res;
