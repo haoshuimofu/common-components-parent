@@ -92,4 +92,38 @@ public class Test_20230807 {
         return Math.max(dfs(node.left, depth + 1), dfs(node.right, depth + 1));
     }
 
+    /**
+     * LCR 038. 每日温度
+     *
+     * @param temperatures
+     * @return
+     */
+    public int[] dailyTemperatures(int[] temperatures) {
+        if (temperatures == null) {
+            return null;
+        }
+        int[] res = new int[temperatures.length];
+        res[0] = 0;
+        int slow = 0;
+        int fast = 1;
+        while (fast < temperatures.length) {
+            if (slow == fast) {
+                fast++;
+            } else {
+                if (temperatures[fast] > temperatures[fast - 1]) {
+                    res[fast - 1] = 1;
+                }
+                if (temperatures[fast] > temperatures[slow]) {
+                    if (temperatures[slow] == 0) {
+                        res[slow] = fast - slow;
+                    }
+                    slow++;
+                } else {
+                    fast++;
+                }
+            }
+        }
+        return res;
+    }
+
 }
