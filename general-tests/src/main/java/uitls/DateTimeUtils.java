@@ -10,7 +10,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
-public class DateUtils {
+public class DateTimeUtils {
 
     public static final String GSON_DATE_FORMATTER = "MMM d, yyyy h:mm:ss a";
 
