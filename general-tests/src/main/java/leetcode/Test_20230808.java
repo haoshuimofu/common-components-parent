@@ -7,10 +7,10 @@ package leetcode;
 public class Test_20230808 {
 
     public static void main(String[] args) {
-        System.out.println(myPow(34.00515, -3));
-        System.out.println(myPow(1.99364, -11));
-        System.out.println(myPow(1.72777, 7));
-        System.out.println(myPow(0.00001, 2147483647)); // java.lang.OutOfMemoryError: Requested array size exceeds VM limit
+        System.out.println(myPow(34.00515, -3) + "; " + myPow1(34.00515, -3));
+        System.out.println(myPow(1.99364, -11) + "; " + myPow1(1.99364, -11));
+        System.out.println(myPow(1.72777, 7) + "; " + myPow1(1.72777, 7));
+        System.out.println(myPow(0.00001, 2147483647) + "; " + myPow1(0.00001, 2147483647)); // java.lang.OutOfMemoryError: Requested array size exceeds VM limit
 
         for (int i = 0; i <= 16; i++) {
             System.out.println(-i + "/2 = " + -i / 2);
@@ -55,6 +55,26 @@ public class Test_20230808 {
             // n为正数, value = x^(n/2) * x^(n/2+1) = half * (half * x) = value * x
             // n为负数, value = x^(n/2) * x^(n/2-1) = half * (half * x^-1) = value * 1/x
             value = n > 0 ? value * x : value * myPow(x, -1);
+        }
+        return value;
+    }
+
+    /**
+     * 快速次幂 + 迭代
+     *
+     * @param x
+     * @param n
+     * @return
+     */
+    public static double myPow1(double x, int n) {
+        double value = 1.0;
+        double xv = x;
+        while (n != 0) {
+            if (n % 2 != 0) {
+                value *= (n > 0 ? xv : 1 / xv);
+            }
+            xv *= xv;
+            n /= 2;
         }
         return value;
     }
