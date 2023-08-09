@@ -2,6 +2,7 @@ package leetcode;
 
 import com.alibaba.fastjson.JSON;
 
+import java.util.Arrays;
 import java.util.Stack;
 
 /**
@@ -12,6 +13,8 @@ public class Test_20230809 {
 
     public static void main(String[] args) {
         System.out.println(JSON.toJSONString(printNumbers(1)));
+        System.out.println(JSON.toJSONString(exchange(new int[]{1, 3, 5})));
+        System.out.println(JSON.toJSONString(exchange1(new int[]{1, 3, 5})));
     }
 
     /**
@@ -102,6 +105,103 @@ public class Test_20230809 {
             res[i - 1] = i;
         }
         return res;
+    }
+
+    /**
+     * 剑指 Offer 21. 调整数组顺序使奇数位于偶数前面
+     *
+     * @param nums
+     * @return
+     */
+    public static int[] exchange(int[] nums) {
+        if (nums == null || nums.length < 2) {
+            return nums;
+        }
+        int[] res = new int[nums.length];
+        int left = 0;
+        int right = nums.length - 1;
+        int slow = left;
+        int high = right;
+        while (slow < high) {
+            if (nums[slow] % 2 == 0) {
+                res[right] = nums[slow];
+                right--;
+            } else {
+                res[left] = nums[slow];
+                left++;
+            }
+            slow++;
+
+            if (nums[high] % 2 == 0) {
+                res[right] = nums[high];
+                right--;
+            } else {
+                res[left] = nums[high];
+                left++;
+            }
+            high--;
+        }
+        if (slow == high) {
+            res[left] = nums[slow];
+        }
+        return res;
+    }
+
+    public static int[] exchange1(int[] nums) {
+        if (nums == null || nums.length < 2) {
+            return nums;
+        }
+        int left = -1; // 偶数
+        int right = 0; // 奇数
+        while (right < nums.length) {
+            if (nums[right] % 2 == 0) {
+                if (left == -1) {
+                    left = right;
+                }
+            } else if (left != -1) {
+                int temp = nums[left];
+                nums[left] = nums[right];
+                nums[right] = temp;
+                left++;
+            }
+            right++;
+        }
+        return nums;
+    }
+
+    /**
+     * LCR 004. 只出现一次的数字 II
+     *
+     * @param nums
+     * @return
+     */
+    public int singleNumber(int[] nums) {
+        Arrays.sort(nums);
+        for (int i = 0; i < nums.length; i++) {
+            if ((i == 0 && i < nums.length - 1 && nums[i] == nums[i + 1])
+                    || (i > 0 && (nums[i] == nums[i - 1] || (i < nums.length - 1 && nums[i] == nums[i + 1])))) {
+                continue;
+            }
+            return nums[i];
+        }
+        return -1;
+    }
+
+
+    public int singleNumber1(int[] nums) {
+        for (int i = 0; i < nums.length - 1; i++) {
+            boolean match = false;
+            for (int j = i; j < nums.length; j++) {
+                if (j > i && nums[i] == nums[j]) {
+                    match = true;
+                    break;
+                }
+            }
+            if (!match) {
+                return nums[i];
+            }
+        }
+        return -1;
     }
 
 }
