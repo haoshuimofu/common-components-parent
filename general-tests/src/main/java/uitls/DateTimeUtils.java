@@ -2,11 +2,11 @@ package uitls;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
@@ -15,17 +15,26 @@ public class DateTimeUtils {
     public static final String GSON_DATE_FORMATTER = "MMM d, yyyy h:mm:ss a";
 
     /**
-     * java.util.Date转LocalDate
+     * java.util.Date 转 java.time.LocalDateTime
      *
      * @param date
      * @return
      */
-    public static LocalDate dateToLocalDate(Date date) {
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(date);
-        return LocalDate.of(calendar.get(Calendar.YEAR),
-                calendar.get(Calendar.MONTH) + 1,
-                calendar.get(Calendar.DAY_OF_MONTH));
+    public static LocalDateTime dateToLocalDateTime(Date date) {
+        Instant instant = date.toInstant();
+        return LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
+    }
+
+    /**
+     * java.time.LocalDate 转 java.util.Date
+     *
+     * @param localDate
+     * @return
+     */
+    public static Date localDateToDate(LocalDate localDate) {
+        LocalDateTime localDateTime = localDate.atStartOfDay();
+        Instant instant = localDateTime.atZone(ZoneId.systemDefault()).toInstant();
+        return new Date(instant.toEpochMilli());
     }
 
     /**
@@ -44,6 +53,12 @@ public class DateTimeUtils {
         Date date = parseGsonDateTime(dateString);
         SimpleDateFormat outputFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         System.out.println(outputFormatter.format(date));
+
+        System.out.println(outputFormatter.format(localDateToDate(LocalDate.now().plusDays(-14))));
+        System.out.println(outputFormatter.format(localDateToDate(LocalDate.now())));
+
+        System.out.println(dateToLocalDateTime(new Date()));
+
     }
 
 }
