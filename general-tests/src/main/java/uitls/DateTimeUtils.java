@@ -13,6 +13,7 @@ import java.util.Locale;
 public class DateTimeUtils {
 
     public static final String GSON_DATE_FORMATTER = "MMM d, yyyy h:mm:ss a";
+    public static final String DEFAULT_DATE_FORMATTER = "yyyy-MM-dd HH:mm:ss";
 
     /**
      * java.util.Date 转 java.time.LocalDateTime
@@ -45,17 +46,21 @@ public class DateTimeUtils {
      */
     public static Date parseGsonDateTime(String datetime) {
         LocalDateTime localDateTime = LocalDateTime.parse(datetime, DateTimeFormatter.ofPattern(GSON_DATE_FORMATTER, Locale.ENGLISH));
+        // 受系统时区影响, 可测试: ZoneId.of("America/Chicago")
         return Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
     }
 
     public static void main(String[] args) throws ParseException {
         String dateString = "Aug 7, 2023 7:51:27 PM";
+        System.out.println("原始Gson英文环境日期序列化: " + dateString);
+        System.out.println("系统时区: " + ZoneId.systemDefault().toString());
         Date date = parseGsonDateTime(dateString);
-        SimpleDateFormat outputFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        System.out.println(outputFormatter.format(date));
+        System.out.println("转java.util.Date: " + date);
+        SimpleDateFormat format = new SimpleDateFormat(DEFAULT_DATE_FORMATTER);
+        System.out.println("格式化yyyy-MM-dd HH:mm:ss " + format.format(date));
 
-        System.out.println(outputFormatter.format(localDateToDate(LocalDate.now().plusDays(-14))));
-        System.out.println(outputFormatter.format(localDateToDate(LocalDate.now())));
+        System.out.println(format.format(localDateToDate(LocalDate.now().plusDays(-14))));
+        System.out.println(format.format(localDateToDate(LocalDate.now())));
 
         System.out.println(dateToLocalDateTime(new Date()));
 
