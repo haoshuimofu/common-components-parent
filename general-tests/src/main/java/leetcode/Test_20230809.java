@@ -100,11 +100,9 @@ public class Test_20230809 {
      */
     public static int[] printNumbers(int n) {
         // int size = (int) Math.pow(10, n);
-        int size = 0;
-        int factor = 10;
+        int size = 1;
         while (n > 0) {
-            size += factor;
-            factor *= 10;
+            size *= 10;
             n--;
         }
         int[] res = new int[size - 1];
