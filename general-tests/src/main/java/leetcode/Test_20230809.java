@@ -194,7 +194,7 @@ public class Test_20230809 {
 
 
     public int singleNumber1(int[] nums) {
-        for (int i = 0; i < nums.length - 1; i++) {
+        for (int i = 0; i < nums.length; i++) {
             boolean match = false;
             for (int j = i; j < nums.length; j++) {
                 if (j > i && nums[i] == nums[j]) {
