@@ -194,12 +194,19 @@ public class Test_20230809 {
 
 
     public int singleNumber1(int[] nums) {
+        int[] flags = new int[nums.length];
         for (int i = 0; i < nums.length; i++) {
+            if (flags[i] == 1) {
+                continue;
+            }
+            flags[i] = 1;
             boolean match = false;
             for (int j = i; j < nums.length; j++) {
-                if (j > i && nums[i] == nums[j]) {
-                    match = true;
-                    break;
+                if (j > i && flags[j] == 0) {
+                    if (nums[i] == nums[j]) {
+                        flags[j] = 1;
+                        match = true;
+                    }
                 }
             }
             if (!match) {
