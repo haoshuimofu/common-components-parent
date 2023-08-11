@@ -14,7 +14,7 @@ public class Test_20230810 {
             // 3的0次幂为1
             return true;
         }
-        while (n > 0) {
+        while (true) {
             if (n % 3 != 0) {
                 // n都不能被3整除, 那n肯定不是3的x次幂
                 return false;
@@ -24,7 +24,7 @@ public class Test_20230810 {
                 return true;
             }
         }
-        return true;
+//        return true;
     }
 
 }
