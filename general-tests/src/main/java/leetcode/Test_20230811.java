@@ -15,7 +15,15 @@ public class Test_20230811 {
         Test_20230811 test = new Test_20230811();
         System.out.println(test.sumNumbers(root));
 
+        System.out.println("///////////////////////");
+
         System.out.println(JSON.toJSONString(test.combinationSum(new int[]{2, 3, 6, 7}, 7)));
+
+        System.out.println("///////////////////////");
+
+//        System.out.println(test.numSubarrayProductLessThanK1(new int[]{10, 9, 10, 4, 3, 8, 3, 3, 6, 2, 10, 10, 9, 3}, 19));
+        System.out.println(test.numSubarrayProductLessThanK1(new int[]{10, 5, 2, 6}, 100));
+
     }
 
     /**
@@ -131,7 +139,7 @@ public class Test_20230811 {
         pathIndex.add(currIndex);
         path.add(candidates[currIndex]);
 
-        System.out.println(JSON.toJSONString(path));
+//        System.out.println(JSON.toJSONString(path));
         if (sum[0] == target) {
             paths.add(new ArrayList<>(path));
         }
@@ -144,5 +152,83 @@ public class Test_20230811 {
         sum[0] -= candidates[currIndex];
         pathIndex.remove(pathIndex.size() - 1);
         path.remove(path.size() - 1);
+    }
+
+    /**
+     * LCR 009. 乘积小于 K 的子数组 - 不连续
+     * <p>
+     * 也是求子集
+     *
+     * @param nums
+     * @param k
+     * @return
+     */
+    public int numSubarrayProductLessThanK(int[] nums, int k) {
+        double[] valueAndCount = new double[2];
+        for (int i = 0; i < nums.length; i++) {
+            valueAndCount[0] = 1;
+            doNumSubarrayProductLessThanK(nums, k, i, valueAndCount, new ArrayList<>());
+        }
+        return (int) valueAndCount[1];
+    }
+
+    public void doNumSubarrayProductLessThanK(int[] nums, int k, int currIndex, double[] valueAndCount, List<Integer> path) {
+        if (currIndex >= nums.length) {
+            return;
+        }
+        path.add(nums[currIndex]);
+        System.out.println(JSON.toJSONString(path));
+        double factor = k * 1.0 / nums[currIndex];
+        if (valueAndCount[0] >= factor) {
+            System.out.println(JSON.toJSONString(path) + "---");
+            path.remove(path.size() - 1);
+            return;
+        }
+        valueAndCount[0] *= nums[currIndex];
+        valueAndCount[1]++;
+        for (int i = currIndex + 1; i <= currIndex + 1; i++) {
+            doNumSubarrayProductLessThanK(nums, k, i, valueAndCount, path);
+        }
+        path.remove(path.size() - 1);
+        valueAndCount[0] /= nums[currIndex];
+    }
+
+    /**
+     * 乘积小于 K 的子数组
+     * -->连续子数组
+     */
+    public int numSubarrayProductLessThanK1(int[] nums, int k) {
+        double value = nums[0] < k ? nums[0] : 1;
+        int count = nums[0] < k ? 1 : 0;
+        int left = 0;
+        int right = 1;
+        boolean[] flag = new boolean[nums.length];
+        while (right < nums.length) {
+            if (nums[right] >= k) {
+                value = 1;
+                right++;
+                left = right;
+            } else {
+                if (!flag[right]) {
+                    flag[right] = true;
+                    count++;
+                }
+                if (right > left) {
+                    if (k / value <= nums[right]) {
+                        // value * nums[i] >= k
+                        value /= nums[left];
+                        left++;
+                    } else {
+                        value *= nums[right];
+                        count++;
+                        right++;
+                    }
+                } else {
+                    value *= nums[right];
+                    right++;
+                }
+            }
+        }
+        return count;
     }
 }

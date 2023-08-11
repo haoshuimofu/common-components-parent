@@ -14,11 +14,7 @@ public class Test_20230807 {
         Test_20230807 test = new Test_20230807();
 
         int[] nums = new int[]{1, 2, 3};
-        List<List<Integer>> subsets = new ArrayList<>();
-        subsets.add(Collections.emptyList());
-        for (int i = 1; i <= nums.length; i++) {
-            test.subsets(nums, i, subsets);
-        }
+        List<List<Integer>> subsets = test.subsets(nums);
         System.out.println(JSON.toJSONString(subsets));
 
 
@@ -34,26 +30,60 @@ public class Test_20230807 {
      * @param nums
      * @return
      */
-    public void subsets(int[] nums, int subsetLen, List<List<Integer>> subsets) {
-        boolean[] visit = new boolean[nums.length];
-        findSubset(nums, subsetLen, new ArrayList<>(), new ArrayList<>(), visit, subsets);
+    public List<List<Integer>> subsets(int[] nums) {
+        List<List<Integer>> subsets = new ArrayList<>();
+        subsets.add(Collections.emptyList());
+        for (int i = 0; i < nums.length; i++) {
+            findSubset(nums, i, i, new ArrayList<>(), subsets);
+        }
+        return subsets;
     }
 
-    private void findSubset(int[] nums, int subsetLen, List<Integer> subset, List<Integer> visitIndexes, boolean[] visit, List<List<Integer>> subsets) {
-        if (subset.size() == subsetLen) {
-            subsets.add(new ArrayList<>(subset));
+    private void findSubset(int[] nums, int fromIndex, int currIndex, List<Integer> path, List<List<Integer>> subsets) {
+        if (fromIndex >= nums.length) {
+            return;
         }
-        for (int i = 0; i < nums.length; i++) {
-            if (!visit[i] && (visitIndexes.isEmpty() || i > visitIndexes.get(visitIndexes.size() - 1))) {
-                subset.add(nums[i]);
-                visitIndexes.add(i);
-                visit[i] = true;
-                findSubset(nums, subsetLen, subset, visitIndexes, visit, subsets);
-                visit[i] = false;
-                subset.remove(subset.size() - 1);
-                visitIndexes.remove(visitIndexes.size() - 1);
+        path.add(nums[currIndex]);
+        subsets.add(new ArrayList<>(path));
+        for (int i = fromIndex; i < nums.length; i++) {
+            if (i > currIndex) {
+                findSubset(nums, fromIndex, i, path, subsets);
             }
         }
+        path.remove(path.size() - 1);
+    }
+
+
+    /**
+     * 90. 子集 II
+     *
+     * @param nums
+     * @return
+     */
+    public List<List<Integer>> subsetsWithDup(int[] nums) {
+        Arrays.sort(nums);
+        List<List<Integer>> subsets = new ArrayList<>();
+        subsets.add(Collections.emptyList());
+        for (int i = 0; i < nums.length; i++) {
+            findSubsetWithDup(nums, i, i, new ArrayList<>(), subsets);
+        }
+        return subsets;
+    }
+
+    private void findSubsetWithDup(int[] nums, int fromIndex, int currIndex, List<Integer> path, List<List<Integer>> subsets) {
+        if (fromIndex >= nums.length) {
+            return;
+        }
+        path.add(nums[currIndex]);
+        subsets.add(new ArrayList<>(path));
+        for (int i = fromIndex; i < nums.length; i++) {
+            if (i > currIndex) {
+                if (i - currIndex == 1 || nums[i] != nums[i - 1]) {
+                    findSubset(nums, fromIndex, i, path, subsets);
+                }
+            }
+        }
+        path.remove(path.size() - 1);
     }
 
     /**
