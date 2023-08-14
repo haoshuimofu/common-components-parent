@@ -1,6 +1,13 @@
 package leetcode;
 
 
+import com.alibaba.fastjson.JSON;
+
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
 /**
  * @author dewu.de
  * @date 2023-08-14 2:06 下午
@@ -13,6 +20,9 @@ public class Test_20230814 {
         System.out.println(Integer.MAX_VALUE);
         System.out.println((Integer.MIN_VALUE + 1) / Integer.MIN_VALUE);
         System.out.println(Integer.MAX_VALUE / Integer.MIN_VALUE);
+
+        Test_20230814 test = new Test_20230814();
+        System.out.println(JSON.toJSONString(test.singleNumbers(new int[]{4, 1, 4, 6})));
     }
 
     /**
@@ -74,5 +84,45 @@ public class Test_20230814 {
         }
         // doubledB = count * b, a - doubledB in [0, doubledB)
         return count + div(a - doubledB, b);
+    }
+
+    /**
+     * 剑指 Offer 56 - I. 数组中数字出现的次数
+     */
+    public int[] singleNumbers(int[] nums) {
+        Set<Integer> set = new HashSet<>();
+        for (int num : nums) {
+            if (!set.add(num)) {
+                set.remove(num);
+            }
+        }
+        int[] res = new int[set.size()];
+        int index = 0;
+        for (int num : set) {
+            res[index] = num;
+            index++;
+        }
+        return res;
+    }
+
+    /**
+     * 剑指 Offer 56 - II. 数组中数字出现的次数 II
+     * @param nums
+     * @return
+     */
+    public int singleNumber(int[] nums) {
+        Map<Integer, Set<Integer>> countNums = new HashMap<>();
+        for (int num : nums) {
+            Set<Integer> sets = countNums.get(1);
+            if (sets == null) {
+                sets = new HashSet<>();
+                sets.add(num);
+                countNums.put(1, sets);
+            } else if (sets.contains(num)){
+
+            }
+        }
+
+
     }
 }
