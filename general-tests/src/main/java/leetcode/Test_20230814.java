@@ -3,10 +3,7 @@ package leetcode;
 
 import com.alibaba.fastjson.JSON;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author dewu.de
@@ -23,6 +20,13 @@ public class Test_20230814 {
 
         Test_20230814 test = new Test_20230814();
         System.out.println(JSON.toJSONString(test.singleNumbers(new int[]{4, 1, 4, 6})));
+
+
+        int[][] nums = new int[2][7];
+        nums[0] = new int[]{7, 34, 45, 10, 12, 27, 13};
+        nums[1] = new int[]{27, 21, 45, 10, 12, 13};
+//        nums[2] = new int[]{3,4,5,6};
+        System.out.println(JSON.toJSONString(test.intersection(nums)));
     }
 
     /**
@@ -107,22 +111,49 @@ public class Test_20230814 {
 
     /**
      * 剑指 Offer 56 - II. 数组中数字出现的次数 II
+     *
      * @param nums
      * @return
      */
     public int singleNumber(int[] nums) {
-        Map<Integer, Set<Integer>> countNums = new HashMap<>();
+        Set<Integer> oneSet = new HashSet<>();
+        Set<Integer> moreSet = new HashSet<>();
         for (int num : nums) {
-            Set<Integer> sets = countNums.get(1);
-            if (sets == null) {
-                sets = new HashSet<>();
-                sets.add(num);
-                countNums.put(1, sets);
-            } else if (sets.contains(num)){
-
+            if (!moreSet.contains(num)) {
+                if (oneSet.contains(num)) {
+                    oneSet.remove(num);
+                    moreSet.add(num);
+                } else {
+                    oneSet.add(num);
+                }
             }
         }
+        return oneSet.iterator().next();
+    }
 
-
+    /**
+     * 2248. 多个数组求交集
+     *
+     * @param nums
+     * @return
+     */
+    public List<Integer> intersection(int[][] nums) {
+        for (int i = 0; i < nums.length; i++) {
+            Arrays.sort(nums[i]);
+        }
+        List<Integer> res = new ArrayList<>();
+        for (int i = 0; i < nums[0].length; i++) {
+            boolean match = true;
+            for (int j = 1; j < nums.length; j++) {
+                if (Arrays.binarySearch(nums[j], nums[0][i]) < 0) {
+                    match = false;
+                    break;
+                }
+            }
+            if (match) {
+                res.add(nums[0][i]);
+            }
+        }
+        return res;
     }
 }
