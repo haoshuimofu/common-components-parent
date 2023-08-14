@@ -100,10 +100,10 @@ public class Test_20230814 {
                 set.remove(num);
             }
         }
-        int[] res = new int[set.size()];
+        int[] res = new int[2];
         int index = 0;
-        for (int num : set) {
-            res[index] = num;
+        for (Integer integer : set) {
+            res[index] = integer;
             index++;
         }
         return res;
@@ -138,20 +138,33 @@ public class Test_20230814 {
      * @return
      */
     public List<Integer> intersection(int[][] nums) {
-        for (int i = 0; i < nums.length; i++) {
-            Arrays.sort(nums[i]);
+//        for (int i = 0; i < nums.length; i++) {
+//            Arrays.sort(nums[i]);
+//        }
+//        List<Integer> res = new ArrayList<>();
+//        for (int i = 0; i < nums[0].length; i++) {
+//            boolean match = true;
+//            for (int j = 1; j < nums.length; j++) {
+//                if (Arrays.binarySearch(nums[j], nums[0][i]) < 0) {
+//                    match = false;
+//                    break;
+//                }
+//            }
+//            if (match) {
+//                res.add(nums[0][i]);
+//            }
+//        }
+//        return res;
+        int[] counter = new int[1001];
+        for (int i=0; i<nums.length; i++) {
+            for (int j=0; j<nums[i].length; j++) {
+                counter[nums[i][j]] += 1;
+            }
         }
         List<Integer> res = new ArrayList<>();
-        for (int i = 0; i < nums[0].length; i++) {
-            boolean match = true;
-            for (int j = 1; j < nums.length; j++) {
-                if (Arrays.binarySearch(nums[j], nums[0][i]) < 0) {
-                    match = false;
-                    break;
-                }
-            }
-            if (match) {
-                res.add(nums[0][i]);
+        for (int i=0; i<counter.length; i++) {
+            if (counter[i] == nums.length) {
+                res.add(i);
             }
         }
         return res;
