@@ -9,6 +9,7 @@ public class Test_20230726 {
     public static void main(String[] args) {
         int[] nums = new int[]{2, 3, 1, 1, 4};
         System.out.println(jump(nums));
+        System.out.println(jump1(nums));
 
         System.out.println("///////////////");
         System.out.println(firstBadVersion(2126753390));
@@ -18,6 +19,7 @@ public class Test_20230726 {
 
     /**
      * 45. 跳跃游戏 II
+     * 暴力解法
      *
      * @param nums
      * @return
@@ -37,6 +39,22 @@ public class Test_20230726 {
             }
         }
         return minSteps[nums.length - 1];
+    }
+
+    public static int jump1(int[] nums) {
+        int maxPosition = 0; // 能到达的最远位置
+        int end = 0; // 当前这一轮中遍历范围的右边界值
+        int minSteps = 0; // 最小步数
+        for (int i = 0; i < nums.length - 1; i++) {
+            // 交换可达最远位置
+            maxPosition = Math.max(maxPosition, nums[i] + i);
+            if (i == end) {
+                // 当前位置已到达了上一轮最远位置, 计步器+1, 下一轮遍历的最远位置就是这一轮的maxPosition
+                end = maxPosition;
+                minSteps++;
+            }
+        }
+        return minSteps;
     }
 
 
