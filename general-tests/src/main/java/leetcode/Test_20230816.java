@@ -8,32 +8,55 @@ public class Test_20230816 {
 
     public static void main(String[] args) {
         Test_20230816 test = new Test_20230816();
-        System.out.println(test.mySqrt(10));
-        for (int i = 1; i <= 32; i++) {
-            System.out.println(i + "平方根 = " + test.mySqrt(i));
-
-        }
+        System.out.println(test.mySqrt(2147395599));
+        System.out.println(test.myPow(-1, Integer.MIN_VALUE));
     }
 
+    /**
+     * 69. x 的平方根
+     *
+     * @param x
+     * @return
+     */
     public int mySqrt(int x) {
         int num = 1;
-        while (num * num <= x) {
+        while (num <= x / num) {
+            // num平方 <= x
             num *= 2;
         }
-        // 真值在(num/2, num]区间内
+        // 循环终止时, 说明 num平方 > x, x平方根真值在(num/2, num]区间内
         int low = num / 2;
         int high = num;
         while (low <= high) {
             int mid = (low + high) / 2;
-            if (mid * mid == x) {
+            if (x / mid == mid) {
                 return mid;
-            } else if (mid * mid > x) {
-                high = mid - 1;
-            } else {
+            } else if (x / mid > mid) {
                 low = mid + 1;
+            } else {
+                high = mid - 1;
             }
         }
         return low - 1;
+    }
+
+    /**
+     * 50. Pow(x, n)
+     * 求x的正数n次方
+     */
+    public double myPow(double x, int n) {
+        if (n == 0) {
+            // 任何数字的0次幂都等于1, 包括0
+            return 1;
+        } else if (Math.abs(n) == 1) {
+            return n == 1 ? x : 1 / x;
+        }
+        double half = myPow(x, n / 2);
+        double value = half * half;
+        if (n % 2 != 0) {
+            value *= n > 0 ? x : 1 / x;
+        }
+        return value;
     }
 
 }
