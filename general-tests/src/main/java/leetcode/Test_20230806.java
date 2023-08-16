@@ -1,10 +1,19 @@
 package leetcode;
 
+import jdk.nashorn.internal.ir.debug.ObjectSizeCalculator;
+
+import java.math.BigInteger;
+
 public class Test_20230806 {
 
     public static void main(String[] args) {
         System.out.println(numWays(4));
         System.out.println(cuttingRope(120));
+
+
+        int a = Integer.MAX_VALUE;
+        int b = 2;
+//        int result = Math.multiplyExact(a, b); //如果溢出则抛异常
 
     }
 
@@ -37,26 +46,34 @@ public class Test_20230806 {
      * @return
      */
     public static int cuttingRope(int n) {
-        long max = 0;
+        BigInteger max = BigInteger.ZERO;
         for (int i = 2; i <= n; i++) {
-            max = Math.max(max, maxSplitInt(n, i));
-            System.out.println(maxSplitInt(n, i));
+            BigInteger temp = doCuttingRope(n, i);
+            if (max.compareTo(temp) < 0) {
+                max = temp;
+            }
         }
-        return (int) (max % 1000000007);
+        //System.out.println(ObjectSizeCalculator.getObjectSize(max));
+        return max.mod(BigInteger.valueOf(1000000007)).intValue();
     }
 
-    public static long maxSplitInt(int n, int k) {
+    /**
+     * leetcode 不识别BigInteger类, 擦
+     *
+     * @param n
+     * @param k
+     * @return
+     */
+    public static BigInteger doCuttingRope(int n, int k) {
         int base = n / k;
         int delta = n % k;
-        int count = 0;
-        long total = 1;
+        BigInteger total = BigInteger.ONE;
         for (int i = 0; i < k; i++) {
-            int subVal = base;
-            if (count < delta) {
-                subVal += 1;
-                count++;
+            if (i < delta) {
+                total = total.multiply(BigInteger.valueOf(base + 1));
+            } else {
+                total = total.multiply(BigInteger.valueOf(base));
             }
-            total = total * subVal;
         }
         return total;
     }
