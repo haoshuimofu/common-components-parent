@@ -1,5 +1,7 @@
 package leetcode;
 
+import java.util.Stack;
+
 /**
  * @author dewu.de
  * @date 2023-08-16 7:48 下午
@@ -57,6 +59,61 @@ public class Test_20230816 {
             value *= n > 0 ? x : 1 / x;
         }
         return value;
+    }
+
+    /**
+     * 394. 字符串解码
+     *
+     * @param s
+     * @return
+     */
+    public String decodeString(String s) {
+        String result = null;
+        Stack<String> stack = new Stack<>();
+        int from = 0;
+        for (int i = 0; i < s.length(); i++) {
+            char curr = s.charAt(i);
+            if (curr == '[') {
+                if (from >= 0 && from < i) {
+                    stack.push(s.substring(from, i));
+                }
+                stack.push("]");
+                from = i + 1;
+            } else if (curr == ']') {
+                String repeat = s.substring(from, i);
+                String prefix = stack.pop();
+                int index = -1;
+                for (int j = 0; j < prefix.length(); j++) {
+                    if (isNumberChar(prefix.charAt(j))) {
+                        index = j;
+                        break;
+                    }
+                }
+                String str = index == 0 ? "" : prefix.substring(0, index);
+                int repeatTimes = Integer.parseInt(prefix.substring(index, prefix.length()));
+                if (repeatTimes == 1) {
+                    str = str + repeat;
+                } else {
+                    StringBuilder sb = new StringBuilder(repeat);
+                    for (int z = 2; z <= repeatTimes ; z++) {
+                        sb.append(repeat);
+                    }
+                    str = str + sb.toString();
+                }
+                stack.push(str);
+
+            } else {
+                if (i == s.length() - 1) {
+                    return stack.pop() + s.substring(from, i + 1);
+                }
+            }
+        }
+        return "0";
+    }
+
+    private static boolean isNumberChar(char ch) {
+        int intVal = (int) ch;
+        return intVal >= 48 && intVal <= 57;
     }
 
 }
