@@ -6,25 +6,23 @@ public class Test_20230810 {
         System.out.println(isPowerOfThree(3));
     }
 
+    /**
+     * 326. 3的幂
+     *
+     * @param n
+     * @return
+     */
     public static boolean isPowerOfThree(int n) {
-        if (n < 1) {
-            // 3的x次幂n为整数, 那n肯定>=1
-            return false;
-        } else if (n == 1) {
-            // 3的0次幂为1
-            return true;
-        }
-        while (true) {
-            if (n % 3 != 0) {
-                // n都不能被3整除, 那n肯定不是3的x次幂
-                return false;
-            }
-            n /= 3;
+        while (n > 0) {
             if (n == 1) {
                 return true;
             }
+            if (n % 3 != 0) {
+                return false;
+            }
+            n /= 3;
         }
-//        return true;
+        return false;
     }
 
 }
