@@ -118,4 +118,123 @@ public class Test_20230817 {
         return value[i][j];
     }
 
+    /**
+     * 剑指 Offer 24. 反转链表
+     *
+     * @param head
+     * @return
+     */
+    public ListNode reverseList(ListNode head) {
+        ListNode newHead = null;
+        ListNode prev = null;
+        ListNode curr = head;
+        while (curr != null) {
+            ListNode next = curr.next;
+            curr.next = prev;
+            prev = curr;
+            if (next == null) {
+                newHead = curr;
+            }
+            curr = next;
+        }
+        return newHead;
+    }
+
+    /**
+     * 剑指 Offer 22. 链表中倒数第k个节点
+     *
+     * @param head
+     * @param k
+     * @return
+     */
+    public ListNode getKthFromEnd(ListNode head, int k) {
+        int size = 0;
+        ListNode node = head;
+        while (node != null) {
+            size++;
+            node = node.next;
+        }
+        int index = 0;
+        ListNode prev = null;
+        node = head;
+        while (node != null) {
+            index++;
+            ListNode next = node.next;
+            if (index == size - k + 1) {
+                if (prev != null) {
+                    prev.next = null;
+                }
+                return node;
+            } else {
+                prev = node;
+                node = next;
+            }
+        }
+        return head;
+    }
+
+    /**
+     * 83. 删除排序链表中的重复元素
+     *
+     * @param head
+     * @return
+     */
+    public ListNode deleteDuplicates(ListNode head) {
+        int[] vals = new int[201];
+        ListNode prev = null;
+        ListNode node = head;
+        while (node != null) {
+            int index = node.val + 100;
+            if (vals[index] == 0) {
+                vals[index] = 1;
+                prev = node;
+                node = node.next;
+            } else {
+                ListNode next = node.next;
+                node.next = null;
+                prev.next = next;
+                node = next;
+
+            }
+        }
+        return head;
+
+    }
+
+    /**
+     * 剑指 Offer 51. 数组中的逆序对
+     * ---> 暴力解法 ---> 超时
+     * ---> 当前求解 ---> 也超时
+     *
+     * @param nums
+     * @return
+     */
+    public int reversePairs(int[] nums) {
+        if (nums == null || nums.length < 2) {
+            return 0;
+        }
+        int count = 0;
+        int lessThenCur = -1;
+        for (int i = 0; i < nums.length - 1; i++) {
+            if (lessThenCur != -1) {
+                count += lessThenCur;
+                lessThenCur = -1;
+                continue;
+            }
+            for (int j = i + 1; j < nums.length; j++) {
+                if (nums[i] > nums[j]) {
+                    count++;
+                }
+                if (j > i + 1 && nums[i + 1] > nums[j]) {
+                    if (lessThenCur == -1) {
+                        lessThenCur = 1;
+                    } else {
+                        lessThenCur++;
+                    }
+                }
+            }
+        }
+        return count;
+    }
+
 }
