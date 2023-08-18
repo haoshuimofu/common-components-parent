@@ -3,6 +3,7 @@ package leetcode;
 import com.alibaba.fastjson.JSON;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -12,17 +13,21 @@ import java.util.List;
 public class Test_20230818 {
 
     public static void main(String[] args) {
-        TreeNode root = new TreeNode(5);
-        root.left = new TreeNode(3);
-        root.left.left = new TreeNode(2);
-        root.left.right = new TreeNode(4);
+        TreeNode root = new TreeNode(10);
+        root.left = new TreeNode(5);
+        root.left.left = new TreeNode(3);
+        root.left.right = new TreeNode(2);
+        root.left.left.left = new TreeNode(3);
+        root.left.left.right = new TreeNode(-2);
+        root.left.right.right = new TreeNode(1);
 
-        root.right = new TreeNode(7);
-        root.right.left = new TreeNode(6);
-        root.right.right = new TreeNode(8);
+        root.right = new TreeNode(-3);
+        root.right.right = new TreeNode(11);
 
         Test_20230818 test = new Test_20230818();
-        System.out.println(test.pathSum(root, 7));
+        System.out.println(test.pathSum(root, 8));
+
+        System.out.println(test.missingNumber(new int[]{0, 1, 3}));
 
     }
 
@@ -64,41 +69,25 @@ public class Test_20230818 {
     }
 
     // ========
-    public int pathSum(TreeNode node, int targetSum) {
+    public int pathSum(TreeNode root, int targetSum) {
         int[] count = new int[1];
-        List<Integer> leftPathVals = new ArrayList<>();
-        leftPathVals.add(node.val);
-        doPathSum(node.left, targetSum, true, leftPathVals, count);
-        List<Integer> rightPathVals = new ArrayList<>();
-        rightPathVals.add(node.val);
-        doPathSum(node.right, targetSum, false, rightPathVals, count);
+        doPathSum(root, targetSum, new ArrayList<>(), count);
         return count[0];
     }
 
-    public void doPathSum(TreeNode node, int targetNum, boolean left, List<Integer> pathVals, int[] count) {
+    public void doPathSum(TreeNode node, int targetNum, List<Integer> pathVals, int[] count) {
         if (node == null) {
-            if (pathVals.size() > 0) {
-                System.out.println(JSON.toJSONString(pathVals));
-                countPath(pathVals, targetNum, count);
-            }
-        } else {
-            pathVals.add(node.val);
-            if (left) {
-                doPathSum(node.left, targetNum, true, pathVals, count);
-                if (node.right != null) {
-                    List<Integer> newPathVals = new ArrayList<>();
-                    newPathVals.add(node.val);
-                    doPathSum(node.right, targetNum, false, newPathVals, count);
-                }
-            } else {
-                doPathSum(node.right, targetNum, false, pathVals, count);
-                if (node.left != null) {
-                    List<Integer> newPathVals = new ArrayList<>();
-                    newPathVals.add(node.val);
-                    doPathSum(node.left, targetNum, true, newPathVals, count);
-                }
-            }
+            return;
         }
+        pathVals.add(node.val);
+        if (node.right == null && node.left == null) {
+            System.out.println(JSON.toJSONString(pathVals));
+            countPath(pathVals, targetNum, count);
+        } else {
+            doPathSum(node.left, targetNum, pathVals, count);
+            doPathSum(node.right, targetNum, pathVals, count);
+        }
+        pathVals.remove(pathVals.size() - 1);
     }
 
     private void countPath(List<Integer> path, int targetSum, int[] count) {
@@ -114,6 +103,7 @@ public class Test_20230818 {
         steps++;
         sum += path.get(currIndex);
         if (steps > 1 && sum == targetNum) {
+            System.out.println(sum + "--->" + JSON.toJSONString(path));
             count[0]++;
         }
         // 既然循环只有一个值, 就没必要循环
@@ -121,6 +111,156 @@ public class Test_20230818 {
 //            doCountPath(path, targetNum, i, sum, count);
 //        }
         doCountPath(path, targetNum, currIndex + 1, steps, sum, count);
+    }
+
+    //=====
+
+    /**
+     * 剑指 Offer 50. 第一个只出现一次的字符
+     *
+     * @param s
+     * @return
+     */
+    public char firstUniqChar(String s) {
+        int[] count = new int[26];
+        for (int i = 0; i < s.length(); i++) {
+            count[(int) s.charAt(i) - 97] += 1;
+        }
+        for (int i = 0; i < s.length(); i++) {
+            if (count[(int) s.charAt(i) - 97] == 1) {
+                return s.charAt(i);
+            }
+        }
+        return ' ';
+    }
+
+    /**
+     * 剑指 Offer 40. 最小的k个数
+     *
+     * @param arr
+     * @param k
+     * @return
+     */
+    public int[] getLeastNumbers(int[] arr, int k) {
+        for (int i = 0; i < arr.length - 1; i++) {
+            if (i == k) {
+                break;
+            }
+            for (int j = i + 1; j < arr.length; j++) {
+                if (arr[i] > arr[j]) {
+                    int temp = arr[i];
+                    arr[i] = arr[j];
+                    arr[j] = temp;
+                }
+            }
+        }
+        int[] res = new int[k];
+        System.arraycopy(arr, 0, res, 0, k);
+        return res;
+    }
+
+    /**
+     * Arrays.sort比自己手写排序快多了
+     *
+     * @param arr
+     * @param k
+     * @return
+     */
+    public int[] getLeastNumbers1(int[] arr, int k) {
+        Arrays.sort(arr);
+        int[] res = new int[k];
+        System.arraycopy(arr, 0, res, 0, k);
+        return res;
+    }
+
+    /**
+     * 剑指 Offer 53 - II. 0～n-1中缺失的数字
+     *
+     * @param nums
+     * @return
+     */
+    public int missingNumber(int[] nums) {
+        int[] flag = new int[nums.length + 1];
+        for (int i = 0; i < nums.length; i++) {
+            flag[nums[i]] = 1;
+        }
+        for (int i = 0; i < flag.length; i++) {
+            if (flag[i] == 0) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    /**
+     * 剑指 Offer 53 - I. 在排序数组中查找数字 I
+     *
+     * @param nums
+     * @param target
+     * @return
+     */
+    public int search(int[] nums, int target) {
+        int low = 0;
+        int high = nums.length - 1;
+        int targetIndex = -1;
+        while (low <= high) {
+            int mid = (low + high) / 2;
+            if (nums[mid] == target) {
+                if (mid == 0 || nums[mid - 1] != target) {
+                    targetIndex = mid;
+                    break;
+                } else {
+                    high = mid - 1;
+                }
+            } else if (nums[mid] > target) {
+                high = mid - 1;
+            } else {
+                low = mid + 1;
+            }
+        }
+        int count = 0;
+        if (targetIndex >= 0) {
+            while (targetIndex <= nums.length - 1 && nums[targetIndex] == target) {
+                count++;
+                targetIndex++;
+            }
+        }
+        return count;
+    }
+
+    /**
+     * 剑指 Offer 54. 二叉搜索树的第k大节点
+     *
+     * @param root
+     * @param k
+     * @return
+     */
+    public int kthLargest(TreeNode root, int k) {
+        // 前序遍历
+        return doKthLargest(root, k, 0);
+    }
+
+    public int doKthLargest(TreeNode node, int k, int count) {
+        if (node == null) {
+            return Integer.MIN_VALUE;
+        }
+        int value = doKthLargest(node.right, k, count);
+        if (value != Integer.MIN_VALUE) {
+            return value;
+        }
+        if (node.left == null && node.right == null && count == -1) {
+            count = 1;
+        } else {
+            count++;
+        }
+        if (count == k) {
+            return node.val;
+        }
+        value = doKthLargest(node.left, k, count);
+        if (value != Integer.MIN_VALUE) {
+            return value;
+        }
+        return Integer.MIN_VALUE;
     }
 
 }
