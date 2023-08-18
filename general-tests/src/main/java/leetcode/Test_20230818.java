@@ -29,6 +29,13 @@ public class Test_20230818 {
 
         System.out.println(test.missingNumber(new int[]{0, 1, 3}));
 
+        //
+        TreeNode r = new TreeNode(3);
+        r.right = new TreeNode(4);
+        r.left = new TreeNode(1);
+        r.left.right = new TreeNode(2);
+        System.out.println(test.kthLargest(r, 1));
+
     }
 
     /**
@@ -81,7 +88,7 @@ public class Test_20230818 {
         }
         pathVals.add(node.val);
         if (node.right == null && node.left == null) {
-            System.out.println(JSON.toJSONString(pathVals));
+//            System.out.println(JSON.toJSONString(pathVals));
             countPath(pathVals, targetNum, count);
         } else {
             doPathSum(node.left, targetNum, pathVals, count);
@@ -103,7 +110,7 @@ public class Test_20230818 {
         steps++;
         sum += path.get(currIndex);
         if (steps > 1 && sum == targetNum) {
-            System.out.println(sum + "--->" + JSON.toJSONString(path));
+//            System.out.println(sum + "--->" + JSON.toJSONString(path));
             count[0]++;
         }
         // 既然循环只有一个值, 就没必要循环
@@ -230,37 +237,33 @@ public class Test_20230818 {
 
     /**
      * 剑指 Offer 54. 二叉搜索树的第k大节点
+     * 关键点: 如何终止递归???
      *
      * @param root
      * @param k
      * @return
      */
     public int kthLargest(TreeNode root, int k) {
-        // 前序遍历
-        return doKthLargest(root, k, 0);
+        int[] res = new int[2];
+        doKthLargest(root, k, res);
+        return res[1];
     }
 
-    public int doKthLargest(TreeNode node, int k, int count) {
-        if (node == null) {
-            return Integer.MIN_VALUE;
+    public void doKthLargest(TreeNode node, int k, int[] res) {
+        if (node == null || res[0] >= k) {
+            return;
         }
-        int value = doKthLargest(node.right, k, count);
-        if (value != Integer.MIN_VALUE) {
-            return value;
+        doKthLargest(node.right, k, res);
+        if (res[0] < k) {
+            res[0]++;
+            res[1] = node.val;
+            if (res[0] == k) {
+                return;
+            }
+            if (res[0] < k) {
+                doKthLargest(node.left, k, res);
+            }
         }
-        if (node.left == null && node.right == null && count == -1) {
-            count = 1;
-        } else {
-            count++;
-        }
-        if (count == k) {
-            return node.val;
-        }
-        value = doKthLargest(node.left, k, count);
-        if (value != Integer.MIN_VALUE) {
-            return value;
-        }
-        return Integer.MIN_VALUE;
     }
 
 }
