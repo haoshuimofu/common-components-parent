@@ -1,6 +1,11 @@
 package leetcode;
 
+import com.alibaba.fastjson.JSON;
+import com.demo.algorithm.Tree;
+
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class Test_20230819 {
 
@@ -18,6 +23,19 @@ public class Test_20230819 {
         System.out.println(test.reverseBetween(head, 1, 2));
 
         System.out.println(test.removeDuplicates(new int[]{1, 1, 1, 2, 2, 3}));
+
+        TreeNode root = new TreeNode(3);
+        root.left = new TreeNode(9);
+        root.right = new TreeNode(20);
+        root.right.left = new TreeNode(15);
+        root.right.right = new TreeNode(7);
+        System.out.println(test.isBalanced(root));
+
+        int[][] matrix = new int[3][3];
+        matrix[0] = new int[]{1, 2, 3};
+        matrix[1] = new int[]{4, 5, 6};
+        matrix[2] = new int[]{7, 8, 9};
+        System.out.println(JSON.toJSONString(test.spiralOrder(matrix)));
     }
 
     /**
@@ -197,6 +215,101 @@ public class Test_20230819 {
         while (node != null) {
         }
         return null;
+    }
+
+    /**
+     * 剑指 Offer 55 - II. 平衡二叉树
+     * <p>
+     * 平衡二叉树定义: 书中的每个节点左右子树高度差都不超过1
+     *
+     * @param root
+     * @return
+     */
+    public boolean isBalanced(TreeNode root) {
+        boolean balanced = root == null || Math.abs(getTreeHeight(root.left, 1) - getTreeHeight(root.right, 1)) <= 1;
+        if (balanced && root != null) {
+            balanced = isBalanced(root.left) && isBalanced(root.right);
+        }
+        return balanced;
+    }
+
+    public int getTreeHeight(TreeNode node, int height) {
+        if (node == null) {
+            return height;
+        }
+        if (node.left == null && node.right == null) {
+            return height + 1;
+        }
+        return Math.max(getTreeHeight(node.left, height + 1), getTreeHeight(node.right, height + 1));
+    }
+
+    /**
+     * 剑指 Offer 29. 顺时针打印矩阵
+     *
+     * @param matrix
+     * @return
+     */
+    public int[] spiralOrder(int[][] matrix) {
+        if (matrix == null || matrix.length == 0) {
+            return new int[0];
+        } else if (matrix.length == 1) {
+            return matrix[0];
+        }
+        int m = matrix.length;
+        int n = matrix[0].length;
+        int[][] visit = new int[m][n];
+        int[] nums = new int[m * n];
+        int index = 0;
+        int dir = 0; // 0-右, 1-下, 2-左, 3-上
+        int i = 0;
+        int j = 0;
+        while (i >= 0 && i < m && j >= 0 && j < n && visit[i][j] == 0) {
+            visit[i][j] = 1;
+            nums[index] = matrix[i][j];
+            index++;
+            if (dir == 0) {
+                if (j == n - 1 || visit[i][j + 1] == 1) {
+                    i++;
+                    dir = 1;
+                } else {
+                    j++;
+                }
+            } else if (dir == 1) {
+                if (i == m - 1 || visit[i + 1][j] == 1) {
+                    j--;
+                    dir = 2;
+                } else {
+                    i++;
+                }
+            } else if (dir == 2) {
+                if (j == 0 || visit[i][j - 1] == 1) {
+                    i--;
+                    dir = 3;
+                } else {
+                    j--;
+                }
+            } else if (dir == 3) {
+                if (i == 0 || visit[i - 1][j] == 1) {
+                    j++;
+                    dir = 0;
+                } else {
+                    i--;
+                }
+            }
+
+        }
+        return nums;
+    }
+
+    private List<Integer> arrayToList(int[] nums) {
+        if (nums == null || nums.length == 0) {
+            return new ArrayList<>();
+        }
+        List<Integer> list = new ArrayList<>(nums.length);
+        for (int num : nums) {
+            list.add(num);
+        }
+        return list;
     }
 
 }
