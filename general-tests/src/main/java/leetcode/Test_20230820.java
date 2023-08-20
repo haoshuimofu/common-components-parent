@@ -210,4 +210,33 @@ public class Test_20230820 {
         return new String(chs, 0, index);
     }
 
+    /**
+     * 剑指 Offer 58 - II. 左旋转字符串
+     *
+     * @param s
+     * @param n
+     * @return
+     */
+    public String reverseLeftWords(String s, int n) {
+        n = n % s.length();
+        if (n == 0) {
+            return s;
+        }
+        char[] chs = new char[s.length()];
+        char[] schs = s.toCharArray();
+        System.arraycopy(schs, n, chs, 0, s.length() - n);
+        System.arraycopy(schs, 0, chs, s.length() - n, n);
+
+//        int index = 0;
+//        for (int i = n; i < s.length(); i++) {
+//            chs[index] = s.charAt(i);
+//            index++;
+//        }
+//        for (int i = 0; i < n; i++) {
+//            chs[index] = s.charAt(i);
+//            index++;
+//        }
+        return new String(chs);
+    }
+
 }
