@@ -1,8 +1,11 @@
 package study.algorithm.sort;
 
 /**
+ * 快排
+ * 参考：https://blog.csdn.net/qq_43471489/article/details/125582437
+ *
  * @author dewu.de
- * @date 2023-08-21 11:29 上午
+ * @date 2023-08-21 2:08 下午
  */
 public class QuickSort {
 
@@ -16,35 +19,34 @@ public class QuickSort {
         }
     }
 
-    public static void quickSort(int[] arr, int low, int high) {
-        if (low < high) {
-            int pivotIndex = partition(arr, low, high);
-
-            quickSort(arr, low, pivotIndex - 1);
-            quickSort(arr, pivotIndex + 1, high);
+    public static void quickSort(int[] nums, int from, int to) {
+        if (from < to) {
+            int pivotIndex = partition(nums, from, to);
+            quickSort(nums, from, pivotIndex - 1);
+            quickSort(nums, pivotIndex + 1, to);
         }
     }
 
-    public static int partition(int[] arr, int low, int high) {
-        int pivotValue = arr[high];
-        int i = low - 1;
-        System.out.println("i="+i);
-
-        for (int j = low; j < high; j++) {
-            if (arr[j] < pivotValue) {
-                i++;
-                swap(arr, i, j);
+    private static int partition(int[] nums, int from, int to) {
+        // 基准值, 单独记录, 所以from位置可以被重新赋值
+        int pivotValue = nums[from];
+        int left = from;
+        int right = to;
+        while (left < right) {
+            // right向左, 找到第一个比基准值小的元素
+            while (left < right && nums[right] >= pivotValue) {
+                right--;
             }
+            // 前面的while跳出时, 要么left == right, 要么num[right] < 基准值
+            nums[left] = nums[right];
+
+            // left向右, 找到第一个比基准值大的元素
+            while (left < right && nums[left] <= pivotValue) {
+                left++;
+            }
+            nums[right] = nums[left];
         }
-
-        swap(arr, i + 1, high);
-        return i + 1;
-    }
-
-    public static void swap(int[] arr, int i, int j) {
-        int temp = arr[i];
-        arr[i] = arr[j];
-        arr[j] = temp;
+        nums[left] = pivotValue;
+        return left;
     }
 }
-
