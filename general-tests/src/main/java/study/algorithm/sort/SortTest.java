@@ -60,6 +60,14 @@ public class SortTest {
         System.out.println("快速排序: " + (System.currentTimeMillis() - start));
 
 
+        start = System.currentTimeMillis();
+        for (int i = 0; i < round; i++) {
+            int[] nums = new int[]{5, 9, 3, 1, 7, 6, 8, 2, 4};
+            MergeSort.sort(nums);
+        }
+        System.out.println("归并排序: " + (System.currentTimeMillis() - start));
+
+
     }
 
 
