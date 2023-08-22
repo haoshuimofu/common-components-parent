@@ -37,23 +37,22 @@ public class MergeSort {
     private static void merge(int[] nums, int from, int mid, int to, int[] temp) {
         int i = from;
         int j = mid + 1;
-        int k = 0;
+        int index = 0;
         while (i <= mid && j <= to) {
-            if (nums[i] < nums[j]) {
-                temp[k++] = nums[i++];
+            if (nums[i] > nums[j]) {
+                temp[index++] = nums[j++];
             } else {
-                temp[k++] = nums[j++];
+                temp[index++] = nums[i++];
             }
         }
         while (i <= mid) {
-            temp[k++] = nums[i++];
+            temp[index++] = nums[i++];
         }
         while (j <= to) {
-            temp[k++] = nums[j++];
+            temp[index++] = nums[j++];
         }
-        for (i = 0; i < k; i++) {
-            nums[from + i] = temp[i];
+        for (int n = 0; n < index; n++) {
+            nums[from + n] = temp[n];
         }
-
     }
 }
