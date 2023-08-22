@@ -113,45 +113,50 @@ public class Test_20230811 {
 
     /**
      * 39. 组合总和
+     * TODO 待解
      *
      * @param candidates
      * @param target
      * @return
      */
     public List<List<Integer>> combinationSum(int[] candidates, int target) {
-        List<List<Integer>> res = new ArrayList<>();
-        boolean[] visit = new boolean[candidates.length];
+        List<List<Integer>> result = new ArrayList<>();
+        List<Integer> path = new ArrayList<>();
         int[] sum = new int[1];
         for (int i = 0; i < candidates.length; i++) {
-            combination(candidates, target, i, visit, new ArrayList<>(), new ArrayList<>(), i, sum, res);
+            doCombination(candidates, target, i, sum, path, result);
         }
-        return res;
+        return result;
     }
 
-    private void combination(int[] candidates, int target, int fromIndex,
-                             boolean[] visit, List<Integer> pathIndex, List<Integer> path,
-                             int currIndex, int[] sum, List<List<Integer>> paths) {
-        if (currIndex >= candidates.length) {
+    private void doCombination(int[] candidates, int target, int currIndex, int[] sum,
+                               List<Integer> path, List<List<Integer>> result) {
+        if (sum[0] >= target) {
             return;
         }
-        visit[currIndex] = true;
-        sum[0] += candidates[currIndex];
-        pathIndex.add(currIndex);
-        path.add(candidates[currIndex]);
-
-//        System.out.println(JSON.toJSONString(path));
+        int value = candidates[currIndex];
+        path.add(value);
+        sum[0] += value;
         if (sum[0] == target) {
-            paths.add(new ArrayList<>(path));
-        }
-        for (int i = 0; i < candidates.length; i++) {
-            if (!visit[i] && i > fromIndex) {
-                combination(candidates, target, fromIndex, visit, pathIndex, path, i, sum, paths);
+            result.add(new ArrayList<>(path));
+        } else if (sum[0] < target) {
+            for (int i = 0; i < path.size(); i++) {
+
+                if ((target - sum[0]) % path.get(i) == 0) {
+                    int repeat = (target - sum[0]) / path.get(i);
+                    List<Integer> newPath = new ArrayList<>(path);
+                    for (int j = 0; j < repeat; j++) {
+                        newPath.add(path.get(i));
+                    }
+                    result.add(newPath);
+                }
+            }
+            for (int i = currIndex + 1; i < candidates.length; i++) {
+                doCombination(candidates, target, i, sum, path, result);
             }
         }
-        visit[currIndex] = false;
-        sum[0] -= candidates[currIndex];
-        pathIndex.remove(pathIndex.size() - 1);
         path.remove(path.size() - 1);
+        sum[0] -= value;
     }
 
     /**
@@ -230,5 +235,17 @@ public class Test_20230811 {
             }
         }
         return count;
+    }
+
+    /**
+     * 面试题 02.03. 删除中间节点
+     * @param node
+     */
+    public void deleteNode(ListNode node) {
+        ListNode next = node.next;
+        ListNode nextNext = next.next;
+        next.next = null;
+        node.next = nextNext;
+        node.val = next.val;
     }
 }
