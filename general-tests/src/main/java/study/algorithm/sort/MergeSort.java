@@ -51,8 +51,6 @@ public class MergeSort {
         while (j <= to) {
             temp[index++] = nums[j++];
         }
-        for (int n = 0; n < index; n++) {
-            nums[from + n] = temp[n];
-        }
+        System.arraycopy(temp, 0, nums, from, index);
     }
 }
