@@ -17,7 +17,8 @@ public class Test_20230811 {
 
         System.out.println("///////////////////////");
 
-        System.out.println(JSON.toJSONString(test.combinationSum(new int[]{2, 3, 6, 7}, 7)));
+//        System.out.println(JSON.toJSONString(test.combinationSum(new int[]{2, 3, 6, 7}, 7)));
+        System.out.println(JSON.toJSONString(test.combinationSum(new int[]{3, 5, 8}, 11)));
 
         System.out.println("///////////////////////");
 
@@ -113,7 +114,7 @@ public class Test_20230811 {
 
     /**
      * 39. 组合总和
-     * TODO 待解
+     * TODO tag再优化
      *
      * @param candidates
      * @param target
@@ -131,7 +132,7 @@ public class Test_20230811 {
 
     private void doCombination(int[] candidates, int target, int currIndex, int[] sum,
                                List<Integer> path, List<List<Integer>> result) {
-        if (sum[0] >= target) {
+        if (sum[0] >= target || currIndex >= candidates.length) {
             return;
         }
         int value = candidates[currIndex];
@@ -140,19 +141,29 @@ public class Test_20230811 {
         if (sum[0] == target) {
             result.add(new ArrayList<>(path));
         } else if (sum[0] < target) {
-            for (int i = 0; i < path.size(); i++) {
-
-                if ((target - sum[0]) % path.get(i) == 0) {
-                    int repeat = (target - sum[0]) / path.get(i);
-                    List<Integer> newPath = new ArrayList<>(path);
-                    for (int j = 0; j < repeat; j++) {
-                        newPath.add(path.get(i));
+            int delta = target - sum[0];
+            int repeat = delta / value;
+            if (delta > 0) {
+                for (int i = 0; i <= repeat; i++) {
+                    if (i > 0) {
+                        path.add(value);
+                        sum[0] += value;
                     }
-                    result.add(newPath);
+                    if (sum[0] == target) {
+                        result.add(new ArrayList<>(path));
+                        break;
+                    } else if (sum[0] < target) {
+                        for (int j = currIndex + 1; j < candidates.length; j++) {
+                            doCombination(candidates, target, j, sum, path, result);
+                        }
+                    } else {
+                        break;
+                    }
                 }
-            }
-            for (int i = currIndex + 1; i < candidates.length; i++) {
-                doCombination(candidates, target, i, sum, path, result);
+                for (int i = 1; i <= repeat; i++) {
+                    path.remove(path.size() - 1);
+                    sum[0] -= value;
+                }
             }
         }
         path.remove(path.size() - 1);
@@ -239,6 +250,7 @@ public class Test_20230811 {
 
     /**
      * 面试题 02.03. 删除中间节点
+     *
      * @param node
      */
     public void deleteNode(ListNode node) {
