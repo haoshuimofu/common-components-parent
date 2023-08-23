@@ -22,8 +22,10 @@ public class Test_20230811 {
 
         System.out.println("///////////////////////");
 
-//        System.out.println(test.numSubarrayProductLessThanK1(new int[]{10, 9, 10, 4, 3, 8, 3, 3, 6, 2, 10, 10, 9, 3}, 19));
-        System.out.println(test.numSubarrayProductLessThanK1(new int[]{10, 5, 2, 6}, 100));
+//        System.out.println(test.numSubarrayProductLessThanK(new int[]{10, 9, 10, 4, 3, 8, 3, 3, 6, 2, 10, 10, 9, 3}, 19));
+        System.out.println(test.numSubarrayProductLessThanK(new int[]{10, 5, 2, 6}, 100));
+
+        System.out.println(Math.pow(10, 9) > Integer.MAX_VALUE);
 
     }
 
@@ -141,14 +143,15 @@ public class Test_20230811 {
         if (sum[0] == target) {
             result.add(new ArrayList<>(path));
         } else if (sum[0] < target) {
+            for (int j = currIndex + 1; j < candidates.length; j++) {
+                doCombination(candidates, target, j, sum, path, result);
+            }
             int delta = target - sum[0];
             int repeat = delta / value;
-            if (delta > 0) {
-                for (int i = 0; i <= repeat; i++) {
-                    if (i > 0) {
-                        path.add(value);
-                        sum[0] += value;
-                    }
+            if (delta > 0 && repeat > 0) {
+                for (int i = 1; i <= repeat; i++) {
+                    path.add(value);
+                    sum[0] += value;
                     if (sum[0] == target) {
                         result.add(new ArrayList<>(path));
                         break;
@@ -171,77 +174,34 @@ public class Test_20230811 {
     }
 
     /**
-     * LCR 009. 乘积小于 K 的子数组 - 不连续
-     * <p>
-     * 也是求子集
+     * LCR 009. 乘积小于 K 的子数组
+     * 713. 乘积小于 K 的子数组
      *
      * @param nums
      * @param k
      * @return
      */
     public int numSubarrayProductLessThanK(int[] nums, int k) {
-        double[] valueAndCount = new double[2];
-        for (int i = 0; i < nums.length; i++) {
-            valueAndCount[0] = 1;
-            doNumSubarrayProductLessThanK(nums, k, i, valueAndCount, new ArrayList<>());
+        if (k == 0) {
+            return 0;
         }
-        return (int) valueAndCount[1];
-    }
-
-    public void doNumSubarrayProductLessThanK(int[] nums, int k, int currIndex, double[] valueAndCount, List<Integer> path) {
-        if (currIndex >= nums.length) {
-            return;
-        }
-        path.add(nums[currIndex]);
-        System.out.println(JSON.toJSONString(path));
-        double factor = k * 1.0 / nums[currIndex];
-        if (valueAndCount[0] >= factor) {
-            System.out.println(JSON.toJSONString(path) + "---");
-            path.remove(path.size() - 1);
-            return;
-        }
-        valueAndCount[0] *= nums[currIndex];
-        valueAndCount[1]++;
-        for (int i = currIndex + 1; i <= currIndex + 1; i++) {
-            doNumSubarrayProductLessThanK(nums, k, i, valueAndCount, path);
-        }
-        path.remove(path.size() - 1);
-        valueAndCount[0] /= nums[currIndex];
-    }
-
-    /**
-     * 乘积小于 K 的子数组
-     * -->连续子数组
-     */
-    public int numSubarrayProductLessThanK1(int[] nums, int k) {
-        double value = nums[0] < k ? nums[0] : 1;
-        int count = nums[0] < k ? 1 : 0;
-        int left = 0;
-        int right = 1;
-        boolean[] flag = new boolean[nums.length];
-        while (right < nums.length) {
-            if (nums[right] >= k) {
+        int value = 1;
+        int count = 0;
+        int from = 0;
+        int index = 0;
+        while (index < nums.length) {
+            if (nums[index] >= k) {
                 value = 1;
-                right++;
-                left = right;
+                index++;
+                from = index;
             } else {
-                if (!flag[right]) {
-                    flag[right] = true;
-                    count++;
-                }
-                if (right > left) {
-                    if (k / value <= nums[right]) {
-                        // value * nums[i] >= k
-                        value /= nums[left];
-                        left++;
-                    } else {
-                        value *= nums[right];
-                        count++;
-                        right++;
-                    }
+                if (value * nums[index] >= k) {
+                    value /= nums[from];
+                    from++;
                 } else {
-                    value *= nums[right];
-                    right++;
+                    value *= nums[index];
+                    count += (index - from + 1);
+                    index++;
                 }
             }
         }
