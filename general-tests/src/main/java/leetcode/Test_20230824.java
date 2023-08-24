@@ -45,10 +45,8 @@ public class Test_20230824 {
         }
         path.add(node.val);
         // 如果有叶子节点, 先处理叶子节点
-        if (node.left != null || node.right != null) {
-            doPathSum(node.left, targetSum, path, count);
-            doPathSum(node.right, targetSum, path, count);
-        }
+        doPathSum(node.left, targetSum, path, count);
+        doPathSum(node.right, targetSum, path, count);
         // 叶子节点处理完了, 回溯时叶子节点也移除了
         count[0] += countPath(path, targetSum);
         path.remove(path.size() - 1);
@@ -85,6 +83,9 @@ public class Test_20230824 {
         List<Integer> path = new ArrayList<>();
         int[] sum = new int[1];
         for (int i = 0; i < candidates.length; i++) {
+            if (candidates[i] > target) {
+                break;
+            }
             if (i == 0 || candidates[i] != candidates[i - 1]) {
                 doCombinationSum2(candidates, target, i, path, sum, result);
             }
@@ -97,6 +98,9 @@ public class Test_20230824 {
             return;
         }
         int currValue = candidates[currIndex];
+        if (currIndex > target) {
+            return;
+        }
         path.add(currValue);
         sum[0] += currValue;
         if (sum[0] == target) {
