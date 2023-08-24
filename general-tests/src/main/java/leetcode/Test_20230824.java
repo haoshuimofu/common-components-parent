@@ -10,7 +10,11 @@ public class Test_20230824 {
 
     public static void main(String[] args) {
         Test_20230824 test = new Test_20230824();
-        int[] nums = {2, 5, 2, 1, 2};
+
+        int[] nums = {10, 1, 2, 7, 6, 1, 5};
+        System.out.println(JSON.toJSONString(test.combinationSum2(nums, 8)));
+
+        nums = new int[]{2, 5, 2, 1, 2};
         System.out.println(JSON.toJSONString(test.combinationSum2(nums, 5)));
 
         nums = new int[]{14, 6, 25, 9, 30, 20, 33, 34, 28, 30, 16, 12, 31, 9, 9, 12, 34, 16, 25, 32, 8, 7, 30, 12, 33, 20, 21, 29, 24, 17, 27, 34, 11, 17, 30, 6, 32, 21, 27, 17, 16, 8, 24, 12, 12, 28, 11, 33, 10, 32, 22, 13, 34, 18, 12};
@@ -69,6 +73,7 @@ public class Test_20230824 {
 
     /**
      * 40. 组合总和 II
+     * TODO 待求最优解
      *
      * @param candidates
      * @param target
@@ -88,7 +93,7 @@ public class Test_20230824 {
     }
 
     public void doCombinationSum2(int[] candidates, int target, int currIndex, List<Integer> path, int[] sum, List<List<Integer>> result) {
-        if (currIndex >= candidates.length) {
+        if (currIndex >= candidates.length || sum[0] >= target) {
             return;
         }
         int currValue = candidates[currIndex];
