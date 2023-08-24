@@ -1,10 +1,6 @@
 package leetcode;
 
-import com.alibaba.fastjson.JSON;
-
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 /**
  * @author dewu.de
@@ -25,8 +21,6 @@ public class Test_20230818 {
         root.right.right = new TreeNode(11);
 
         Test_20230818 test = new Test_20230818();
-        System.out.println(test.pathSum(root, 8));
-
         System.out.println(test.missingNumber(new int[]{0, 1, 3}));
 
         //
@@ -73,51 +67,6 @@ public class Test_20230818 {
             }
         }
         return node;
-    }
-
-    // ========
-    public int pathSum(TreeNode root, int targetSum) {
-        int[] count = new int[1];
-        doPathSum(root, targetSum, new ArrayList<>(), count);
-        return count[0];
-    }
-
-    public void doPathSum(TreeNode node, int targetNum, List<Integer> pathVals, int[] count) {
-        if (node == null) {
-            return;
-        }
-        pathVals.add(node.val);
-        if (node.right == null && node.left == null) {
-//            System.out.println(JSON.toJSONString(pathVals));
-            countPath(pathVals, targetNum, count);
-        } else {
-            doPathSum(node.left, targetNum, pathVals, count);
-            doPathSum(node.right, targetNum, pathVals, count);
-        }
-        pathVals.remove(pathVals.size() - 1);
-    }
-
-    private void countPath(List<Integer> path, int targetSum, int[] count) {
-        for (int i = 0; i < path.size(); i++) {
-            doCountPath(path, targetSum, i, 0, 0, count);
-        }
-    }
-
-    private void doCountPath(List<Integer> path, int targetNum, int currIndex, int steps, int sum, int[] count) {
-        if (currIndex >= path.size()) {
-            return;
-        }
-        steps++;
-        sum += path.get(currIndex);
-        if (steps > 1 && sum == targetNum) {
-//            System.out.println(sum + "--->" + JSON.toJSONString(path));
-            count[0]++;
-        }
-        // 既然循环只有一个值, 就没必要循环
-//        for (int i = currIndex + 1; i <= currIndex + 1; i++) {
-//            doCountPath(path, targetNum, i, sum, count);
-//        }
-        doCountPath(path, targetNum, currIndex + 1, steps, sum, count);
     }
 
     //=====
