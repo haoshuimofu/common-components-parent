@@ -12,8 +12,9 @@ public class Test_20230801 {
 
     public static void main(String[] args) {
 
+        Test_20230801 test = new Test_20230801();
         int[] nums = new int[]{2, 1, 4};
-        System.out.println(sumOfPower(nums));
+        System.out.println(test.sumOfPower(nums));
 
     }
 
@@ -23,20 +24,8 @@ public class Test_20230801 {
      * @param nums
      * @return
      */
-    public static int sumOfPower(int[] nums) {
-        Arrays.sort(nums);
-        long sum = 0;
-        long factor = (long) Math.pow(10, 9) + 7;
-        for (int i = nums.length - 1; i >= 0; i--) {
-            long base = (long) Math.pow(nums[i], 2);
-            for (int j = i; j >= 0; j--) {
-                System.out.print(j + " ");
-
-                sum += base * nums[j];
-            }
-            System.out.println();
-        }
-
+    public int sumOfPower(int[] nums) {
+        int mod = (int) Math.pow(10, 9) + 7;
         PriorityQueue<Integer> min = new PriorityQueue<>(new Comparator<Integer>() {
             @Override
             public int compare(Integer o1, Integer o2) {
@@ -49,24 +38,48 @@ public class Test_20230801 {
                 return Integer.compare(o2, o1);
             }
         });
-        return (int) (sum % factor);
+        int[] sum = new int[1];
+        for (int i = 0; i < nums.length; i++) {
+            doSumOfPower(nums, i, min, max, sum, mod);
+        }
+        return (int) (sum[0] % mod);
     }
 
     public void doSumOfPower(int[] nums, int currIndex, PriorityQueue<Integer> min, PriorityQueue<Integer> max, int[] sum, int mod) {
         if (currIndex >= nums.length) {
             return;
         }
-        min.add(nums[currIndex]);
-        max.add(nums[currIndex]);
+        Integer value = Integer.valueOf(nums[currIndex]);
+        min.add(value);
+        max.add(value);
 
-        int maxValue = max.poll();
-        int minValue = min.poll();
-        int currSum = maxValue * maxValue * minValue;
+        int maxValue = max.peek();
+        int minValue = min.peek();
+        long currSum = maxValue * maxValue * minValue;
         sum[0] += currSum % mod;
 
         for (int i = currIndex + 1; i < nums.length; i++) {
             doSumOfPower(nums, i, min, max, sum, mod);
         }
+        // 回溯
+        min.remove(value);
+        max.remove(value);
+    }
+
+
+    public int sumOfPower1(int[] nums) {
+        Arrays.sort(nums);
+        long sum = 0;
+        int sumFactor = 0;
+        for (int num : nums) {
+            sum += num;
+        }
+        for (int i = nums.length - 1; i >= 0; i--) {
+            int value = nums[i];
+
+
+        }
+        return 0;
 
 
     }
