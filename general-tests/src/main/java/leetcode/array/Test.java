@@ -1,7 +1,5 @@
 package leetcode.array;
 
-import com.alibaba.fastjson.JSON;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -24,35 +22,10 @@ public class Test {
                 return new int[]{i, sameNumIndex};
             }
         }
-        System.out.println(JSON.toJSONString(numIndexMap));
         for (int i = 0; i < nums.length; i++) {
-            System.out.println("i=" + i + "; num=" + nums[i] + "; other=" + (target - nums[i]));
-            System.out.println("other =" + numIndexMap.containsKey(target - nums[i]));
             Integer otherIndex = numIndexMap.get(target - nums[i]);
             if (otherIndex != null && otherIndex != i) {
                 return new int[]{i, otherIndex};
-            }
-        }
-        return null;
-    }
-
-    public static int[] twoSum11(int[] nums, int target) {
-        Map<Integer, Integer> numIndexMap = new HashMap<>(nums.length);
-        for (int i = 0; i < nums.length; i++) {
-            if (numIndexMap.containsKey(nums[i])) {
-                if (nums[i] * 2 == target) {
-                    return new int[]{i, numIndexMap.get(nums[i])};
-                }
-            } else  {
-                numIndexMap.put(nums[i], i);
-            }
-        }
-        for (int i = 0; i < nums.length; i++) {
-            if (numIndexMap.containsKey(target - nums[i])) {
-                int otherIndex = numIndexMap.get(target - nums[i]);
-                if (i != otherIndex) {
-                    return new int[]{i, otherIndex};
-                }
             }
         }
         return null;
@@ -65,21 +38,5 @@ public class Test {
             System.out.println(index);
         }
     }
-
-
-    public static int[] twoSum1(int[] nums, int target) {
-        for (int i = 0; i < nums.length - 1; i++) {
-            if (nums[i] > target) continue;
-            for (int j = i + 1; j < nums.length; j++) {
-                if (nums[j] > target) continue;
-                if (nums[i] + nums[j] == target) {
-                    return new int[]{i, j};
-                }
-            }
-
-        }
-        return null;
-    }
-
 
 }
