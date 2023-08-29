@@ -1,7 +1,5 @@
 package leetcode;
 
-import com.alibaba.fastjson.JSON;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,7 +19,9 @@ public class Test_20230829 {
         int[] visit = new int[n + 1];
         List<Integer> path = new ArrayList<>(n);
         for (int i = 1; i <= n; i++) {
-            doGetPermutation(n, k, visit, i, path);
+            if (visit[0] <k) {
+                doGetPermutation(n, k, visit, i, path);
+            }
         }
         StringBuilder sb = new StringBuilder();
         for (Integer num : path) {
