@@ -2,6 +2,7 @@ package leetcode;
 
 import uitls.NumberUtils;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 
 public class Test_20230825 {
@@ -79,16 +80,16 @@ public class Test_20230825 {
      * @return
      */
     public String multiply(String num1, String num2) {
-        return String.valueOf(convertStrToNum(num1) * convertStrToNum(num2));
+        return convertStrToNum(num1).multiply(convertStrToNum(num2)).toString();
     }
 
-    private int convertStrToNum(String str) {
-        int factor = 1;
-        int sum = 0;
+    private BigDecimal convertStrToNum(String str) {
+        BigDecimal factor = BigDecimal.valueOf(1);
+        BigDecimal sum = BigDecimal.valueOf(0);
         for (int i = str.length() - 1; i >= 0; i--) {
-            int chInt = (int) str.charAt(i) - 48;
-            sum += chInt * factor;
-            factor *= 10;
+            BigDecimal value = BigDecimal.valueOf(str.charAt(i) - '0');
+            sum = sum.add(value.multiply(factor));
+            factor = factor.multiply(BigDecimal.TEN);
         }
         return sum;
     }
@@ -121,6 +122,8 @@ public class Test_20230825 {
         System.out.println(test.convertStrToNum("123"));
 
         System.out.println(test.findKthLargest(new int[]{3, 2, 3, 1, 2, 4, 5, 5, 6}, 4));
+
+        System.out.println(test.multiply("6913259244", "71103343"));
     }
 
 }

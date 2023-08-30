@@ -1,7 +1,11 @@
 package leetcode;
 
+import com.alibaba.fastjson.JSON;
+
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author dewu.de
@@ -12,6 +16,10 @@ public class Test_20230829 {
     public static void main(String[] args) {
         Test_20230829 test = new Test_20230829();
         System.out.println(test.getPermutation(3, 2));
+        System.out.println("//////////////////////");
+        System.out.println(test.lengthOfLIS(new int[]{0, 1, 0, 3, 2, 3}));
+        System.out.println("//////////////////////");
+        System.out.println(test.addDigits(110));
     }
 
 
@@ -124,4 +132,121 @@ public class Test_20230829 {
         }
         return new String(chs, 0, index);
     }
+
+    /**
+     * 面试题 01.04. 回文排列
+     *
+     * @param s
+     * @return
+     */
+    public boolean canPermutePalindrome(String s) {
+        Map<Character, Integer> count = new HashMap<>();
+        for (int i = 0; i < s.length(); i++) {
+            char ch = s.charAt(i);
+            count.put(ch, count.getOrDefault(ch, 0) + 1);
+        }
+        int mid = 0;
+        for (Integer value : count.values()) {
+            if (value % 2 != 0) {
+                mid++;
+            }
+        }
+        return mid < 2;
+    }
+
+    /**
+     * 216. 组合总和 III
+     *
+     * @param k
+     * @param n
+     * @return
+     */
+    public List<List<Integer>> combinationSum3(int k, int n) {
+        List<List<Integer>> result = new ArrayList<>();
+        int[] sum = new int[1];
+        for (int i = 1; i <= 9; i++) {
+            if (9 - i + 1 >= k) {
+                doCombinationSum3(k, n, i, sum, new ArrayList<>(), result);
+            }
+        }
+        return result;
+    }
+
+    public void doCombinationSum3(int k, int n, int num, int[] sum, List<Integer> path, List<List<Integer>> result) {
+        if (num > 9 || path.size() >= k) {
+            return;
+        }
+        sum[0] += num;
+        path.add(num);
+        if (path.size() == k) {
+            if (sum[0] == n) {
+                result.add(new ArrayList<>(path));
+            }
+        } else {
+            for (int i = num + 1; i <= 9; i++) {
+                doCombinationSum3(k, n, i, sum, path, result);
+            }
+        }
+        sum[0] -= num;
+        path.remove(path.size() - 1);
+    }
+
+    /**
+     * 300. 最长递增子序列
+     *
+     * @param nums
+     * @return
+     */
+    public int lengthOfLIS(int[] nums) {
+        if (nums == null || nums.length == 0) {
+            return 0;
+        } else if (nums.length == 1) {
+            return 1;
+        }
+        int[] lenAndMax = new int[2];
+        for (int i = 0; i < nums.length - 1; i++) {
+            if (nums[i] < nums[i + 1] && lenAndMax[1] < nums.length - i) {
+                lenAndMax[0] = 0;
+                doLengthOfLIS(nums, Integer.MIN_VALUE, 0, i, lenAndMax);
+            }
+        }
+        return lenAndMax[1];
+    }
+
+    public void doLengthOfLIS(int[] nums, int lastNum, int len, int currIndex, int[] lenAndMax) {
+        if (currIndex >= nums.length) {
+            return;
+        }
+        int currValue = nums[currIndex];
+        if (currValue > lastNum) {
+            lastNum = currValue;
+            lenAndMax[1] = Math.max(lenAndMax[1], ++len);
+        }
+        for (int i = currIndex + 1; i < nums.length; i++) {
+            doLengthOfLIS(nums, lastNum, len, i, lenAndMax);
+        }
+    }
+
+    /**
+     * 258. 各位相加
+     *
+     * @param num
+     * @return
+     */
+    public int addDigits(int num) {
+        if (num < 10) {
+            return num;
+        }
+        int sum = 0;
+        while (num >= 10) {
+            sum = 0;
+            while (num > 0) {
+                sum += num % 10;
+                num /= 10;
+            }
+            num = sum;
+        }
+        return sum;
+    }
+
 }
