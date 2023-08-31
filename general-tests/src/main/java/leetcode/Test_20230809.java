@@ -3,6 +3,8 @@ package leetcode;
 import com.alibaba.fastjson.JSON;
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Stack;
 
 /**
@@ -176,6 +178,7 @@ public class Test_20230809 {
 
     /**
      * LCR 004. 只出现一次的数字 II
+     * 137. 只出现一次的数字 II
      *
      * @param nums
      * @return
@@ -194,26 +197,16 @@ public class Test_20230809 {
 
 
     public int singleNumber1(int[] nums) {
-        int[] flags = new int[nums.length];
+        Map<Integer, Integer> countMap = new HashMap<>(nums.length);
         for (int i = 0; i < nums.length; i++) {
-            if (flags[i] == 1) {
-                continue;
-            }
-            flags[i] = 1;
-            boolean match = false;
-            for (int j = i; j < nums.length; j++) {
-                if (j > i && flags[j] == 0) {
-                    if (nums[i] == nums[j]) {
-                        flags[j] = 1;
-                        match = true;
-                    }
-                }
-            }
-            if (!match) {
-                return nums[i];
+            countMap.put(nums[i], countMap.getOrDefault(nums[i], 0) + 1);
+        }
+        for (Map.Entry<Integer, Integer> entry : countMap.entrySet()) {
+            if (entry.getValue() == 1) {
+                return entry.getKey();
             }
         }
-        return -1;
+        return 0;
     }
 
 }
