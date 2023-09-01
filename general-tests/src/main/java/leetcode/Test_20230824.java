@@ -94,21 +94,19 @@ public class Test_20230824 {
     }
 
     public void doCombinationSum2(int[] candidates, int target, int currIndex, List<Integer> path, int[] sum, List<List<Integer>> result) {
-        if (currIndex >= candidates.length || sum[0] >= target) {
+        if (sum[0] >= target) {
             return;
         }
         int currValue = candidates[currIndex];
-        if (currIndex > target) {
-            return;
-        }
         path.add(currValue);
         sum[0] += currValue;
         if (sum[0] == target) {
             result.add(new ArrayList<>(path));
-        }
-        for (int i = currIndex + 1; i < candidates.length; i++) {
-            if (i == currIndex + 1 || candidates[i] != candidates[i - 1]) {
-                doCombinationSum2(candidates, target, i, path, sum, result);
+        } else if (sum[0] < target) {
+            for (int i = currIndex + 1; i < candidates.length; i++) {
+                if (i == currIndex + 1 || candidates[i] != candidates[i - 1]) {
+                    doCombinationSum2(candidates, target, i, path, sum, result);
+                }
             }
         }
         path.remove(path.size() - 1);

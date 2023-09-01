@@ -76,7 +76,7 @@ public class Test_20230831 {
     public String[] permutation(String s) {
         char[] chs = s.toCharArray();
         Arrays.sort(chs);
-        Set<String> strList = new HashSet<>();
+        List<String> strList = new ArrayList<>();
         boolean[] visit = new boolean[chs.length];
         char[] pathChs = new char[chs.length];
         int[] pathLen = new int[1];
@@ -93,7 +93,7 @@ public class Test_20230831 {
         return sts;
     }
 
-    public void doPermutation(char[] chs, boolean[] visit, char[] pathChs, int[] pathLen, int currIndex, Set<String> strList) {
+    public void doPermutation(char[] chs, boolean[] visit, char[] pathChs, int[] pathLen, int currIndex, List<String> strList) {
         if (pathLen[0] == chs.length) {
             return;
         }
@@ -104,9 +104,11 @@ public class Test_20230831 {
             strList.add(new String(pathChs, 0, chs.length));
         } else {
             for (int i = 0; i < chs.length; i++) {
-                if (!visit[i]) {
-                    doPermutation(chs, visit, pathChs, pathLen, i, strList);
+                // 第二条件很巧妙啊
+                if (visit[i] || (i > 0 && !visit[i - 1] && chs[i - 1] == chs[i])) {
+                    continue;
                 }
+                doPermutation(chs, visit, pathChs, pathLen, i, strList);
             }
         }
         // 回撤
