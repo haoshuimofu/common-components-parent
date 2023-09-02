@@ -76,4 +76,97 @@ public class Test_20230901 {
         }
     }
 
+    /**
+     * 剑指 Offer 61. 扑克牌中的顺子
+     *
+     * @param nums
+     * @return
+     */
+    public boolean isStraight(int[] nums) {
+        Arrays.sort(nums);
+        int kingCount = 0;
+        int diffCount = 0;
+        for (int i = 1; i < nums.length; i++) {
+            if (nums[i - 1] == 0) {
+                kingCount++;
+            } else if (nums[i - 1] != 0) {
+                if (nums[i] == nums[i - 1]) {
+                    return false;
+                }
+                diffCount += Math.abs(nums[i - 1] + 1 - nums[i]);
+            }
+        }
+        return kingCount >= diffCount;
+    }
+
+    /**
+     * 剑指 Offer 62. 圆圈中最后剩下的数字
+     *
+     * @param n
+     * @param m
+     * @return
+     */
+    public int lastRemaining(int n, int m) {
+        if (n == 1 || m == 1) {
+            return n - 1;
+        }
+        List<Integer> list = new ArrayList<>();
+        for (int i = 0; i < n; i++) {
+            list.add(i);
+        }
+        int num = 0;
+        int from = 0;
+        while (!list.isEmpty()) {
+            int index = (from + m - 1) % list.size();
+            num = list.remove(index);
+            from = index;
+        }
+        return num;
+    }
+
+    /**
+     * 3. 无重复字符的最长子串
+     * 剑指 Offer 48. 最长不含重复字符的子字符串
+     *
+     * @param s
+     * @return
+     */
+    public int lengthOfLongestSubstring(String s) {
+        if (s == null || s.length() == 0) {
+            return 0;
+        } else if (s.length() == 1) {
+            return 1;
+        }
+        int max = 0;
+        int left = 0;
+        Set<Character> set = new HashSet<>();
+        for (int i = 0; i < s.length(); i++) {
+            char ch = s.charAt(i);
+            if (!set.add(ch)) {
+                max = Math.max(max, i - left);
+                // 从left一直删, 直到删除重复字符
+                for (int j = left; j < i; j++) {
+                    char tempCh = s.charAt(j);
+                    if (tempCh != ch) {
+                        set.remove(tempCh);
+                    } else {
+                        left = j + 1;
+                        break;
+                    }
+                }
+            } else if (i == s.length() - 1) {
+                max = Math.max(max, i - left + 1);
+            }
+        }
+        return max;
+    }
+
+    public static void main(String[] args) {
+        Test_20230901 test = new Test_20230901();
+        System.out.println(test.isStraight(new int[]{9, 0, 6, 0, 10}));
+        long startMillis = System.currentTimeMillis();
+        System.out.println(test.lastRemaining(56795, 87778));
+        System.out.println("coast=" + (System.currentTimeMillis() - startMillis));
+        System.out.println(test.lengthOfLongestSubstring("aab"));
+    }
 }

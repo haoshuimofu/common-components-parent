@@ -9,15 +9,6 @@ import java.util.List;
 
 public class Test_20230715 {
 
-    public static void main(String[] args) {
-        int[] nums = new int[]{1000000000, 1000000000, 1000000000, 1000000000};
-        System.out.println(JSON.toJSONString(fourSum(nums, -294967296)));
-
-        nums = new int[]{1, 3, 5, 7};
-        System.out.println(searchInsert(nums, 7));
-
-    }
-
     /**
      * 268. 丢失的数字
      * 给定一个包含 [0, n] 中 n 个数的数组 nums ，找出 [0, n] 这个范围内没有出现在数组中的那个数。
@@ -26,7 +17,7 @@ public class Test_20230715 {
      * @return
      */
     public int missingNumber(int[] nums) {
-        int[] flags = new int[nums.length +1];
+        int[] flags = new int[nums.length + 1];
         for (int i = 0; i < nums.length; i++) {
             flags[nums[i]] = 1;
         }
@@ -138,6 +129,57 @@ public class Test_20230715 {
             }
         }
         return result;
+    }
+
+    /**
+     * 18. 四数之和
+     *
+     * @param nums
+     * @param target
+     * @return
+     */
+    public List<List<Integer>> fourSum1(int[] nums, int target) {
+        Arrays.sort(nums);
+        List<List<Integer>> result = new ArrayList<>();
+        int[] sum = new int[1];
+        List<Integer> path = new ArrayList<>(4);
+        for (int i = 0; i < nums.length; i++) {
+            if (i == 0 || nums[i] != nums[i - 1]) {
+                doFourSum1(nums, target, path, result, sum, i);
+            }
+        }
+        return result;
+    }
+
+
+    public void doFourSum1(int[] nums, int target, List<Integer> path, List<List<Integer>> result, int[] sum, int currIndex) {
+        if (path.size() == 4) {
+            return;
+        }
+        path.add(nums[currIndex]);
+        sum[0] += nums[currIndex];
+        if (path.size() == 4) {
+            if (sum[0] == target) {
+                result.add(new ArrayList<>(path));
+            }
+        } else {
+            for (int i = currIndex + 1; i < nums.length; i++) {
+                if (i == currIndex +1 || nums[i] != nums[i-1]) {
+                    doFourSum1(nums, target, path, result, sum, i);
+                }
+            }
+        }
+        path.remove(path.size() - 1);
+        sum[0] -= nums[currIndex];
+    }
+
+    public static void main(String[] args) {
+
+        Test_20230715 test = new Test_20230715();
+        int[] nums = new int[]{2, 2, 2, 2, 2};
+        System.out.println(JSON.toJSONString(test.fourSum1(nums, 8)));
+
+
     }
 
 }
