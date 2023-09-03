@@ -161,6 +161,47 @@ public class Test_20230901 {
         return max;
     }
 
+    /**
+     * 剑指 Offer 49. 丑数
+     * 264. 丑数 II
+     *
+     * @param n
+     * @return
+     */
+    public int nthUglyNumber(int n) {
+        int[] init = new int[]{1, 2, 3, 4, 5};
+        if (n < init.length) {
+            return init[n];
+        }
+        int count = 1;
+        int two = 2;
+        int three = 3;
+        int five = 5;
+        return 0;
+    }
+
+    /**
+     * 剑指 Offer 45. 把数组排成最小的数
+     *
+     * @param nums
+     * @return
+     */
+    public String minNumber(int[] nums) {
+        // 找谁的高位数最小
+        StringBuilder sb = new StringBuilder();
+        boolean[] visit = new boolean[nums.length];
+
+        return "";
+
+    }
+
+    private int getMaxPosition(int num) {
+        while (num >= 10) {
+            num /= 10;
+        }
+        return num;
+    }
+
     public static void main(String[] args) {
         Test_20230901 test = new Test_20230901();
         System.out.println(test.isStraight(new int[]{9, 0, 6, 0, 10}));
@@ -168,5 +209,9 @@ public class Test_20230901 {
         System.out.println(test.lastRemaining(56795, 87778));
         System.out.println("coast=" + (System.currentTimeMillis() - startMillis));
         System.out.println(test.lengthOfLongestSubstring("aab"));
+        System.out.println();
+        for (int i = 0; i < 10; i++) {
+            System.out.println(test.nthUglyNumber(i));
+        }
     }
 }
