@@ -139,11 +139,17 @@ public class Test_20230715 {
      * @return
      */
     public List<List<Integer>> fourSum1(int[] nums, int target) {
+        if (nums == null) {
+            return null;
+        } else if (nums.length < 4) {
+            return new ArrayList<>();
+        }
         Arrays.sort(nums);
         List<List<Integer>> result = new ArrayList<>();
-        int[] sum = new int[1];
+        long[] sum = new long[1];
         List<Integer> path = new ArrayList<>(4);
         for (int i = 0; i < nums.length; i++) {
+            if (nums[i] > target)
             if (i == 0 || nums[i] != nums[i - 1]) {
                 doFourSum1(nums, target, path, result, sum, i);
             }
@@ -152,7 +158,7 @@ public class Test_20230715 {
     }
 
 
-    public void doFourSum1(int[] nums, int target, List<Integer> path, List<List<Integer>> result, int[] sum, int currIndex) {
+    public void doFourSum1(int[] nums, int target, List<Integer> path, List<List<Integer>> result, long[] sum, int currIndex) {
         if (path.size() == 4) {
             return;
         }
@@ -164,7 +170,7 @@ public class Test_20230715 {
             }
         } else {
             for (int i = currIndex + 1; i < nums.length; i++) {
-                if (i == currIndex +1 || nums[i] != nums[i-1]) {
+                if (i == currIndex + 1 || nums[i] != nums[i - 1]) {
                     doFourSum1(nums, target, path, result, sum, i);
                 }
             }

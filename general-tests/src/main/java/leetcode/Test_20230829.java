@@ -192,7 +192,7 @@ public class Test_20230829 {
     }
 
     /**
-     * 300. 最长递增子序列
+     * 300. 最长递增子序列 - DFS
      *
      * @param nums
      * @return
@@ -203,28 +203,50 @@ public class Test_20230829 {
         } else if (nums.length == 1) {
             return 1;
         }
-        int[] lenAndMax = new int[2];
-        for (int i = 0; i < nums.length - 1; i++) {
-            if (nums[i] < nums[i + 1] && lenAndMax[1] < nums.length - i) {
-                lenAndMax[0] = 0;
-                doLengthOfLIS(nums, Integer.MIN_VALUE, 0, i, lenAndMax);
+        int[] maxLen = new int[1];
+        for (int i = 0; i < nums.length; i++) {
+            if (i == nums.length - 1 || (nums[i] < nums[i + 1] && maxLen[0] < nums.length - i)) {
+                doLengthOfLIS(nums, Integer.MIN_VALUE, 0, i, maxLen);
             }
         }
-        return lenAndMax[1];
+        return maxLen[0];
     }
 
-    public void doLengthOfLIS(int[] nums, int lastNum, int len, int currIndex, int[] lenAndMax) {
+    public void doLengthOfLIS(int[] nums, int lastNum, int len, int currIndex, int[] maxLen) {
         if (currIndex >= nums.length) {
             return;
         }
         int currValue = nums[currIndex];
         if (currValue > lastNum) {
             lastNum = currValue;
-            lenAndMax[1] = Math.max(lenAndMax[1], ++len);
+            maxLen[0] = Math.max(maxLen[0], ++len);
         }
         for (int i = currIndex + 1; i < nums.length; i++) {
-            doLengthOfLIS(nums, lastNum, len, i, lenAndMax);
+            doLengthOfLIS(nums, lastNum, len, i, maxLen);
         }
+    }
+
+    /**
+     * 300. 最长递增子序列 - DP
+     *
+     * @param nums
+     * @return
+     */
+    public int lengthOfLIS_DP(int[] nums) {
+        if (nums == null || nums.length == 0) {
+            return 0;
+        } else if (nums.length == 1) {
+            return 1;
+        }
+        int[] dp = new int[nums.length];
+        int max = 0;
+        for (int i = 0; i < nums.length; i++) {
+            dp[0] = 1;
+            for (int j = 1; j < i; j++) {
+
+            }
+        }
+        return 0;
     }
 
     /**
