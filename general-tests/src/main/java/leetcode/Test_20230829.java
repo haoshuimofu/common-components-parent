@@ -2,10 +2,7 @@ package leetcode;
 
 import com.alibaba.fastjson.JSON;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author dewu.de
@@ -18,6 +15,8 @@ public class Test_20230829 {
         System.out.println(test.getPermutation(3, 2));
         System.out.println("//////////////////////");
         System.out.println(test.lengthOfLIS(new int[]{0, 1, 0, 3, 2, 3}));
+        System.out.println(test.lengthOfLIS_BS(new int[]{7, 5, 6, 8, 2, 1, 2, 3, 4, 5, 6, 7, 8}));
+
         System.out.println("//////////////////////");
         System.out.println(test.addDigits(110));
     }
@@ -235,18 +234,63 @@ public class Test_20230829 {
     public int lengthOfLIS_DP(int[] nums) {
         if (nums == null || nums.length == 0) {
             return 0;
-        } else if (nums.length == 1) {
-            return 1;
         }
         int[] dp = new int[nums.length];
-        int max = 0;
-        for (int i = 0; i < nums.length; i++) {
-            dp[0] = 1;
-            for (int j = 1; j < i; j++) {
+        dp[0] = 1;
+        int max = 1;
+        for (int i = 1; i < nums.length; i++) {
+            if (nums[i] == nums[i - 1]) {
+                dp[i] = dp[i - 1];
+                continue;
+            }
+            dp[i] = 1;
+            for (int j = 0; j < i; j++) {
+                if (nums[i] > nums[j]) {
+                    dp[i] = Math.max(dp[i], dp[j] + 1);
+                }
+            }
+            max = Math.max(max, dp[i]);
+        }
+        return max;
+    }
 
+    /**
+     * 300. 最长递增子序列 - BS
+     *
+     * @param nums
+     * @return
+     */
+    public int lengthOfLIS_BS(int[] nums) {
+        if (nums == null || nums.length == 0) {
+            return 0;
+        }
+        int[] d = new int[nums.length];
+        d[0] = nums[0];
+        int index = 0;
+        for (int i = 1; i < nums.length; i++) {
+            if (nums[i] > d[index]) {
+                d[++index] = nums[i];
+            } else {
+                int position = -1;
+                int left = 0;
+                int right = index;
+                while (left <= right) {
+                    int mid = (left + right) / 2;
+                    if (nums[i] > d[mid]) {
+                        if (nums[i] <= d[mid + 1]) {
+                            position = mid;
+                            break;
+                        } else {
+                            left = mid + 1;
+                        }
+                    } else {
+                        right = mid - 1;
+                    }
+                }
+                d[position + 1] = nums[i];
             }
         }
-        return 0;
+        return index + 1;
     }
 
     /**
