@@ -1,8 +1,6 @@
 package leetcode;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author dewu.de
@@ -62,7 +60,7 @@ public class Test_20230828 {
 
 
     /**
-     * 剑指 Offer 59 - I. 滑动窗口的最大值
+     * 剑指 Offer 59 - I. 滑动窗口的最大值 - 暴力求解
      *
      * @param nums
      * @param k
@@ -126,6 +124,46 @@ public class Test_20230828 {
             }
         }
         return result;
+    }
+
+    /**
+     * 剑指 Offer 59 - I. 滑动窗口的最大值
+     * 239. 滑动窗口最大值
+     * 优先级队列
+     *
+     * @param nums
+     * @param k
+     * @return
+     */
+    public int[] maxSlidingWindow_PQ(int[] nums, int k) {
+        if (k == 1) {
+            return nums;
+        }
+        // 优先级队列, 按数值-下标倒序排列
+        PriorityQueue<int[]> queue = new PriorityQueue<>(new Comparator<int[]>() {
+            @Override
+            public int compare(int[] o1, int[] o2) {
+                return o2[0] == o1[0] ? o2[1] - o1[1] : o2[0] - o1[0];
+            }
+        });
+        // 先把前k个值放入队列, 第一个窗口
+        for (int i = 0; i < k; i++) {
+            queue.offer(new int[]{nums[i], i});
+        }
+        int[] window = new int[nums.length - k + 1];
+        int index = 0;
+        window[index++] = queue.peek()[0]; // 第一个窗口的最大值
+        for (int i = k; i < nums.length; i++) {
+            // 把当前值放入队列
+            queue.offer(new int[]{nums[i], i});
+            // 如果最大值的下标在窗口左侧外则删除它
+            while (queue.peek()[1] <= i - k) {
+                queue.poll();
+            }
+            // 当前窗口的最大值
+            window[index++] = queue.peek()[0];
+        }
+        return window;
     }
 
     public static void main(String[] args) {
