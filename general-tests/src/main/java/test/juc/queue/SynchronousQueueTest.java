@@ -15,7 +15,8 @@ import java.util.concurrent.SynchronousQueue;
 public class SynchronousQueueTest {
 
     public static void main(String[] args) throws InterruptedException {
-        final SynchronousQueue<Integer> queue = new SynchronousQueue<Integer>(true);
+
+        final SynchronousQueue<Integer> queue = new SynchronousQueue<>(true);
         int threadNum = 10;
         for (int i = 0; i < threadNum; i++) {
             final int idx = i;
@@ -28,13 +29,14 @@ public class SynchronousQueueTest {
                         queue.put(idx);
                         System.out.println(threadName + " put end");
                     } catch (InterruptedException e) {
+                        System.err.println(threadName + " put error");
                     }
                 }
             });
             putThread.setName("put-" + i);
             putThread.start();
         }
-        threadNum = 2;
+        threadNum = 10;
         for (int i = 0; i < threadNum; i++) {
             Thread takeThread = new Thread(new Runnable() {
                 @Override
@@ -45,6 +47,7 @@ public class SynchronousQueueTest {
                         Integer i = queue.take();
                         System.out.println(threadName + " task end, value=" + i);
                     } catch (InterruptedException e) {
+                        System.err.println(threadName + " take error");
                     }
                 }
             });
