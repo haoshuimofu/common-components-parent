@@ -169,15 +169,34 @@ public class Test_20230901 {
      * @return
      */
     public int nthUglyNumber(int n) {
-        int[] init = new int[]{1, 2, 3, 4, 5};
-        if (n < init.length) {
-            return init[n];
+        if (n == 1) {
+            return 1;
         }
         int count = 1;
-        int two = 2;
-        int three = 3;
-        int five = 5;
-        return 0;
+
+        int two = 0;
+        int three = 0;
+        int five = 0;
+
+        while (count < n) {
+            while (two +2)
+            two += 2;
+            count++;
+            if (count == n) {
+                return two;
+            }
+            three += 3;
+            count++;
+            if (count == n) {
+                return three;
+            }
+            five += 5;
+            count++;
+            if (count == n) {
+                return five;
+            }
+        }
+        return -1;
     }
 
     /**
@@ -210,8 +229,8 @@ public class Test_20230901 {
         System.out.println("coast=" + (System.currentTimeMillis() - startMillis));
         System.out.println(test.lengthOfLongestSubstring("aab"));
         System.out.println();
-        for (int i = 0; i < 10; i++) {
-            System.out.println(test.nthUglyNumber(i));
+        for (int i = 1; i < 11; i++) {
+            System.err.println(test.nthUglyNumber(i));
         }
     }
 }
