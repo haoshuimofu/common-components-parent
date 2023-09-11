@@ -169,56 +169,66 @@ public class Test_20230901 {
      * @return
      */
     public int nthUglyNumber(int n) {
-        if (n == 1) {
-            return 1;
-        }
-        int count = 1;
+        int[] factor = new int[]{2, 3, 5};
+        PriorityQueue<Integer> queue = new PriorityQueue<>(new Comparator<Integer>() {
+            @Override
+            public int compare(Integer o1, Integer o2) {
+                return Integer.compare(o1, o2);
+            }
+        });
+        queue.offer(1);
+        while (queue.size() < n) {
+            int size = queue.size();
+            List<Integer> nums = new ArrayList<>(size);
+            while (!queue.isEmpty()) {
+                nums.add(queue.poll());
+            }
 
-        int two = 0;
-        int three = 0;
-        int five = 0;
-
-        while (count < n) {
-            while (two +2)
-            two += 2;
-            count++;
-            if (count == n) {
-                return two;
+            for (Integer i : factor) {
+                for (int num : nums) {
+                    int value = num * i;
+                    System.out.print(" --> " +value);
+                    queue.offer(num * i);
+                }
             }
-            three += 3;
-            count++;
-            if (count == n) {
-                return three;
-            }
-            five += 5;
-            count++;
-            if (count == n) {
-                return five;
+            System.out.println();
+            for (Integer num : nums) {
+                if (!queue.contains(num)) {
+                    queue.offer(num);
+                }
             }
         }
-        return -1;
+        int index = 0;
+        int num = 0;
+
+        while (++index < n) {
+            num = queue.poll();
+            System.out.print(num + " ");
+        }
+        System.out.println();
+        return num;
     }
 
     /**
-     * 剑指 Offer 45. 把数组排成最小的数
+     * 263. 丑数
      *
-     * @param nums
+     * @param n
      * @return
      */
-    public String minNumber(int[] nums) {
-        // 找谁的高位数最小
-        StringBuilder sb = new StringBuilder();
-        boolean[] visit = new boolean[nums.length];
-
-        return "";
-
-    }
-
-    private int getMaxPosition(int num) {
-        while (num >= 10) {
-            num /= 10;
+    public boolean isUgly(int n) {
+        if (n <= 0) {
+            return false;
         }
-        return num;
+        while (n % 5 == 0) {
+            n /= 5;
+        }
+        while (n % 3 == 0) {
+            n /= 3;
+        }
+        while (n % 2 == 0) {
+            n /= 2;
+        }
+        return n == 1;
     }
 
     public static void main(String[] args) {
@@ -229,8 +239,7 @@ public class Test_20230901 {
         System.out.println("coast=" + (System.currentTimeMillis() - startMillis));
         System.out.println(test.lengthOfLongestSubstring("aab"));
         System.out.println();
-        for (int i = 1; i < 11; i++) {
-            System.err.println(test.nthUglyNumber(i));
-        }
+        System.err.println(test.nthUglyNumber(10));
+
     }
 }
