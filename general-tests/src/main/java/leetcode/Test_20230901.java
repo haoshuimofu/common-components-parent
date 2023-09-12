@@ -171,45 +171,46 @@ public class Test_20230901 {
      * @return
      */
     public int nthUglyNumber(int n) {
+        if (n <= 0) {
+            return 0;
+        }
         int[] factor = new int[]{2, 3, 5};
-        PriorityQueue<Integer> queue = new PriorityQueue<>(new Comparator<Integer>() {
-            @Override
-            public int compare(Integer o1, Integer o2) {
-                return Integer.compare(o1, o2);
-            }
-        });
-        queue.offer(1);
-        while (queue.size() < n) {
-            int size = queue.size();
-            List<Integer> nums = new ArrayList<>(size);
-            while (!queue.isEmpty()) {
-                nums.add(queue.poll());
-            }
-            System.out.println("nums=" + JSON.toJSONString(nums));
-
-            for (Integer i : factor) {
-                for (int num : nums) {
-                    int value = num * i;
-                    System.out.print(" --> " +value);
-                    queue.offer(num * i);
-                }
-            }
-            System.out.println();
-            for (Integer num : nums) {
-                if (!queue.contains(num)) {
-                    queue.offer(num);
-                }
-            }
-        }
-        int index = 0;
-        int num = 0;
-
-        while (++index < n) {
+        Set<Long> set = new HashSet<>();
+        PriorityQueue<Long> queue = new PriorityQueue<>();
+        queue.offer(1L);
+        int count = 0;
+        long num = 0;
+        while (count < n) {
             num = queue.poll();
-            System.out.print(num + " ");
+            for (int i : factor) {
+                long temp = num * i;
+                if (set.add(temp)) {
+                    queue.offer(temp);
+                }
+            }
+            count++;
         }
-        System.out.println();
-        return num;
+        return (int) num;
+    }
+
+    public int nthUglyNumber_DP(int n) {
+        int[] dp = new int[n + 1];
+        dp[1] = 1;
+        int p2 = 1, p3 = 1, p5 = 1;
+        for (int i = 2; i <= n; i++) {
+            int num2 = dp[p2] * 2, num3 = dp[p3] * 3, num5 = dp[p5] * 5;
+            dp[i] = Math.min(Math.min(num2, num3), num5);
+            if (dp[i] == num2) {
+                p2++;
+            }
+            if (dp[i] == num3) {
+                p3++;
+            }
+            if (dp[i] == num5) {
+                p5++;
+            }
+        }
+        return dp[n];
     }
 
     /**
@@ -232,6 +233,26 @@ public class Test_20230901 {
             n /= 2;
         }
         return n == 1;
+    }
+
+    /**
+     * 448. 找到所有数组中消失的数字
+     *
+     * @param nums
+     * @return
+     */
+    public List<Integer> findDisappearedNumbers(int[] nums) {
+        Set<Integer> set = new HashSet<>();
+        for (int num : nums) {
+            set.add(num);
+        }
+        List<Integer> missNums = new ArrayList<>();
+        for (int i = 1; i <= nums.length; i++) {
+            if (!set.contains(i)) {
+                missNums.add(i);
+            }
+        }
+        return missNums;
     }
 
     public static void main(String[] args) {

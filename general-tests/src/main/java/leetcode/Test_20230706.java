@@ -122,4 +122,49 @@ public class Test_20230706 {
         return resList;
     }
 
+    public static List<List<Integer>> threeSum1(int[] nums) {
+        if (nums == null || nums.length < 3) {
+            return null;
+        }
+        Arrays.sort(nums);
+        List<List<Integer>> resList = new ArrayList<>();
+        for (int i = 0; i < nums.length - 2; i++) {
+            int curr = nums[i];
+            // 当前数值>0, 后面数字肯定也大于0
+            if (curr > 0) {
+                break;
+            }
+            if (i != 0 && nums[i] == nums[i - 1]) {
+                continue;
+            }
+            int left = i + 1;
+            int right = nums.length - 1;
+            while (left < right) {
+                int sum = curr + nums[left] + nums[right];
+                if (sum == 0) {
+                    resList.add(Arrays.asList(curr, nums[left], nums[right]));
+                    // curr + left + right = 0, left & right都向中间移动, 一增一减可能还有和等于0的组合
+                    int subLeft = left + 1;
+                    while (subLeft < right && nums[subLeft] == nums[left]) {
+                        subLeft++;
+                    }
+                    // 循环结束: subLeft = right || num[subLeft] != num[left]
+                    left = subLeft;
+
+                    int subRight = right - 1;
+                    while (subRight > left && nums[subRight] == nums[right]) {
+                        subRight--;
+                    }
+                    // 循环结束: subRight = left || num[subRight] != num[right]
+                    right = subRight;
+                } else if (sum > 0) {
+                    right--;
+                } else {
+                    left++;
+                }
+            }
+        }
+        return resList;
+    }
+
 }
