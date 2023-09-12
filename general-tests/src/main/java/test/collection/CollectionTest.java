@@ -1,4 +1,4 @@
-package com.demo.collection;
+package test.collection;
 
 import java.util.ArrayList;
 import java.util.HashMap;

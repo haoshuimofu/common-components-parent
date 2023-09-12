@@ -1,7 +1,6 @@
-package com.demo.collection;
+package test.collection;
 
 import java.util.HashMap;
-import java.util.Map;
 
 /**
  * @author dewu.de
@@ -10,7 +9,7 @@ import java.util.Map;
 public class HashMapTest {
 
     public static void main(String[] args) {
-        HashMap<String, String> map = new HashMap<>();
+        HashMap<String, String> map = new HashMap<>(10);
         map.put("1", "1");
         System.out.println(map.size());
     }

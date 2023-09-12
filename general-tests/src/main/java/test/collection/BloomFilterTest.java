@@ -1,4 +1,4 @@
-package com.demo.collection;
+package test.collection;
 
 import com.google.common.hash.BloomFilter;
 import com.google.common.hash.Funnels;

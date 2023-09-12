@@ -1,5 +1,7 @@
 package leetcode;
 
+import com.alibaba.fastjson.JSON;
+
 import java.util.*;
 
 public class Test_20230901 {
@@ -183,6 +185,7 @@ public class Test_20230901 {
             while (!queue.isEmpty()) {
                 nums.add(queue.poll());
             }
+            System.out.println("nums=" + JSON.toJSONString(nums));
 
             for (Integer i : factor) {
                 for (int num : nums) {

@@ -1,4 +1,4 @@
-package com.demo.collection;
+package test.collection;
 
 /**
  * @author dewu.de
