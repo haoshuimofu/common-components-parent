@@ -12,7 +12,7 @@ import java.util.Random;
 public class BinarySearch {
 
     public static void main(String[] args) {
-        System.out.println("insert position=" + searchInsertPosition(new int[]{3, 5, 6, 7, 8}, 6));
+        System.out.println("binary search index=" + binarySearch(new int[]{3, 5, 6, 7, 8}, 6));
         List<Integer> numList = new ArrayList<>();
         for (int i = 0; i < 1000; i++) {
             if (i == 0) {
@@ -31,64 +31,37 @@ public class BinarySearch {
             int selfIndex = binarySearch(nums, value);
             int jdkIndex = Arrays.binarySearch(nums, value);
             if (jdkIndex >= 0) {
-                if (selfIndex != jdkIndex) {
-                    System.err.println("value=" + value + ", self=" + selfIndex + ", jdk=" + jdkIndex);
+                if (nums[selfIndex] != nums[jdkIndex]) {
+                    System.err.println("found value=" + value
+                            + ", self_index=" + selfIndex + ", self_value=" + nums[selfIndex]
+                            + ", jdk_index" + jdkIndex + ", jdk_value=" + nums[jdkIndex]);
                 }
-            } else if (selfIndex != (jdkIndex + 1)) {
-                System.err.println("value=" + value + ", self=" + selfIndex + ", jdk=" + jdkIndex);
+            } else {
+                if (selfIndex != jdkIndex) {
+                    System.err.println("not found value=" + value
+                            + ", self_index=" + selfIndex + ", jdk_index=" + jdkIndex);
+                }
             }
         }
     }
+
+    // [3, 12, 20, 22, 31, 40, 44, 44, 49, 56], find 8
 
     public static int binarySearch(int[] arr, int num) {
-        int position = Integer.MIN_VALUE;
         int left = 0;
         int right = arr.length - 1;
         while (left <= right) {
             int mid = (left + right) / 2;
-            if (arr[mid] >= num) {
-                if (mid == 0 || arr[mid - 1] < num) {
-                    position = arr[mid] == num ? mid : -mid;
-                    break;
-                } else {
-                    right = mid - 1;
-                }
+            int midVal = arr[mid];
+            if (midVal == num) {
+                return mid;
+            } else if (midVal > num) {
+                right = mid - 1;
             } else {
-                if (mid == 0 || mid == arr.length - 1) {
-                    position = mid + 1;
-                    break;
-                } else {
-                    left = mid + 1;
-                }
+                left = mid + 1;
             }
         }
-        return position;
+        return -left - 1;
     }
 
-    public static int searchInsertPosition(int[] arr, int num) {
-        int position = -1;
-        int left = 0;
-        int right = arr.length - 1;
-        while (left <= right) {
-            int mid = (left + right) / 2;
-            if (arr[mid] >= num) {
-                if (mid == 0) {
-                    break;
-                } else if (arr[mid - 1] < num) {
-                    position = mid - 1;
-                    break;
-                } else {
-                    right = mid - 1;
-                }
-            } else {
-                if (mid == arr.length - 1) {
-                    position = mid;
-                    break;
-                } else {
-                    left = mid + 1;
-                }
-            }
-        }
-        return position + 1;
-    }
 }
