@@ -12,7 +12,7 @@ import java.util.Random;
 public class BinarySearch {
 
     public static void main(String[] args) {
-        System.out.println("binary search index=" + binarySearch(new int[]{3, 5, 6, 7, 8}, 6));
+        System.out.println("binary search index=" + binarySearch(new int[]{3, 5, 6, 7, 8}, 4));
         List<Integer> numList = new ArrayList<>();
         for (int i = 0; i < 1000; i++) {
             if (i == 0) {
@@ -54,6 +54,7 @@ public class BinarySearch {
             int mid = (left + right) / 2;
             int midVal = arr[mid];
             if (midVal == num) {
+                // 找到和num等值的元素, 直接返回下标
                 return mid;
             } else if (midVal > num) {
                 right = mid - 1;
@@ -61,7 +62,10 @@ public class BinarySearch {
                 left = mid + 1;
             }
         }
-        return -left - 1;
+        // 循环结束, 说明在arr没找到和num等值的元素
+        // 如果num在arr左侧, 最后结束循环: left=0, right=-1
+        // 如果num在arr右侧, 最后结束循环: left=arr.length, right=arr.length-1
+        return -(left + 1);
     }
 
 }
