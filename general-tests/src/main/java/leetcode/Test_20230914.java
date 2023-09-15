@@ -11,6 +11,9 @@ public class Test_20230914 {
 
         int[] coins = new int[]{411, 412, 413, 414, 415, 416, 417, 418, 419, 420, 421, 422};
         System.out.println(test.coinChange(coins, 9864));
+
+        coins = new int[]{284, 260, 393, 494};
+        System.out.println(test.coinChange(coins, 7066));
     }
 
     /**
@@ -46,56 +49,33 @@ public class Test_20230914 {
         Arrays.sort(coins);
         int[] min = new int[1];
         min[0] = Integer.MAX_VALUE;
-        doCoinChange(coins, coins.length - 1, amount, 0, 0, min);
+        for (int i = coins.length - 1; i >= 0; i--) {
+            doCoinChange(coins, i, amount, 0, 0, min);
+        }
         return min[0] == Integer.MAX_VALUE ? -1 : min[0];
     }
 
-    public void doCoinChange(int[] coins, int to, int amount, int total, int count, int[] min) {
+    public boolean doCoinChange(int[] coins, int to, int amount, int total, int count, int[] min) {
         if (to < 0 || total >= amount) {
-            return;
+            return false;
         }
         int num = (amount - total) / coins[to];
-        if (num == 0) {
-            doCoinChange(coins, to - 1, amount, total, count, min);
+        total += coins[to] * num;
+        count += num;
+        if (amount == total) {
+            min[0] = Math.min(min[0], count);
+            return true;
         } else {
-            count += num;
-            total += coins[to] * num;
-            if (amount == total) {
-                min[0] = Math.min(min[0], count);
-            } else {
-                int diff = amount - total;
-                while ()
-
-
-                int left = 0;
-                int right = to - 1;
-                int position = -1;
-
-                while (left <= right) {
-                    int mid = (left + right) / 2;
-                    int midVal = coins[mid];
-                    if (midVal == diff) {
-                        position = mid;
-                        break;
-                    } else if (midVal > diff) {
-                        right = mid - 1;
-                    } else {
-                        left = mid + 1;
-                    }
+            while (num >= 0) {
+                if (doCoinChange(coins, to - 1, amount, total, count, min)) {
+                    return true;
                 }
-                if (position >= 0) {
-
-                }
-
-
-                while (num > 0) {
-                    doCoinChange(coins, to - 1, amount, total, count, min);
-                    total -= coins[to];
-                    count--;
-                    num--;
-                }
+                total -= coins[to];
+                count--;
+                num--;
             }
         }
+        return false;
     }
 
 }
