@@ -46,36 +46,37 @@ public class Test_20230914 {
      * @return
      */
     public int coinChange(int[] coins, int amount) {
+        if (amount <= 0) {
+            return 0;
+        }
+        long start = System.currentTimeMillis();
         Arrays.sort(coins);
         int[] min = new int[1];
         min[0] = Integer.MAX_VALUE;
         for (int i = coins.length - 1; i >= 0; i--) {
             doCoinChange(coins, i, amount, 0, 0, min);
         }
+        System.out.println("cost=" + (System.currentTimeMillis() - start));
         return min[0] == Integer.MAX_VALUE ? -1 : min[0];
     }
 
-    public boolean doCoinChange(int[] coins, int to, int amount, int total, int count, int[] min) {
+    public void doCoinChange(int[] coins, int to, int amount, int total, int count, int[] min) {
         if (to < 0 || total >= amount) {
-            return false;
+            return;
         }
         int num = (amount - total) / coins[to];
         total += coins[to] * num;
         count += num;
-        if (amount == total) {
+        if (total == amount) {
             min[0] = Math.min(min[0], count);
-            return true;
-        } else {
-            while (num >= 0) {
-                if (doCoinChange(coins, to - 1, amount, total, count, min)) {
-                    return true;
-                }
-                total -= coins[to];
-                count--;
-                num--;
-            }
+            return;
         }
-        return false;
+        while (num >= 0) {
+            doCoinChange(coins, to - 1, amount, total, count, min);
+            total -= coins[to];
+            count--;
+            num--;
+        }
     }
 
 }
