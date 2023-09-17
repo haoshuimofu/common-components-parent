@@ -1,5 +1,8 @@
 package leetcode;
 
+import com.sun.org.apache.bcel.internal.generic.RET;
+import leetcode.annotation.PerfectAnswer;
+
 import java.util.Arrays;
 
 public class Test_20230914 {
@@ -11,9 +14,15 @@ public class Test_20230914 {
 
         int[] coins = new int[]{411, 412, 413, 414, 415, 416, 417, 418, 419, 420, 421, 422};
         System.out.println(test.coinChange(coins, 9864));
+        System.out.println(test.coinChange1(coins, 9864));
+        System.out.println(test.coinChange_dp(coins, 9864));
 
-        coins = new int[]{284, 260, 393, 494};
-        System.out.println(test.coinChange(coins, 7066));
+//        coins = new int[]{284, 260, 393, 494};
+//        System.out.println(test.coinChange(coins, 7066));
+//        System.out.println(test.coinChange1(coins, 7066));
+//        ;
+//        System.out.println(test.coinChange_dp(coins, 7066));
+
     }
 
     /**
@@ -22,6 +31,7 @@ public class Test_20230914 {
      * @param nums
      * @return
      */
+    @PerfectAnswer
     public int maxProduct(int[] nums) {
         int max = nums[0];
         int lastMax = max;
@@ -40,6 +50,7 @@ public class Test_20230914 {
 
     /**
      * 322. 零钱兑换
+     * dfs超时
      *
      * @param coins
      * @param amount
@@ -77,6 +88,66 @@ public class Test_20230914 {
             count--;
             num--;
         }
+    }
+
+    public int coinChange1(int[] coins, int amount) {
+        if (amount <= 0) {
+            return 0;
+        }
+        long start = System.currentTimeMillis();
+        int[] count = new int[amount + 1];
+        doCoinChange1(coins, amount, count);
+        System.out.println("mem cost=" + (System.currentTimeMillis() - start));
+        return count[amount] == Integer.MAX_VALUE ? -1 : count[amount];
+    }
+
+    public int doCoinChange1(int[] coins, int remain, int[] count) {
+        if (remain < 0) {
+            return Integer.MAX_VALUE;
+        }
+        if (remain == 0) {
+            return 0;
+        }
+        if (count[remain] != 0) {
+            return count[remain];
+        }
+        Integer min = Integer.MAX_VALUE;
+        for (int coin : coins) {
+            int subCount = doCoinChange1(coins, remain - coin, count);
+            if (subCount >= 0 && subCount < min) {
+                min = subCount + 1;
+            }
+        }
+        count[remain] = min;
+        return min;
+    }
+
+    /**
+     * 322. 零钱兑换
+     *
+     * @param coins
+     * @param amount
+     * @return
+     */
+    @PerfectAnswer
+    public int coinChange_dp(int[] coins, int amount) {
+        if (amount <= 0) {
+            return 0;
+        }
+        long start = System.currentTimeMillis();
+        int[] dp = new int[amount + 1];
+        Arrays.fill(dp, Integer.MAX_VALUE);
+        dp[0] = 0;
+        for (int i = 1; i <= amount; i++) {
+            // 最后一枚硬币, dp[i-coin] + 1
+            for (int coin : coins) {
+                if (i - coin >= 0 && dp[i - coin] != Integer.MAX_VALUE) {
+                    dp[i] = Math.min(dp[i], dp[i - coin] + 1);
+                }
+            }
+        }
+        System.out.println("dp cost=" + (System.currentTimeMillis() - start));
+        return dp[amount] == Integer.MAX_VALUE ? -1 : dp[amount];
     }
 
 }
