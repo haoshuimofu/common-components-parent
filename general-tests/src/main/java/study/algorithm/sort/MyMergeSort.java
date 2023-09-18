@@ -8,11 +8,14 @@ import java.util.Arrays;
  */
 public class MyMergeSort {
 
+    static int count = 0;
+
 
     public static void main(String[] args) {
         int[] nums = {5, 9, 3, 1, 7, 6, 8, 2, 4};
         sort(nums);
         System.out.println(Arrays.toString(nums));
+        System.out.println("逆序对: count=" + count);
     }
 
 
@@ -38,7 +41,8 @@ public class MyMergeSort {
         int r = mid + 1;
         int index = 0;
         while (l <= mid && r <= right) {
-            if (nums[l] >= nums[r]) {
+            if (nums[l] > nums[r]) {
+                count += (mid - l + 1);
                 temp[index++] = nums[r++];
             } else {
                 temp[index++] = nums[l++];
