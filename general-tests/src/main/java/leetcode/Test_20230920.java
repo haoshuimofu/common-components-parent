@@ -1,6 +1,6 @@
 package leetcode;
 
-import java.util.Arrays;
+import java.util.*;
 
 /**
  * @author dewu.de
@@ -16,6 +16,13 @@ public class Test_20230920 {
 
         test.nextPermutation(nums);
         System.out.println(Arrays.toString(nums));
+
+
+        System.out.println("///////////");
+        System.out.println(test.nextGreaterElement(12));
+
+        System.out.println("///////////");
+        System.out.println(test.isIsomorphic("foo", "bar"));
     }
 
     /**
@@ -25,28 +32,89 @@ public class Test_20230920 {
      */
     public void nextPermutation(int[] nums) {
         int right = nums.length - 1;
-        boolean ok = false;
-        while (right >= 1 && !ok) {
-            if (nums[right] <= nums[right - 1]) {
-                right--;
-                continue;
-            }
+        int sourceIndex = -1;
+        int destIndex = -1;
+        while (right >= 1) {
             int left = right - 1;
-            while (left >= 0) {
+            while (left > destIndex) {
                 if (nums[left] < nums[right]) {
-                    int temp = nums[left];
-                    nums[left] = nums[right];
-                    nums[right] = temp;
-                    Arrays.sort(nums, left + 1, nums.length);
-                    ok = true;
+                    if (destIndex == -1) {
+                        // 初始化第一个交换的位置
+                        destIndex = left;
+                        sourceIndex = right;
+                    } else {
+                        // 如果有交换的数字在第一个右侧，或者在同一位置但比上一个数字要小
+                        destIndex = left;
+                        sourceIndex = right;
+                    }
                     break;
                 }
                 left--;
             }
             right--;
         }
-        if (!ok) {
+        if (destIndex != -1) {
+            int temp = nums[sourceIndex];
+            nums[sourceIndex] = nums[destIndex];
+            nums[destIndex] = temp;
+            Arrays.sort(nums, destIndex + 1, nums.length);
+        } else {
             Arrays.sort(nums);
         }
+    }
+
+    /**
+     * 556. 下一个更大元素 III
+     *
+     * @param n
+     * @return
+     */
+    public int nextGreaterElement(int n) {
+        Deque<Integer> deque = new ArrayDeque<>();
+        int num = n;
+        while (num > 0) {
+            deque.addFirst(num % 10);
+            num /= 10;
+        }
+        int[] nums = new int[deque.size()];
+        int index = 0;
+        while (!deque.isEmpty()) {
+            nums[index++] = deque.pollFirst();
+        }
+        System.out.println(Arrays.toString(nums));
+        nextPermutation(nums);
+        int factor = 1;
+        for (int i = nums.length - 1; i >= 0; i--) {
+            num += nums[i] * factor;
+            factor *= 10;
+        }
+        return n >= num ? -1 : num;
+    }
+
+    /**
+     * 205. 同构字符串
+     *
+     * @param s
+     * @param t
+     * @return
+     */
+    public boolean isIsomorphic(String s, String t) {
+        if (s.length() != t.length()) {
+            return false;
+        }
+        Map<Character, Integer> smap = new HashMap<>();
+        Map<Character, Integer> tmap = new HashMap<>();
+        for (int i = 0; i < s.length(); i++) {
+            char ch1 = s.charAt(i);
+            int sindex = smap.getOrDefault(ch1, -1);
+            char ch2 = t.charAt(i);
+            int tindex = tmap.getOrDefault(ch2, -1);
+            if (sindex != tindex) {
+                return false;
+            }
+            smap.put(ch1, i);
+            tmap.put(ch2, i);
+        }
+        return true;
     }
 }
