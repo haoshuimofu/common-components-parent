@@ -12,11 +12,9 @@ import java.util.Arrays;
 public class MergeSort {
 
     public static void main(String[] args) {
-
         int[] nums = {5, 9, 3, 1, 7, 6, 8, 2, 4};
         sort(nums);
         System.out.println(Arrays.toString(nums));
-
     }
 
     public static void sort(int[] nums) {
@@ -28,7 +26,7 @@ public class MergeSort {
         if (from < to) {
             // 分析一下 from + 1 = to, 这是 from = mid, to = mid + 1
             int mid = (from + to) / 2;
-            mergeSort(nums, 0, mid, temp);
+            mergeSort(nums, from, mid, temp);
             mergeSort(nums, mid + 1, to, temp);
             merge(nums, from, mid, to, temp);
         }

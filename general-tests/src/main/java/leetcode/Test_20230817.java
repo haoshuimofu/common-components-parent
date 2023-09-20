@@ -1,5 +1,7 @@
 package leetcode;
 
+import leetcode.annotation.PerfectAnswer;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -204,8 +206,6 @@ public class Test_20230817 {
     /**
      * 剑指 Offer 51. 数组中的逆序对
      * ---> 暴力解法 ---> 超时
-     * ---> 当前求解 ---> 也超时
-     * ---> 最优解 TODO
      *
      * @param nums
      * @return
@@ -236,6 +236,54 @@ public class Test_20230817 {
             }
         }
         return count;
+    }
+
+    /**
+     * 剑指 Offer 51. 数组中的逆序对
+     * ---> 归并排序 --->
+     *
+     * @param nums
+     * @return
+     */
+    @PerfectAnswer
+    public int reversePairsByMergeSort(int[] nums) {
+        if (nums == null || nums.length < 2) {
+            return 0;
+        }
+        int[] temp = new int[nums.length];
+        int[] count = new int[1];
+        partialSort(nums, 0, nums.length - 1, temp, count);
+        return count[0];
+    }
+
+    public static void partialSort(int[] nums, int left, int right, int[] temp, int[] count) {
+        if (left < right) {
+            int mid = (left + right) / 2;
+            partialSort(nums, left, mid, temp, count);
+            partialSort(nums, mid + 1, right, temp, count);
+            merge(nums, left, right, mid, temp, count);
+        }
+    }
+
+    public static void merge(int[] nums, int left, int right, int mid, int[] temp, int[] count) {
+        int l = left;
+        int r = mid + 1;
+        int index = 0;
+        while (l <= mid && r <= right) {
+            if (nums[l] > nums[r]) {
+                count[0] += (mid - l + 1);
+                temp[index++] = nums[r++];
+            } else {
+                temp[index++] = nums[l++];
+            }
+        }
+        while (l <= mid) {
+            temp[index++] = nums[l++];
+        }
+        while (r <= left) {
+            temp[index++] = nums[r++];
+        }
+        System.arraycopy(temp, 0, nums, left, index);
     }
 
 }
