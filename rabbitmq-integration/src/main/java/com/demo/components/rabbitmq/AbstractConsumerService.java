@@ -16,9 +16,9 @@ import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
+
 import java.lang.reflect.ParameterizedType;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public abstract class AbstractConsumerService<T> implements ChannelAwareMessageListener, BeanNameAware, InitializingBean, DisposableBean {
@@ -48,21 +48,6 @@ public abstract class AbstractConsumerService<T> implements ChannelAwareMessageL
         // todo do something
         handleMessage(t);
         channel.basicAck(message.getMessageProperties().getDeliveryTag(), true);
-    }
-
-    @Override
-     public void onMessage(Message message) {
-        throw new IllegalStateException("Should never be called for a ChannelAwareMessageListener");
-    }
-
-    @Override
-    public void onMessageBatch(List<Message> messages, Channel channel) {
-        throw new UnsupportedOperationException("This listener does not support message batches");
-    }
-
-    @Override
-    public void onMessageBatch(List<Message> messages) {
-        throw new UnsupportedOperationException("This listener does not support message batches");
     }
 
     @Override
@@ -104,6 +89,7 @@ public abstract class AbstractConsumerService<T> implements ChannelAwareMessageL
             listenerContainer.setMessageListener(this);
             listenerContainer.setConcurrency("2");
             listenerContainer.setQueueNames(queue.getName());
+            listenerContainer.setPrefetchCount(3); // 单个请求从broker拉取到的message数, 提高吞吐
             listenerContainer.start();
             logger.info("[Rabbit] ConsumerBean启动成功! beanName={}", beanName);
         }
