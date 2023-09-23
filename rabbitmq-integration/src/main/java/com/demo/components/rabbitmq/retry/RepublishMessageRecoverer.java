@@ -39,12 +39,11 @@ public class RepublishMessageRecoverer implements MessageRecoverer {
         String consumerQueue = messageProperties.getConsumerQueue();
         headers.put(MessageHeadersKey.X_ORIGINAL_EXCHANGE.getKey(), receivedExchange);
         headers.put(MessageHeadersKey.X_ORIGINAL_ROUTINGKEY.getKey(), receivedRoutingKey);
-        headers.put(MessageHeadersKey.X_EXCEPTION_MESSAGE.getKey(),
-                cause.getCause() != null ? cause.getCause().getMessage() : cause.getMessage());
+        headers.put(MessageHeadersKey.X_EXCEPTION_MESSAGE.getKey(), cause.getCause() != null ? cause.getCause().getMessage() : cause.getMessage());
         headers.put(MessageHeadersKey.X_EXCEPTION_STACKTRACE.getKey(), getStackTraceAsString(cause));
         String dlxExchange = RabbitUtils.appendDLXSuffix(receivedExchange);
         this.rabbitTemplate.send(dlxExchange, consumerQueue, message);
-        logger.error("### 消息[{}]消费异常后转发至死信队列: consumerQueue=[{}], receivedExchange=[{}], receivedRoutingKey=[{}], {}=[{}], {}=[{}].",
+        logger.error("###消息消费失败, 转储至死信队列: consumerQueue=[{}], receivedExchange=[{}], receivedRoutingKey=[{}], {}=[{}], {}=[{}].",
                 messageProperties.getMessageId(), consumerQueue, receivedExchange, receivedRoutingKey,
                 QueueArgumentsKey.X_DEAD_LETTER_EXCHANGE.getKey(), dlxExchange,
                 QueueArgumentsKey.X_DEAD_LETTER_ROUTING_KEY.getKey(), consumerQueue, cause);

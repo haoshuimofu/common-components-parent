@@ -10,7 +10,7 @@ public class Test_20230922 {
 
     public static void main(String[] args) {
         Test_20230922 test = new Test_20230922();
-        System.out.println(test.canCompleteCircuit(new int[]{1, 2, 3, 4, 5}, new int[]{3, 4, 5, 1, 2}));
+        System.out.println(test.canCompleteCircuit1(new int[]{1, 2, 3, 4, 5}, new int[]{3, 4, 5, 1, 2}));
 
         int[] gas = new int[1000];
         int[] cost = new int[1000];
@@ -61,15 +61,44 @@ public class Test_20230922 {
     }
 
     public int canCompleteCircuit1(int[] gas, int[] cost) {
-        int gasTotal = 0;
-        int costTotal = 0;
-        for (int i = 0; i < gas.length; i++) {
-            gasTotal += gas[i];
-            costTotal += cost[i];
+        int steps = gas.length;
+        int[] stations = new int[2 * steps - 1];
+        for (int i = 0; i < steps; i++) {
+            stations[i] = gas[i] - cost[i];
         }
-        if (gasTotal >= costTotal) {
+        System.arraycopy(stations, 0, stations, steps, steps - 1);
+        int left = 0;
+        int count = 0;
+        int sum = 0;
+        while (left < steps && count < steps) {
+            sum += stations[left + count];
+            count++;
+            if (sum < 0) {
+                sum -= stations[left + count];
+                count--;
+                if (stations[left] < 0) {
+                    left++;
+                    sum -= stations[left];
+                    count--;
+                } else {
+                    // 起点位置
+
+                }
+            }
 
         }
+//        for (int i = 0; i < steps; i++) {
+//            int sum = 0;
+//            for (int j = 0; j <= steps; j++) {
+//                sum += stations[i + j];
+//                if (sum < 0) {
+//                    break;
+//                }
+//            }
+//            if (sum >= 0) {
+//                return i;
+//            }
+//        }
         return -1;
     }
 }

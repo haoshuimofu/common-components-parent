@@ -21,6 +21,7 @@ public class DemoConsumerService extends AbstractConsumerService<DemoMessage> {
     @Override
     public void handleMessage(DemoMessage messageBody) {
         logger.info("Receive message: {}", JSON.toJSONString(messageBody));
+        System.out.println(1 / 0);
     }
 
 }

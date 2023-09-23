@@ -44,10 +44,12 @@ public abstract class AbstractConsumerService<T> implements ChannelAwareMessageL
     @Override
     public void onMessage(Message message, Channel channel) throws Exception {
         System.out.println(new String(message.getBody()));
-        T t = JSON.parseObject(message.getBody(), messageClass);
-        // todo do something
-        handleMessage(t);
-        channel.basicAck(message.getMessageProperties().getDeliveryTag(), true);
+        try {
+            T t = JSON.parseObject(message.getBody(), messageClass);
+            handleMessage(t);
+        } finally {
+            channel.basicAck(message.getMessageProperties().getDeliveryTag(), false);
+        }
     }
 
     @Override

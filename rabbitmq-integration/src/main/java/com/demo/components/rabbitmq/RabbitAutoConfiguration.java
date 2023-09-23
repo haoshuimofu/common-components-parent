@@ -94,10 +94,9 @@ public class RabbitAutoConfiguration {
     }
 
     @Bean
-    public StatelessRetryOperationsInterceptorFactoryBean retryOperationsInterceptorFactoryBean(
-            RepublishMessageRecoverer messageRecoverer, RetryTemplate retryTemplate) {
-        StatelessRetryOperationsInterceptorFactoryBean interceptorFactoryBean =
-                new StatelessRetryOperationsInterceptorFactoryBean();
+    public StatelessRetryOperationsInterceptorFactoryBean retryOperationsInterceptorFactoryBean(RepublishMessageRecoverer messageRecoverer,
+                                                                                                RetryTemplate retryTemplate) {
+        StatelessRetryOperationsInterceptorFactoryBean interceptorFactoryBean = new StatelessRetryOperationsInterceptorFactoryBean();
         interceptorFactoryBean.setMessageRecoverer(messageRecoverer);
         interceptorFactoryBean.setRetryOperations(retryTemplate);
         return interceptorFactoryBean;
@@ -111,9 +110,8 @@ public class RabbitAutoConfiguration {
      * @return
      */
     @Bean
-    public SimpleRabbitListenerContainerFactory rabbitListenerContainerFactory(
-            ConnectionFactory connectionFactory,
-            StatelessRetryOperationsInterceptorFactoryBean retryOperationsInterceptorFactoryBean) {
+    public SimpleRabbitListenerContainerFactory rabbitListenerContainerFactory(ConnectionFactory connectionFactory,
+                                                                               StatelessRetryOperationsInterceptorFactoryBean retryOperationsInterceptorFactoryBean) {
         SimpleRabbitListenerContainerFactory listenerContainerFactory = new SimpleRabbitListenerContainerFactory();
         listenerContainerFactory.setConnectionFactory(connectionFactory);
         listenerContainerFactory.setAcknowledgeMode(AcknowledgeMode.MANUAL); // 转发至死信队列时确认消息，不然原始队列会阻塞

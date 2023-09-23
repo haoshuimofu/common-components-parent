@@ -47,7 +47,7 @@ public class WrappedRabbitTemplate implements RabbitTemplate.ConfirmCallback, Ra
                 }
             }
         } else {
-            logger.info("### Rabbit 消息发送至Exchange成功!: ack={}, cause={}, correlationData={}.", false, cause, JSON.toJSONString(correlationData));
+            logger.info("### Rabbit 消息发送至Exchange成功! ack={}, cause={}, correlationData={}.", false, cause, JSON.toJSONString(correlationData));
         }
     }
 
