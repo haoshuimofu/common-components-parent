@@ -16,6 +16,10 @@ public class Test_20230925 {
         Test_20230925 test = new Test_20230925();
         System.out.println(test.letterCombinations("23"));
         System.out.println(test.detectCapitalUse("FlaG"));
+
+        TreeNode root = new TreeNode(2);
+        root.right = new TreeNode(3);
+        System.out.println(test.diameterOfBinaryTree(root));
     }
 
     /**
@@ -91,11 +95,20 @@ public class Test_20230925 {
      * @return
      */
     public int diameterOfBinaryTree(TreeNode root) {
-        if (root == null) {
-            return 0;
-        }
-        return 0;
+        int[] max = new int[1];
+        getBinaryTreeMaxDepth(root, 0, max);
+        return max[0];
+    }
 
+    private int getBinaryTreeMaxDepth(TreeNode node, int depth, int[] max) {
+        if (node == null) {
+            return depth;
+        }
+        int leftDepth = getBinaryTreeMaxDepth(node.left, depth + 1, max);
+        int rightDepth = getBinaryTreeMaxDepth(node.right, depth + 1, max);
+        int diameter = leftDepth + rightDepth - 2;
+        max[0] = Math.max(max[0], diameter);
+        return Math.max(leftDepth, rightDepth);
     }
 
     /**
