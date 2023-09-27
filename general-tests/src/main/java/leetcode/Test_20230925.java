@@ -96,19 +96,23 @@ public class Test_20230925 {
      */
     public int diameterOfBinaryTree(TreeNode root) {
         int[] max = new int[1];
-        getBinaryTreeMaxDepth(root, 0, max);
+        getBinaryTreeMaxDepth(root, max);
         return max[0];
     }
 
-    private int getBinaryTreeMaxDepth(TreeNode node, int depth, int[] max) {
+    private int getBinaryTreeMaxDepth(TreeNode node, int[] max) {
         if (node == null) {
+            return 0;
+        }
+        int depth = 1;
+        if (node.left == null && node.right == null) {
             return depth;
         }
-        int leftDepth = getBinaryTreeMaxDepth(node.left, depth + 1, max);
-        int rightDepth = getBinaryTreeMaxDepth(node.right, depth + 1, max);
-        int diameter = leftDepth + rightDepth - 2;
+        int leftDepth = getBinaryTreeMaxDepth(node.left, max);
+        int rightDepth = getBinaryTreeMaxDepth(node.right, max);
+        int diameter = leftDepth + rightDepth;
         max[0] = Math.max(max[0], diameter);
-        return Math.max(leftDepth, rightDepth);
+        return depth + Math.max(leftDepth, rightDepth);
     }
 
     /**
