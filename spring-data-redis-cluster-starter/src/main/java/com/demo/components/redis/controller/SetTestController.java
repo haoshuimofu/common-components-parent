@@ -31,16 +31,17 @@ public class SetTestController {
         int year = calendar.get(Calendar.YEAR);
         int month = calendar.get(Calendar.MONTH);
         String cacheKey = year + "_" + (month + 1) + "_set";
+        System.out.println(cacheKey + " exists: " + cacheManager.getStringRedisTemplate().hasKey(cacheKey));
+        // 如果cacheKey不存在, members返回emptySet
+        System.out.println(cacheKey + " value: " + JSON.toJSONString(cacheManager.getStringRedisTemplate().opsForSet().members(cacheKey)));
 
         int maximum = calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
         System.out.println(cacheKey + " 有 " + maximum + " 天");
-        int total = 0;
-        for (int i = 0; i < maximum; i++) {
-            String day = String.valueOf(i + 1);
-            long addCnt = cacheManager.getStringRedisTemplate().opsForSet().add(cacheKey, day);
-            total += addCnt;
+        for (int i = 1; i <= maximum; i++) {
+            // flag=1表示set不存在或不包含value,添加ok，否则就是已存在
+            long flag = cacheManager.getStringRedisTemplate().opsForSet().add(cacheKey, String.valueOf(i));
+            System.out.println("add " + i + " result: " + flag);
         }
-        System.out.println("value total=" + total);
         Set<String> members = cacheManager.getStringRedisTemplate().opsForSet().members(cacheKey);
         System.out.println(JSON.toJSONString(members));
 
