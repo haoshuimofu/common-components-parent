@@ -17,23 +17,16 @@ public class InsertSort {
     }
 
     public static void sort(int[] nums) {
+        if (nums == null || nums.length < 2)
+            return;
         for (int i = 1; i < nums.length; i++) {
-            // 可以理解为[0, i-1]已经排序好了
-            // 如果 num[i] >= num[i-1], 那么自然[0, i]也是排序好的
-            // 如果 num[i]  < num[i-1], 把num[i]插入到[0, i-1]之中
-            int currValue = nums[i];
-            if (currValue < nums[i - 1]) {
-                // 把[0, i-1]之中的 > num[i]的都往后移一位
-                int index = i - 1;
-                while (index >= 0 && nums[index] > currValue) {
-                    int temp = nums[index + 1];
-                    nums[index + 1] = nums[index];
-                    nums[index] = temp;
-                    index--;
-                }
-                // 最后把num[i]插入
-                nums[++index] = currValue;
+            int curr = nums[i];
+            int left = i - 1;
+            while (left >= 0 && nums[left] > curr) {
+                nums[left + 1] = nums[left];
+                left--;
             }
+            nums[++left] = curr;
         }
     }
 }
