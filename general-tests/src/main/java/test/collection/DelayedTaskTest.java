@@ -1,6 +1,5 @@
 package test.collection;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
@@ -21,27 +20,32 @@ public class DelayedTaskTest {
     private static final DelayQueue<DelayedTask> delayQueue = new DelayQueue<>();
 
 
-    @AllArgsConstructor
     @Getter
     static class DelayedTask implements Delayed {
 
         private final int index;
         private final long submitMillis;
-        private final long delayMillis;
+        private final long executeMillis;
+
+        DelayedTask(int index, long submitMillis, long executeMillis) {
+            this.index = index;
+            this.submitMillis = submitMillis;
+            this.executeMillis = executeMillis;
+        }
 
         @Override
         public long getDelay(@NotNull TimeUnit unit) {
-            return unit.convert(this.delayMillis - System.currentTimeMillis(), TimeUnit.MILLISECONDS);
+            return unit.convert(this.executeMillis - System.currentTimeMillis(), TimeUnit.MILLISECONDS);
         }
 
         @Override
         public int compareTo(@NotNull Delayed other) {
-            return Long.compare(this.delayMillis, ((DelayedTask) other).getDelayMillis());
+            return Long.compare(this.executeMillis, ((DelayedTask) other).executeMillis);
         }
 
         public void execute() {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.Z");
-            System.out.println(index + " submit at " + sdf.format(new Date(submitMillis)) + ", and execute at " + sdf.format(new Date(delayMillis)));
+            System.out.println(index + " submit at " + sdf.format(new Date(submitMillis)) + ", and execute at " + sdf.format(new Date(executeMillis)));
         }
 
     }
