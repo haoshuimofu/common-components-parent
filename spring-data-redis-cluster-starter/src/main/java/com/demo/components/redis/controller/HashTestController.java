@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author dewu.de
@@ -51,16 +52,26 @@ public class HashTestController {
              *     return "0"
              * end
              */
-            String script = "if redis.call(\"EXISTS\", KEYS[1]) == 1 then redis.call(\"HSET\", KEYS[1], ARGV[1], ARGV[2]) return \"1\" else return \"0\" end";
+            String script = "if redis.call(\"EXISTS\", KEYS[1]) == 1 then redis.call(\"HSET\", KEYS[1], ARGV[1], ARGV[2]) redis.call(\"EXPIRE\", KEYS[1], ARGV[3]) return \"1\" else return \"0\" end";
             DefaultRedisScript<String> redisScript = new DefaultRedisScript<>(script, String.class);
-            String result = cacheManager.getStringRedisTemplate().execute(redisScript, Collections.singletonList(cacheKey), String.valueOf(i), "day_" + i);
+            String result = cacheManager.getStringRedisTemplate().execute(redisScript, Collections.singletonList(cacheKey), String.valueOf(i), "day_" + i, "3600");
             System.out.println("field=" + String.valueOf(i) + " add result: " + result);
             if ("0".equals(result)) {
                 cacheManager.getStringRedisTemplate().opsForHash().put(cacheKey, String.valueOf(i), "day_" + i);
             }
         }
+        try {
+            Thread.sleep(10_000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        System.out.println(cacheKey + "ttl: " + cacheManager.getStringRedisTemplate().getExpire(cacheKey, TimeUnit.SECONDS));
         System.out.println(cacheKey + " value: " + JSON.toJSONString(cacheManager.getStringRedisTemplate().opsForHash().entries(cacheKey)));
         cacheManager.getStringRedisTemplate().delete(cacheKey);
+
+        String script = "if redis.call(\"EXISTS\", KEYS[1]) == 1 then return redis.call(\"HGETALL\", KEYS[1]) else return nil end";
+        String result = cacheManager.getStringRedisTemplate().execute(new DefaultRedisScript<>(script, String.class), Collections.singletonList(cacheKey), new String[]{});
+        System.out.println("result=" + result + ", ==null" + (result == null) + ", null str=" + ("null".equals(result)));
         return JsonResult.success(true);
     }
 
