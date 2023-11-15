@@ -15,6 +15,12 @@ import java.util.Collections;
 import java.util.concurrent.TimeUnit;
 
 /**
+ * <p>lua脚本中KEYS在执行的时候需要保证key在一个slot上，否则无法保证原子操作</p>
+ * <p>
+ *     CROSSSLOT Keys in request don't hash to the same slot#012 at redis.clients.jedis.Protocol.processError(Protocol.java:127)#012
+ *     at redis.clients.jedis.Protocol.process(Protocol.java:161)#012 at redis.clients.jedis.Protocol.read(Protocol.java:215)#012
+ *     at redis.clients.jedis.Connection.readProtocolWithCheckingBroken(Connection.java:340)#012 at
+ * </p>
  * @author dewu.de
  * @date 2023-11-01 3:03 下午
  */
@@ -55,7 +61,7 @@ public class HashTestController {
             String script = "if redis.call(\"EXISTS\", KEYS[1]) == 1 then redis.call(\"HSET\", KEYS[1], ARGV[1], ARGV[2]) redis.call(\"EXPIRE\", KEYS[1], ARGV[3]) return \"1\" else return \"0\" end";
             DefaultRedisScript<String> redisScript = new DefaultRedisScript<>(script, String.class);
             String result = cacheManager.getStringRedisTemplate().execute(redisScript, Collections.singletonList(cacheKey), String.valueOf(i), "day_" + i, "3600");
-            System.out.println("field=" + String.valueOf(i) + " add result: " + result);
+            System.out.println("field=" + i + " add result: " + result);
             if ("0".equals(result)) {
                 cacheManager.getStringRedisTemplate().opsForHash().put(cacheKey, String.valueOf(i), "day_" + i);
             }
@@ -66,12 +72,23 @@ public class HashTestController {
             e.printStackTrace();
         }
         System.out.println(cacheKey + "ttl: " + cacheManager.getStringRedisTemplate().getExpire(cacheKey, TimeUnit.SECONDS));
+
+        for (int i = 1; i <= maximum; i++) {
+            Long result = cacheManager.getStringRedisTemplate().opsForHash().delete(cacheKey, String.valueOf(i));
+            System.out.println("field=" + i + " delete result: " + result);
+        }
+
+        System.out.println("exists=" + cacheManager.getStringRedisTemplate().hasKey(cacheKey));
+
+
         System.out.println(cacheKey + " value: " + JSON.toJSONString(cacheManager.getStringRedisTemplate().opsForHash().entries(cacheKey)));
         cacheManager.getStringRedisTemplate().delete(cacheKey);
 
         String script = "if redis.call(\"EXISTS\", KEYS[1]) == 1 then return redis.call(\"HGETALL\", KEYS[1]) else return nil end";
         String result = cacheManager.getStringRedisTemplate().execute(new DefaultRedisScript<>(script, String.class), Collections.singletonList(cacheKey), new String[]{});
         System.out.println("result=" + result + ", ==null" + (result == null) + ", null str=" + ("null".equals(result)));
+        cacheManager.getStringRedisTemplate().delete(cacheKey);
+
         return JsonResult.success(true);
     }
 
