@@ -10,8 +10,10 @@ import org.springframework.data.redis.core.script.DefaultRedisScript;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -21,6 +23,7 @@ import java.util.concurrent.TimeUnit;
  *     at redis.clients.jedis.Protocol.process(Protocol.java:161)#012 at redis.clients.jedis.Protocol.read(Protocol.java:215)#012
  *     at redis.clients.jedis.Connection.readProtocolWithCheckingBroken(Connection.java:340)#012 at
  * </p>
+ * <p>当hash最后一个hash key被删除时, cache key也就被删除了</p>
  * @author dewu.de
  * @date 2023-11-01 3:03 下午
  */
@@ -66,6 +69,18 @@ public class HashTestController {
                 cacheManager.getStringRedisTemplate().opsForHash().put(cacheKey, String.valueOf(i), "day_" + i);
             }
         }
+        List<String> hashKvs = new ArrayList<>(4);
+        hashKvs.add("time");
+        hashKvs.add(String.valueOf(System.currentTimeMillis()));
+        hashKvs.add("data");
+        hashKvs.add("123");
+//        hashKvs.add(String.valueOf(600));
+
+        String tempScript = "if redis.call(\"EXISTS\", KEYS[1]) == 1 then redis.call('HMSET', KEYS[1], unpack(ARGV)) redis.call('expire', KEYS[1], 3600) return \"1\" end";
+        DefaultRedisScript<String> s = new DefaultRedisScript<>(tempScript, String.class);
+        Object tempResult = cacheManager.getStringRedisTemplate().execute(s, Collections.singletonList(cacheKey), hashKvs.toArray(new String[]{}));
+        System.out.println("temp result=" + tempResult);
+
         try {
             Thread.sleep(10_000);
         } catch (InterruptedException e) {
@@ -73,10 +88,10 @@ public class HashTestController {
         }
         System.out.println(cacheKey + "ttl: " + cacheManager.getStringRedisTemplate().getExpire(cacheKey, TimeUnit.SECONDS));
 
-        for (int i = 1; i <= maximum; i++) {
-            Long result = cacheManager.getStringRedisTemplate().opsForHash().delete(cacheKey, String.valueOf(i));
-            System.out.println("field=" + i + " delete result: " + result);
-        }
+//        for (int i = 1; i <= maximum; i++) {
+//            Long result = cacheManager.getStringRedisTemplate().opsForHash().delete(cacheKey, String.valueOf(i));
+//            System.out.println("field=" + i + " delete result: " + result);
+//        }
 
         System.out.println("exists=" + cacheManager.getStringRedisTemplate().hasKey(cacheKey));
 

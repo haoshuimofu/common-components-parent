@@ -40,6 +40,7 @@ public class RabbitAutoConfiguration {
     }
 
     @Bean("rabbitConnectionFactory")
+//    @ConditionalOnExpression("#{systemEnvironment['property'] != null}") // linux env变量获取
     public ConnectionFactory connectionFactory(ConnectionNameStrategy connectionNameStrategy) {
         CachingConnectionFactory connectionFactory = new CachingConnectionFactory();
         connectionFactory.setUsername(rabbitProperties.getUsername());
