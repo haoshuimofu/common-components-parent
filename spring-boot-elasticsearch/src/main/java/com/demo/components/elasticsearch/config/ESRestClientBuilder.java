@@ -55,6 +55,17 @@ public class ESRestClientBuilder {
         // 设置HttpClientConfigCallback
         restClientBuilder.setHttpClientConfigCallback(httpClientBuilder -> {
             httpClientBuilder.disableAuthCaching();
+            /**
+             * HTTP Keep-Alive 是指在HTTP协议中保持单个TCP连接持续开放以服务于多个HTTP请求的技术。传统的HTTP/1.0默认每个请求-响应对完成之后就会关闭TCP连接，而每一次新的请求都需要重新建立TCP连接，这会导致额外的延迟和资源消耗，尤其是在网页中包含多个元素（比如图片、脚本文件等）时尤为明显。
+             *
+             * HTTP/1.1及更高版本改进了这一机制，默认支持持久连接（persistent connections），即通过Keep-Alive功能，允许一个TCP连接上可以连续发送多个HTTP请求和响应，而不需要每次都重新建立连接。这意味着服务器在处理完一个HTTP请求后不会立即关闭连接，而是保持一段时间的活跃状态，以便客户端在同一连接上发送后续的HTTP请求。
+             *
+             * 在HTTP头部，Connection字段用来控制连接管理行为：
+             *
+             * 在HTTP/1.0中，客户端希望保持连接时需明确设置 Connection: keep-alive。
+             * 在HTTP/1.1中，只要两端都支持持久连接，则默认开启Keep-Alive，除非请求或响应头中明确设置了 Connection: close，表示请求结束后关闭连接。
+             * 利用HTTP Keep-Alive能够显著减少网络延迟，并提高Web应用性能，因为它减少了TCP握手和挥手过程的次数，节省了带宽和服务器资源。然而，它也意味着服务器必须维护这些连接直到超时或客户端明确关闭，从而可能增加服务器的内存消耗和并发连接数。
+             */
             ConnectionKeepAliveStrategy keepAliveStrategy = new DefaultConnectionKeepAliveStrategy() {
                 @Override
                 public long getKeepAliveDuration(HttpResponse response, HttpContext context) {
@@ -68,7 +79,7 @@ public class ESRestClientBuilder {
             };
             return httpClientBuilder.setKeepAliveStrategy(keepAliveStrategy).setConnectionManager(connManager);
             // return httpClientBuilder.setConnectionManager(connManager);
-            // 如果没有自定义ConnectionManager则内部实现还是会创建一个, 并发数用一下两个参数
+            // 如果没有自定义ConnectionManager则内部实现还是会创建一个, 并发数用以下两个参数 {@link org.apache.http.impl.nio.client.HttpAsyncClientBuilder}
             //.setMaxConnPerRoute(restProperties.getDefaultMaxPerRoute())
             //.setMaxConnTotal(restProperties.getMaxTotal())
             // 实测这里的DefaultRequestConfig会覆盖RequestConfigCallback
