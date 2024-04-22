@@ -20,7 +20,12 @@ public class GuavaCacheTest {
                 public void onRemoval(RemovalNotification<String, Integer> rn) {
 
                 }
-            }).build();
+            }).build(new CacheLoader<String, Integer>() {
+                @Override
+                public Integer load(String key) throws Exception {
+                    return null;
+                }
+            });
 
 
     public static void main(String[] args) {
