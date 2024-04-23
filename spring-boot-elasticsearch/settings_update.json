@@ -1,0 +1,211 @@
+{
+  "my_index": {
+    "settings": {
+      "index": {
+        "search": {
+          "slowlog": {
+            "level": "info",
+            "threshold": {
+              "fetch": {
+                "warn": "200ms",
+                "trace": "50ms",
+                "debug": "80ms",
+                "info": "100ms"
+              },
+              "query": {
+                "warn": "500ms",
+                "trace": "50ms",
+                "debug": "100ms",
+                "info": "200ms"
+              }
+            }
+          }
+        },
+        "refresh_interval": "1s",
+        "indexing": {
+          "slowlog": {
+            "level": "info",
+            "threshold": {
+              "index": {
+                "warn": "200ms",
+                "trace": "20ms",
+                "debug": "50ms",
+                "info": "100ms"
+              }
+            },
+            "source": "1000"
+          }
+        },
+        "number_of_shards": "8",
+        "provided_name": "shipping_order_by_knight",
+        "merge": {
+          "policy": {
+            "floor_segment": "10mb",
+            "max_merged_segment": "10gb"
+          }
+        },
+        "creation_date": "1693473973414",
+        "unassigned": {
+          "node_left": {
+            "delayed_timeout": "5m"
+          }
+        },
+        "number_of_replicas": "1",
+        "uuid": "tDKmJP5vQOSGcZt2grLjxQ",
+        "version": {
+          "created": "5050399"
+        }
+      }
+    },
+    "defaults": {
+      "index": {
+        "shared_filesystem.recover_on_any_node": "false",
+        "translog": {
+          "flush_threshold_size": "512mb",
+          "sync_interval": "5s",
+          "durability": "REQUEST"
+        },
+        "auto_expand_replicas": "false",
+        "mapper": {
+          "dynamic": "true"
+        },
+        "recovery": {
+          "initial_shards": "quorum"
+        },
+        "requests": {
+          "cache": {
+            "enable": "true"
+          }
+        },
+        "data_path": "",
+        "routing": {
+          "rebalance": {
+            "enable": "ALL"
+          },
+          "allocation": {
+            "enable": "ALL",
+            "total_shards_per_node": "-1"
+          }
+        },
+        "fielddata": {
+          "cache": "node"
+        },
+        "routing_partition_size": "1",
+        "merge": {
+          "scheduler": {
+            "max_thread_count": "4",
+            "auto_throttle": "true",
+            "max_merge_count": "9"
+          },
+          "policy": {
+            "max_merge_at_once_explicit": "30",
+            "max_merge_at_once": "10",
+            "reclaim_deletes_weight": "2.0",
+            "expunge_deletes_allowed": "10.0",
+            "segments_per_tier": "10.0"
+          }
+        },
+        "max_refresh_listeners": "1000",
+        "max_slices_per_scroll": "1024",
+        "shard": {
+          "check_on_startup": "false"
+        },
+        "load_fixed_bitset_filters_eagerly": "true",
+        "write": {
+          "wait_for_active_shards": "1"
+        },
+        "xpack": {
+          "watcher": {
+            "plugin": {
+              "version": ""
+            },
+            "template": {
+              "version": ""
+            }
+          },
+          "version": ""
+        },
+        "percolator": {
+          "map_unmapped_fields_as_string": "false"
+        },
+        "allocation": {
+          "max_retries": "5"
+        },
+        "mapping": {
+          "coerce": "false",
+          "nested_fields": {
+            "limit": "50"
+          },
+          "depth": {
+            "limit": "20"
+          },
+          "attachment": {
+            "ignore_errors": "true",
+            "detect_language": "false",
+            "indexed_chars": "100000"
+          },
+          "total_fields": {
+            "limit": "1000"
+          },
+          "single_type": "false",
+          "ignore_malformed": "false"
+        },
+        "indexing": {
+          "slowlog": {
+            "reformat": "true"
+          }
+        },
+        "compound_format": "0.1",
+        "blocks": {
+          "metadata": "false",
+          "read": "false",
+          "read_only_allow_delete": "false",
+          "read_only": "false",
+          "write": "false"
+        },
+        "query": {
+          "default_field": "_all",
+          "parse": {
+            "allow_unmapped_fields": "true"
+          }
+        },
+        "max_result_window": "10000",
+        "store": {
+          "throttle": {
+            "type": "none",
+            "max_bytes_per_sec": "0b"
+          },
+          "stats_refresh_interval": "10s",
+          "type": "",
+          "fs": {
+            "fs_lock": "native"
+          }
+        },
+        "priority": "1",
+        "queries": {
+          "cache": {
+            "everything": "false",
+            "enabled": "true",
+            "term_queries": "false"
+          }
+        },
+        "ttl": {
+          "disable_purge": "false"
+        },
+        "warmer": {
+          "enabled": "true"
+        },
+        "codec": "default",
+        "shared_filesystem": "false",
+        "max_rescore_window": "10000",
+        "max_adjacency_matrix_filters": "100",
+        "gc_deletes": "60s",
+        "optimize_auto_generated_id": "true",
+        "query_string": {
+          "lenient": "false"
+        },
+        "shadow_replicas": "false"
+      }
+    }
+  }
+}
