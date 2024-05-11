@@ -25,22 +25,31 @@ public class LockTestController {
     @RequestMapping("lock")
     public JsonResult<Boolean> lock(@RequestParam("lockKey") String lockKey, @RequestParam("lockValue") String lockValue) {
 
-        boolean result = cacheManager.tryLock(lockKey, lockValue, 60);
-        logger.info("### 加锁: lock_key=[{}], lock_value=[{}], result=[{}]", lockKey, lockValue, result);
+        boolean success = cacheManager.tryLock(lockKey, lockValue, 6);
+        logger.info("### 加锁: lock_key=[{}], lock_value=[{}], success=[{}]", lockKey, lockValue, success);
 
-//        try {
-//            Thread.sleep(10_000);
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//        }
+        success = cacheManager.tryLock(lockKey, lockValue, 6);
+        logger.info("### 再次加锁: lock_key=[{}], lock_value=[{}], success=[{}]", lockKey, lockValue, success);
 
-        result = cacheManager.releaseLock(lockKey, lockValue + "-1");
-        logger.info("### 释放锁: key=[{}], value=[{}], result=[{}]", lockKey, lockValue, result);
+        try {
+            Thread.sleep(10_000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
-        result = cacheManager.releaseLock(lockKey, lockValue + "-2");
-        logger.info("### 再次释放锁: key=[{}], value=[{}], result=[{}]", lockKey, lockValue, result);
+        String releaseLockValue = lockValue + "-1";
+        success = cacheManager.releaseLock(lockKey, releaseLockValue);
+        logger.info("### 释放锁: key=[{}], value=[{}], success=[{}]", lockKey, releaseLockValue, success);
 
-        return JsonResult.success(result);
+        releaseLockValue = lockValue + "-2";
+        success = cacheManager.releaseLock(lockKey, releaseLockValue);
+        logger.info("### 再次释放锁: key=[{}], value=[{}], success=[{}]", lockKey, releaseLockValue, success);
+
+        success = cacheManager.releaseLock(lockKey, lockValue);
+        logger.info("### 正确释放锁: key=[{}], value=[{}], success=[{}]", lockKey, lockValue, success);
+
+
+        return JsonResult.success(true);
     }
 
 }

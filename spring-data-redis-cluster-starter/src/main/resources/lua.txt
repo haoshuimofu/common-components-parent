@@ -1,0 +1,24 @@
+-- 加锁脚本
+local key = KEYS[1]
+local value = ARGV[1]
+local expire_time = tonumber(ARGV[2])
+
+-- 使用SET NX PX命令尝试设置锁，只有当key不存在时才设置，并且设置过期时间以防止死锁
+if redis.call("set", key, value, "PX", expire_time, "NX") then
+    return true
+else
+    return false
+end
+
+
+
+-- 解锁脚本
+local key = KEYS[1]
+local value = ARGV[1]
+
+-- 只有当锁的持有者与传入的value匹配时才删除锁，防止误删他人锁
+if redis.call("get", key) == value then
+    return redis.call("del", key)
+else
+    return false
+end
