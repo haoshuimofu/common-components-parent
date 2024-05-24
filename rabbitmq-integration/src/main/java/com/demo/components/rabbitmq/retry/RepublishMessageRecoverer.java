@@ -44,7 +44,7 @@ public class RepublishMessageRecoverer implements MessageRecoverer {
         String dlxExchange = RabbitUtils.appendDLXSuffix(receivedExchange);
         this.rabbitTemplate.send(dlxExchange, consumerQueue, message);
         logger.error("###消息消费失败, 转储至死信队列: consumerQueue=[{}], receivedExchange=[{}], receivedRoutingKey=[{}], {}=[{}], {}=[{}].",
-                messageProperties.getMessageId(), consumerQueue, receivedExchange, receivedRoutingKey,
+                consumerQueue, receivedExchange, receivedRoutingKey,
                 QueueArgumentsKey.X_DEAD_LETTER_EXCHANGE.getKey(), dlxExchange,
                 QueueArgumentsKey.X_DEAD_LETTER_ROUTING_KEY.getKey(), consumerQueue, cause);
     }

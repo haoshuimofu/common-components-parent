@@ -35,7 +35,7 @@ public class CacheManager {
     public CacheManager(StringRedisTemplate stringRedisTemplate) {
         Assert.notNull(stringRedisTemplate, "stringRedisTemplate is null");
         this.stringRedisTemplate = stringRedisTemplate;
-        InputStream is = this.getClass().getClassLoader().getResourceAsStream("lock.lua");
+        InputStream is = this.getClass().getClassLoader().getResourceAsStream("redis-lock.lua");
         BufferedReader br = new BufferedReader(new InputStreamReader(is));
         StringBuilder sb = new StringBuilder();
         String line;
@@ -65,6 +65,7 @@ public class CacheManager {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        System.out.println("redis-loc.lua=" + lockScript);
 
     }
 //

@@ -10,12 +10,16 @@ public class MyThread extends Thread {
         while (!Thread.currentThread().isInterrupted()) {
             // Perform some long-running task
 
-
-            // Check if the thread has been interrupted
-            if (Thread.currentThread().isInterrupted()) {
-                System.out.println("Thread interrupted. Stopping...");
-                break;
-            }
+//            try {
+//                Thread.sleep(3000);
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
+//            // Check if the thread has been interrupted
+//            if (Thread.currentThread().isInterrupted()) {
+//                System.out.println("Thread interrupted. Stopping...");
+//                break;
+//            }
         }
     }
 
@@ -26,12 +30,16 @@ public class MyThread extends Thread {
 
         // Interrupt the thread after 3 seconds
         try {
-            Thread.sleep(3000);
+            Thread.sleep(1000);
             thread.interrupt();
         } catch (InterruptedException e) {
             // 什么时候会抛这个异常?
             e.printStackTrace();
         }
+
+        Object o1= null;
+        MyThread o2 = null;
+        System.out.println(o1 == o2);
     }
 
 }
