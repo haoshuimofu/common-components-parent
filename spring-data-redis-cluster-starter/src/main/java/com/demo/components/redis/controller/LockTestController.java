@@ -25,17 +25,21 @@ public class LockTestController {
     @RequestMapping("lock")
     public JsonResult<Boolean> lock(@RequestParam("lockKey") String lockKey, @RequestParam("lockValue") String lockValue) {
 
-        boolean success = cacheManager.tryLock(lockKey, lockValue, 6);
-        logger.info("### 加锁: lock_key=[{}], lock_value=[{}], success=[{}]", lockKey, lockValue, success);
+        boolean success = cacheManager.tryLock(lockKey, lockValue, 20);
+        logger.info("### 第1次加锁: lock_key=[{}], lock_value=[{}], success=[{}]", lockKey, lockValue, success);
 
-        success = cacheManager.tryLock(lockKey, lockValue, 6);
-        logger.info("### 再次加锁: lock_key=[{}], lock_value=[{}], success=[{}]", lockKey, lockValue, success);
+        success = cacheManager.tryLock(lockKey, lockValue, 200);
+        logger.info("### 第2次加锁: lock_key=[{}], lock_value=[{}], success=[{}]", lockKey, lockValue, success);
 
         try {
             Thread.sleep(10_000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+
+        success = cacheManager.tryLock(lockKey, lockValue, 20);
+        logger.info("### 第3次加锁: lock_key=[{}], lock_value=[{}], success=[{}]", lockKey, lockValue, success);
+
 
         String releaseLockValue = lockValue + "-1";
         success = cacheManager.releaseLock(lockKey, releaseLockValue);

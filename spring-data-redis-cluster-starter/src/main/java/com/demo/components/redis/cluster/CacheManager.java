@@ -1,5 +1,6 @@
 package com.demo.components.redis.cluster;
 
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.redis.connection.RedisStringCommands;
@@ -7,12 +8,7 @@ import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.script.DefaultRedisScript;
 import org.springframework.stereotype.Service;
-import org.springframework.util.Assert;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.Collections;
 
 /**
@@ -22,64 +18,47 @@ import java.util.Collections;
  * @Create 2019-04-25 15:55
  */
 @Service
+@RequiredArgsConstructor
 public class CacheManager {
 
     private static final Logger logger = LoggerFactory.getLogger(CacheManager.class);
 
-    private String lockScript = "";
-    private String lockReleaseScript = "";
+    // 加锁lua脚本, 超时时间单位: 毫秒
+    private String lockScript = "local key = KEYS[1] " +
+            "local value = ARGV[1] " +
+            "local expire_millis = tonumber(ARGV[2])" +
+            "if redis.call(\"set\", key, value, \"PX\", expire_millis, \"NX\") then " +
+            " return \"1\" " +
+            "else " +
+            " return \"0\"" +
+            "end";
+    // 单位：秒
+    private String lockLua = "local lock_key = KEYS[1] " +
+            "local lock_value = ARGV[1] " +
+            "local expire_seconds = tonumber(ARGV[2]) " +
+            "if redis.call(\"SETNX\", lock_key, lock_value) == 1 then" +
+            " redis.call(\"EXPIRE\", lock_key, expire_seconds) " +
+            " return \"1\" " +
+            "else " +
+            " return \"0\" " +
+            "end";
+    private String lockReleaseScript = "if redis.call(\"GET\", KEYS[1]) == ARGV[1] then " +
+            "redis.call(\"DEL\", KEYS[1]) " +
+            " return \"1\" " +
+            "else " +
+            " return \"0\" " +
+            "end";
 
-    //    private final RedisTemplate<String, Object> redisTemplate;
     private final StringRedisTemplate stringRedisTemplate;
 
-    public CacheManager(StringRedisTemplate stringRedisTemplate) {
-        Assert.notNull(stringRedisTemplate, "stringRedisTemplate is null");
-        this.stringRedisTemplate = stringRedisTemplate;
-        InputStream is = this.getClass().getClassLoader().getResourceAsStream("redis-lock.lua");
-        BufferedReader br = new BufferedReader(new InputStreamReader(is));
-        StringBuilder sb = new StringBuilder();
-        String line;
-        try {
-            while ((line = br.readLine()) != null) {
-                sb.append(line).append(" ");
-            }
-            lockScript = sb.toString();
-            System.out.println(lockScript);
-            br.close();
-            is.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        sb.setLength(0);
-        is = this.getClass().getClassLoader().getResourceAsStream("lock-release.lua");
-        br = new BufferedReader(new InputStreamReader(is));
-        try {
-            while ((line = br.readLine()) != null) {
-                sb.append(line).append(" ");
-            }
-            lockReleaseScript = sb.toString();
-            System.out.println(lockReleaseScript);
-            br.close();
-            is.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        System.out.println("redis-loc.lua=" + lockScript);
-
-    }
-//
-//    public RedisTemplate<String, Object> getRedisTemplate() {
-//        return redisTemplate;
-//    }
 
     public StringRedisTemplate getStringRedisTemplate() {
         return stringRedisTemplate;
     }
 
-    public boolean tryLock(String key, String value, long ttlSeconds) {
+    public boolean tryLock(String key, String value, long expiredMillis) {
         DefaultRedisScript<String> redisScript = new DefaultRedisScript<>(lockScript, String.class);
-        String result = getStringRedisTemplate().execute(redisScript, Collections.singletonList(key), value, String.valueOf(ttlSeconds));
+        String result = getStringRedisTemplate().execute(redisScript, Collections.singletonList(key), value, String.valueOf(expiredMillis));
         return "1".equals(result);
     }
 
