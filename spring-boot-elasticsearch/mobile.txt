@@ -1,0 +1,75 @@
+1、script
+GET your_index_name/_search
+{
+  "query": {
+    "bool": {
+      "filter": [
+        {
+          "script": {
+            "script": {
+              "source": """
+                String value = doc['phone_number'].value;
+                if (value == null) return false;
+                return value.matches('.*1234$');
+              """,
+              "lang": "painless"
+            }
+          }
+        }
+      ]
+    }
+  }
+}
+在这个例子中：
+
+your_index_name 需要被替换为你实际的索引名称。
+phone_number 是你要应用正则表达式的字段名。
+script 过滤器使用了Painless脚本语言，它检查phone_number字段的值是否以"1234"结尾（.*1234$是正则表达式，其中.匹配任意字符，*表示前面的元素可以重复零次或多次，$表示字符串的结束位置）。
+如果文档的phone_number字段值匹配这个正则表达式，那么这个文档就会被包含在结果集中。
+请记住，使用脚本过滤器可能会对性能产生影响，特别是在大量数据上，因为它需要对每个文档执行脚本。因此，在生产环境中使用时，应考虑其性能影响并尽可能优化。
+
+2、regexp
+GET your_index_name/_search
+{
+  "query": {
+    "regexp": {
+      "phone": ".{4}9937"
+    }
+  }
+}
+在这个查询中：
+
+your_index_name 需要替换为你的实际索引名称。
+"phone" 是你手机号索引列的名字。
+".{4}9937" 是正则表达式，其中.{4}表示匹配任何四个字符，之后是精确的"9937"。这样就可以确保查询的是以任意四个字符开头，后四位为"9937"的手机号码。
+请注意，这个查询会稍微有些低效，因为它需要对每个文档的phone字段执行正则表达式匹配。如果你的索引非常大，或者频繁执行此类查询，可能需要考虑使用更高效的索引策略或查询方式，或者升级到更现代的Elasticsearch版本，探索更多优化选项。
+
+3、regexp
+GET your_index_name/_search
+{
+  "query": {
+    "regexp": {
+      "phone": "^1380.*"
+    }
+  }
+}
+在这个查询中：
+
+^1380 表示匹配以"1380"开始的字符串，^符号代表字符串的起始位置。
+.* 表示匹配任意数量的任意字符，这使得查询能够接受"1380"后面跟着任何字符的手机号码。
+记得将your_index_name替换为你的实际索引名称。这样，你就能找到所有手机号码前四位为"1380"的文档了。
+
+4、prefix
+GET your_index_name/_search
+{
+  "query": {
+    "prefix": {
+      "phone": "1380"
+    }
+  }
+}
+在这段查询中：
+
+your_index_name 需要替换为你的实际索引名称。
+"phone.keyword" 指定了我们查询的字段。注意到这里使用了.keyword后缀，这是因为prefix查询通常应用于Keyword类型的字段，这些字段不经过分析，保留原始输入值。如果phone字段默认是text类型并进行了分析，那么需要使用其Keyword映射（Elasticsearch自动为text字段创建一个.keyword的子字段）来进行前缀匹配。
+请根据实际情况调整索引名和字段类型。如果不确定字段是否具有Keyword映射，可以通过查看索引映射（通过GET your_index_name/_mapping API）来确认。
