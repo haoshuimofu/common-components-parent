@@ -3,6 +3,7 @@ package study.algorithm.sort;
 import com.alibaba.fastjson.JSON;
 
 /**
+ * 插入排序
  * @author dewu.de
  * @date 2023-08-21 12:24 下午
  */

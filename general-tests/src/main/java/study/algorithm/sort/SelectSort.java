@@ -3,7 +3,7 @@ package study.algorithm.sort;
 import com.alibaba.fastjson.JSON;
 
 /**
- * 冒泡排序
+ * 选择排序
  *
  * @author dewu.de
  * @date 2023-08-21 11:39 上午
@@ -19,6 +19,10 @@ public class SelectSort {
     }
 
     public static void sort(int[] nums) {
+        if (nums == null || nums.length < 2) {
+            return;
+        }
+        // 思路：双重循环
         for (int i = 0; i < nums.length - 1; i++) {
             for (int j = i + 1; j < nums.length; j++) {
                 if (nums[i] > nums[j]) {
