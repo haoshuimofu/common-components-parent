@@ -3,6 +3,7 @@ package study.algorithm.sort;
 /**
  * 快排
  * 参考：https://blog.csdn.net/qq_43471489/article/details/125582437
+ * https://blog.csdn.net/weixin_47533244/article/details/128815841%5Econtrol&utm_relevant_index=2
  *
  * @author dewu.de
  * @date 2023-08-21 2:08 下午
@@ -28,25 +29,26 @@ public class QuickSort {
     }
 
     private static int partition(int[] nums, int from, int to) {
-        // 基准值, 单独记录, 所以from位置可以被重新赋值
-        int pivotValue = nums[from];
+        int baseVal = nums[from]; // 选取from位置元素作为基准值
+        // 定义left && right指针
         int left = from;
         int right = to;
         while (left < right) {
-            // right向左, 找到第一个比基准值小的元素
-            while (left < right && nums[right] >= pivotValue) {
+            // right向左，找第一个比baseVal小的元素
+            while (left < right && baseVal <= nums[right]) {
                 right--;
             }
-            // 前面的while跳出时, 要么left == right, 要么num[right] < 基准值
+            // 前面循环终止时, 要么left == right, 要么num[right] < baseVal
             nums[left] = nums[right];
 
             // left向右, 找到第一个比基准值大的元素
-            while (left < right && nums[left] <= pivotValue) {
+            while (left < right && baseVal >= nums[left]) {
                 left++;
             }
+            // 前面循环终止时, 要么left == right, 要么num[left] > baseVal
             nums[right] = nums[left];
         }
-        nums[left] = pivotValue;
+        nums[left] = baseVal;
         return left;
     }
 }

@@ -8,6 +8,7 @@ import lombok.Setter;
 import java.util.HashMap;
 
 /**
+ * LRU （Least Recently Used：最近最少使用）
  * @author dewu.de
  * @date 2023-04-11 5:29 下午
  */
