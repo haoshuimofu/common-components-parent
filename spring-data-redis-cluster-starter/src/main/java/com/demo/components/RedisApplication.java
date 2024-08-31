@@ -12,8 +12,8 @@ import org.springframework.core.io.ResourceLoader;
  * @author wude
  * @date 2020/7/17 14:14
  */
-//@SpringBootApplication(exclude = {RedisAutoConfiguration.class})
-@SpringBootApplication
+@SpringBootApplication(exclude = {RedisAutoConfiguration.class})
+//@SpringBootApplication
 public class RedisApplication {
 
     public static void main(String[] args) {

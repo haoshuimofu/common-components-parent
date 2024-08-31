@@ -51,4 +51,72 @@ public class Test_20240827 {
         return maxLen;
     }
 
+
+    /**
+     * 121. 买卖股票的最佳时机
+     * @param prices
+     * @return
+     */
+    public int maxProfit(int[] prices) {
+        int profit = 0;
+        int minPrice = prices[0];
+        for (int i = 1; i < prices.length; i++) {
+            if (prices[i] <= minPrice) {
+                minPrice = prices[i];
+            } else {
+                profit = Math.max(prices[i] - minPrice, profit);
+            }
+        }
+        return profit;
+    }
+
+    /**
+     * 55. 跳跃游戏
+     * @param nums
+     * @return
+     */
+    public boolean canJump(int[] nums) {
+        if (nums.length == 1) {
+            return true;
+        }
+        int maxIndex = nums[0];
+        for (int i = 0; i <= maxIndex; i++) {
+            maxIndex = Math.max(maxIndex, nums[i] + i);
+            if (maxIndex >= nums.length - 1) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * 53. 最大子数组和
+     * @param nums
+     * @return
+     */
+    public int maxSubArray(int[] nums) {
+        int maxSub = nums[0];
+        int sub = maxSub;
+        int left = 0;
+        int right = 1;
+        while (right < nums.length) {
+            int tempMaxSub = sub + nums[right];
+            if (tempMaxSub < nums[right]) {
+                sub = nums[right];
+                left = right;
+                right = left + 1;
+            } else {
+                sub = tempMaxSub;
+                right++;
+            }
+            maxSub = Math.max(maxSub, tempMaxSub);
+        }
+        return maxSub;
+    }
+
+    public static void main(String[] args) {
+        int[] nums = new int[]{5,4,-1,7,8};
+        System.out.println(new Test_20240827().maxSubArray(nums));
+    }
+
 }

@@ -1,6 +1,5 @@
 package com.demo.components.redis.cluster;
 
-import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.redis.connection.RedisStringCommands;
@@ -18,7 +17,6 @@ import java.util.Collections;
  * @Create 2019-04-25 15:55
  */
 @Service
-@RequiredArgsConstructor
 public class CacheManager {
 
     private static final Logger logger = LoggerFactory.getLogger(CacheManager.class);
@@ -51,6 +49,9 @@ public class CacheManager {
 
     private final StringRedisTemplate stringRedisTemplate;
 
+    public CacheManager(StringRedisTemplate stringRedisTemplate) {
+        this.stringRedisTemplate = stringRedisTemplate;
+    }
 
     public StringRedisTemplate getStringRedisTemplate() {
         return stringRedisTemplate;

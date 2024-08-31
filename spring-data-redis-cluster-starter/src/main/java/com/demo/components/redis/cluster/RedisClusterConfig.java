@@ -31,67 +31,67 @@ import java.util.stream.Collectors;
 @EnableConfigurationProperties(RedisProperties.class)
 public class RedisClusterConfig {
 
-//    @Bean("customRedisProperties")
-//    @ConfigurationProperties(prefix = "spring.redis.custom")
-//    public RedisProperties customRedisProperties() {
-//        return new RedisProperties();
-//    }
-//
-//    @Bean("customRedisClusterConfiguration")
-//    public RedisClusterConfiguration redisClusterConfiguration(@Qualifier("customRedisProperties") RedisProperties redisProperties) {
-//        RedisClusterConfiguration redisClusterConfiguration = new RedisClusterConfiguration();
-//        List<RedisNode> redisNodes = redisProperties.getCluster().getNodes().stream().map(node -> {
-//            String[] nodeInfo = node.split(":");
-//            return new RedisNode(nodeInfo[0], Integer.parseInt(nodeInfo[1]));
-//        }).collect(Collectors.toList());
-//        redisClusterConfiguration.setClusterNodes(redisNodes);
-//        if (redisProperties.getPassword() != null && redisProperties.getPassword().length() > 0) {
-//            redisClusterConfiguration.setPassword(redisProperties.getPassword());
-//        }
-//        if (redisProperties.getCluster().getMaxRedirects() != null && redisProperties.getCluster().getMaxRedirects() > 0) {
-//            redisClusterConfiguration.setMaxRedirects(redisProperties.getCluster().getMaxRedirects());
-//        }
-//        return redisClusterConfiguration;
-//    }
-//
-//    @Bean("customRedisConnectionFactory")
-//    public RedisConnectionFactory connectionFactory(@Qualifier("customRedisClusterConfiguration") RedisClusterConfiguration redisClusterConfiguration,
-//                                                    @Qualifier("customRedisProperties") RedisProperties redisProperties) {
-//        JedisPoolConfig jedisPoolConfig = new JedisPoolConfig();
-//        RedisProperties.Pool jedisPool = redisProperties.getJedis().getPool();
-//        jedisPoolConfig.setMaxTotal(jedisPool.getMaxActive());
-//        jedisPoolConfig.setMaxIdle(jedisPool.getMaxIdle());
-//        jedisPoolConfig.setMinIdle(jedisPool.getMinIdle());
-//        jedisPoolConfig.setMaxWaitMillis(jedisPool.getMaxWait().toMillis());
-//        return new JedisConnectionFactory(redisClusterConfiguration, jedisPoolConfig);
-//    }
-//
-//    @Bean
-//    @Primary
-//    public RedisTemplate<String, Object> redisTemplate(@Qualifier("customRedisConnectionFactory") RedisConnectionFactory redisConnectionFactory) {
-//        RedisTemplate<String, Object> redisTemplate = new RedisTemplate<String, Object>();
-//        redisTemplate.setConnectionFactory(redisConnectionFactory);
-//        redisTemplate.setKeySerializer(new StringRedisSerializer());
-//        redisTemplate.setValueSerializer(new FastJsonRedisSerializer(Object.class));
-//        redisTemplate.setHashKeySerializer(redisTemplate.getKeySerializer());
-//        redisTemplate.setHashValueSerializer(redisTemplate.getValueSerializer());
-//        return redisTemplate;
-//    }
+    @Bean("customRedisProperties")
+    @ConfigurationProperties(prefix = "spring.redis.custom")
+    public RedisProperties customRedisProperties() {
+        return new RedisProperties();
+    }
 
-    @Bean
-    public RedisConnectionFactory connectionFactory(RedisProperties redisProperties) {
+    @Bean("customRedisClusterConfiguration")
+    public RedisClusterConfiguration redisClusterConfiguration(@Qualifier("customRedisProperties") RedisProperties redisProperties) {
+        RedisClusterConfiguration redisClusterConfiguration = new RedisClusterConfiguration();
+        List<RedisNode> redisNodes = redisProperties.getCluster().getNodes().stream().map(node -> {
+            String[] nodeInfo = node.split(":");
+            return new RedisNode(nodeInfo[0], Integer.parseInt(nodeInfo[1]));
+        }).collect(Collectors.toList());
+        redisClusterConfiguration.setClusterNodes(redisNodes);
+        if (redisProperties.getPassword() != null && redisProperties.getPassword().length() > 0) {
+            redisClusterConfiguration.setPassword(redisProperties.getPassword());
+        }
+        if (redisProperties.getCluster().getMaxRedirects() != null && redisProperties.getCluster().getMaxRedirects() > 0) {
+            redisClusterConfiguration.setMaxRedirects(redisProperties.getCluster().getMaxRedirects());
+        }
+        return redisClusterConfiguration;
+    }
+
+    @Bean("customRedisConnectionFactory")
+    public RedisConnectionFactory connectionFactory(@Qualifier("customRedisClusterConfiguration") RedisClusterConfiguration redisClusterConfiguration,
+                                                    @Qualifier("customRedisProperties") RedisProperties redisProperties) {
         JedisPoolConfig jedisPoolConfig = new JedisPoolConfig();
         RedisProperties.Pool jedisPool = redisProperties.getJedis().getPool();
         jedisPoolConfig.setMaxTotal(jedisPool.getMaxActive());
         jedisPoolConfig.setMaxIdle(jedisPool.getMaxIdle());
         jedisPoolConfig.setMinIdle(jedisPool.getMinIdle());
         jedisPoolConfig.setMaxWaitMillis(jedisPool.getMaxWait().toMillis());
-        return new JedisConnectionFactory(jedisPoolConfig);
+        return new JedisConnectionFactory(redisClusterConfiguration, jedisPoolConfig);
     }
+
+    @Bean
+    @Primary
+    public RedisTemplate<String, Object> redisTemplate(@Qualifier("customRedisConnectionFactory") RedisConnectionFactory redisConnectionFactory) {
+        RedisTemplate<String, Object> redisTemplate = new RedisTemplate<String, Object>();
+        redisTemplate.setConnectionFactory(redisConnectionFactory);
+        redisTemplate.setKeySerializer(new StringRedisSerializer());
+        redisTemplate.setValueSerializer(new FastJsonRedisSerializer(Object.class));
+        redisTemplate.setHashKeySerializer(redisTemplate.getKeySerializer());
+        redisTemplate.setHashValueSerializer(redisTemplate.getValueSerializer());
+        return redisTemplate;
+    }
+
+//    @Bean
+//    public RedisConnectionFactory connectionFactory(RedisProperties redisProperties) {
+//        JedisPoolConfig jedisPoolConfig = new JedisPoolConfig();
+//        RedisProperties.Pool jedisPool = redisProperties.getJedis().getPool();
+//        jedisPoolConfig.setMaxTotal(jedisPool.getMaxActive());
+//        jedisPoolConfig.setMaxIdle(jedisPool.getMaxIdle());
+//        jedisPoolConfig.setMinIdle(jedisPool.getMinIdle());
+//        jedisPoolConfig.setMaxWaitMillis(jedisPool.getMaxWait().toMillis());
+//        return new JedisConnectionFactory(jedisPoolConfig);
+//    }
 
     @Bean("stringRedisTemplate")
     @ConditionalOnBean(RedisTemplate.class)
-    public StringRedisTemplate stringRedisTemplate(RedisConnectionFactory redisConnectionFactory) {
+    public StringRedisTemplate stringRedisTemplate(@Qualifier("customRedisConnectionFactory") RedisConnectionFactory redisConnectionFactory) {
         return new StringRedisTemplate(redisConnectionFactory);
     }
 
