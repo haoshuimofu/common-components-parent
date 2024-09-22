@@ -21,6 +21,10 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+/**
+ * https://blog.csdn.net/Cover_sky/article/details/136057026
+ * https://www.jianshu.com/p/9270f9069a02
+ */
 @RestController
 @RequestMapping("common/test")
 public class CommonTestController {
