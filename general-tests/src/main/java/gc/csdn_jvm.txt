@@ -107,3 +107,11 @@ loggc、UseGCLogFileRotation、GCLogFileSize、NumberOfGCLogFiles、PrintGCDateS
 HeapDumpOnOutOfMemoryError、HeapDumpPath 一起配合使用。
 UseG1GC、MaxGCPauseMillis、ParallelGCThreads 一起配合使用。
 JDK8b12 以后的版本默认情况下，老年代已使用内存占整个堆内存 45% 时会触发并发 GC（Mixed GC），在一些吞吐量比较大的应用中，年轻代占整个堆的比例可能会自动扩容到 55% 以上直至最大值 60% 来满足暂停时间目标，这时老年代占整个堆的比例只有 45% 以下，那么无法触发并发 GC 周期，老年代使用率持续上升直到内存耗尽触发 Full GC，这时可以使用InitiatingHeapOccupancyPercent参数把触发并发 GC 周期的阈值调低一些，如 RocketMQ 官方推荐调低到 30%。参考 RocketMQ 官方文档：JVM/OS 配置。
+
+
+
+https://zhuanlan.zhihu.com/p/667780240
+
+结论
+如果你使用的JDK版本在8b12之前，那么文章开头的第一种说法是正确的，即XX:InitiatingHeapOccupancyPercent是整个堆使用量与堆总体容量的比值；
+如果你使用的JDK版本在8b12之后（包括大版本9、10、11…），那么文章开头第二种说法是正确的，即XX:InitiatingHeapOccupancyPercent是老年代大小与堆总体容量的比值。
