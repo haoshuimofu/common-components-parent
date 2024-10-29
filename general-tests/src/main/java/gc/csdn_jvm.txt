@@ -1,0 +1,109 @@
+https://www.cnblogs.com/jason207010/p/18215711
+
+1.7.2. 关键 JVM 参数
+JVM 总体上可以分成三类：
+
+-：标准参数，比如 -verbose:gc 这类表示标准实现，所有的虚拟机都需要实现这些参数的功能，且向后兼容；
+-X：非标准参数，默认 JVM 会实现这些参数的功能，但是不保证所有的 JVM 实现都满足，且不保证向后兼容；
+-XX：非 Stable 参数，这些参数在不同的 JVM 上会有不同的实现，这些参数不推荐在生产环境中使用，以后很有可能会被取消，需要慎重使用；
+JVM 参数类型：
+
+布尔型参数：-XX:+ 表示打开，-XX:- 表示关闭。（比如-XX:+PrintGCDetails）；
+数字型参数：通过 -XX:= 设定。数字可以是 m/M(兆字节)，k/K(千字节)，g/G(G 字节)。
+字符行参数：通过 -XX:= 设定，通常用来指定一个文件，路径，或者一个命令列表。（比如-XX:HeapDumpPath=./java_pid.hprof）
+-server
+服务器模式下运行
+-Xms
+用于设置 Java 虚拟机（JVM）启动时的初始堆内存大小。
+示例：-Xms8G。
+-Xmx
+用于指定 JVM 可以使用的最大堆内存大小。
+示例：-Xmx8G。
+-Xss
+用于指定线程栈大小，单位可以是 K、M 等，在使用递归场景可以适当调大该参数。
+示例：-Xss2M。
+-XX:MetaspaceSize
+这个参数是初始化的 Metaspace 大小，该值越大触发 Metaspace GC 的时机就越晚。默认约 20.8 M。
+示例：-XX:MetaspaceSize=256M。
+-XX:MaxMetaspaceSize
+这个参数用于限制 Metaspace 增长的上限，防止因为某些情况导致 Metaspace 无限的使用本地内存，影响到其他程序。默认无上限。
+示例：-XX:MaxMetaspaceSize=256M。
+-XX:NewRatio
+老年代与年轻代的比例，默认值：2，即
+老年代
+年轻代
+
+
+-XX:SurvivorRatio
+Eden 与 Survivor 的比例，默认值：8，即
+
+
+-XX:MaxTenuringThreshold
+存活对象晋升到老年代的年龄，经过一次年轻代 GC 对象年龄加 1。分代年龄存储在对象头中，占 4 位，因此分代年龄最多 15。默认值：15。
+-XX:+UseG1GC
+启用 G1 (Garbage-First) 垃圾回收器。
+-XX:MaxGCPauseMillis
+设置一个目标值，指定 G1 GC 努力达到的最大垃圾回收暂停时间。默认 200 毫秒。
+示例：-XX:MaxGCPauseMillis=200。
+-XX:InitiatingHeapOccupancyPercent
+这个参数按 JDK 版本不同有不同的含义。
+JDK8b12 之前版本：当堆内存（整个堆，包括年轻代 + 老年代）占用达到指定百分比时，触发并发 GC 周期。默认值：45。
+JDK8b12 之后版本：当老年代内存占用达到整个堆指定百分比时，触发并发 GC 周期。默认值：45。
+示例：-XX:InitiatingHeapOccupancyPercent=45。
+-XX:ParallelGCThreads
+设置并行垃圾回收器（Parallel Garbage Collector）使用的线程数。一般是在 Stop-the-World 阶段。最佳值取决于系统的硬件配置和应用程序的具体需求。如果设置的值过高，可能会导致 CPU 资源过载，从而影响应用程序的性能。通常，线程数可以设置为与可用处理器核心数相等的值。
+示例：-XX:ParallelGCThreads=8。
+-XX:ConcGCThreads
+设置并发垃圾收集器线程数。一般是在并发标记阶段。
+-XX:G1ReservePercent
+设置堆保留的内存百分比，作为假的上限，用于减少存活对象升级失败的可能性。默认值：10。
+-XX:G1HeapRegionSize
+设置 Region 的大小，对于存在大对象的应用，可以适当调整 Region 大小，避免大对象进入老年代造成空间碎片。
+-XX:+DisableExplicitGC
+用于禁用 System.gc() 方法的显式垃圾回收功能。开发者可能会调用 System.gc() 来尝试管理内存或者优化性能。然而，频繁的垃圾回收可能会导致应用程序的性能下降，因为垃圾回收是一个计算密集型的过程，它会暂停应用程序的执行来回收不再使用的对象。使用该参数避免了可能的性能问题。
+-Xloggc
+启用此选项时，JVM 会将每次垃圾回收的详细信息输出到指定的文件中。GC 日志文件名可使用通配符，%t表示日期时间；%p表示进程ID。
+示例：-Xloggc:logs/gc_%t_%p.log。
+-XX:+UseGCLogFileRotation
+启用垃圾收集（GC）日志文件的轮换功能。启用此功能后，当 GC 日志文件达到一定大小时，JVM 会自动创建新的日志文件，并将旧的日志文件进行轮换和归档，从而避免单个日志文件无限增长。
+-XX:GCLogFileSize
+用于设置垃圾收集日志文件大小。设置该参数后，JVM会根据该参数值控制每个垃圾收集日志文件的大小，一旦达到设置的文件大小，JVM会自动创建一个新的文件，同时保留旧文件。
+示例：-XX:GCLogFileSize=50M。
+-XX:NumberOfGCLogFiles
+设置 JVM 应该保留的 GC 日志文件的最大数量。
+示例：-XX:NumberOfGCLogFiles=5。
+-XX:+PrintGCDateStamps
+用于在垃圾回收 (GC) 日志中添加时间戳。当启用此选项时，每次垃圾回收事件都会被记录，并且在记录中包含自 JVM 启动以来的绝对时间（以秒或毫秒为单位，取决于具体实现）
+-XX:+PrintGCApplicationConcurrentTime
+打印应用程序的并发时间。应用程序的并发时间是指在垃圾收集过程中，应用程序的线程与 GC 线程同时执行的时间。
+-XX:+PrintGCApplicationStoppedTime
+打印应用程序在垃圾收集期间的停顿时间。
+-XX:+PrintGCCause
+打印导致垃圾收集发生的原因。
+-XX:+PrintGCID
+打印每次垃圾收集事件的唯一标识符（ID）。
+-XX:+PrintGCDetails
+启用此选项时，JVM 会在每次垃圾回收发生时，输出包含有关回收的详细数据的日志信息。
+-XX:+PrintTenuringDistribution
+用于在每次垃圾回收事件后输出对象晋升老年代（Tenured Generation）的分布情况。帮助了解对象在年轻代（Young Generation）和老年代之间的年龄分布，从而对垃圾回收器的行为和内存管理策略进行分析和优化。
+-XX:+HeapDumpOnOutOfMemoryError
+用于在发生内存溢出错误（OutOfMemoryError）时自动生成堆内存转储文件（heap dump）。这个文件包含了所有活跃对象的详细信息，可以用来分析内存使用情况，查找内存泄漏或识别占用大量内存的对象。
+-XX:HeapDumpPath
+指定生成的堆转储文件（heap dump）的存储路径和文件名。
+示例：-XX:HeapDumpPath=logs。
+-XX:+PrintConcurrentLocks
+打印 java.util.concurrent 的锁信息，在 SIGTERM 时触发。默认关闭，等价于运行 jstack -l
+-Dfile.encoding
+设置文件的字符编码。选项设置的是系统属性 file.encoding 的值。这个属性不仅影响文件的读写操作，还可能影响其他与字符编码相关的操作，如网络通信、数据库连接等。
+示例：-Dfile.encoding=UTF-8。
+-Djava.security.egd
+SecureRandom 在 java 各种组件中使用广泛，可以可靠的产生随机数。但在大量产生随机数的场景下，性能会较低。这时可以使用-Djava.security.egd=file:/dev/./urandom 加快随机数产生过程。
+示例：-Djava.security.egd=file:/dev/./urandom。
+1.7.3. 最佳实践
+MetaspaceSize 和 MaxMetaspaceSize 设置一样大小，对于大部分项目 256M 即可。
+初始堆内存-Xmx和最大堆内存-Xms设置一样大小。避免堆内存扩大或缩小导致的应用停顿。
+G1 垃圾收集器会根据MaxGCPauseMillis（默认值：200）参数设置的 GC 暂停时间目标在G1MaxNewSizePercent（默认值：60）和G1NewSizePercent（默认值：5）之间动态调整新生代占整个堆的百分比大小，因此不要使用MaxNewSize、NewSize、Xmn等参数限定新生代大小，否则将无法达到MaxGCPauseMillis设定的目标时间。
+loggc、UseGCLogFileRotation、GCLogFileSize、NumberOfGCLogFiles、PrintGCDateStamps、PrintGCApplicationConcurrentTime、PrintGCApplicationStoppedTime、PrintGCCause、PrintGCID、PrintGCDetails、PrintTenuringDistribution 一起配合使用，尽可能打印详尽的日志，便于分析问题。
+HeapDumpOnOutOfMemoryError、HeapDumpPath 一起配合使用。
+UseG1GC、MaxGCPauseMillis、ParallelGCThreads 一起配合使用。
+JDK8b12 以后的版本默认情况下，老年代已使用内存占整个堆内存 45% 时会触发并发 GC（Mixed GC），在一些吞吐量比较大的应用中，年轻代占整个堆的比例可能会自动扩容到 55% 以上直至最大值 60% 来满足暂停时间目标，这时老年代占整个堆的比例只有 45% 以下，那么无法触发并发 GC 周期，老年代使用率持续上升直到内存耗尽触发 Full GC，这时可以使用InitiatingHeapOccupancyPercent参数把触发并发 GC 周期的阈值调低一些，如 RocketMQ 官方推荐调低到 30%。参考 RocketMQ 官方文档：JVM/OS 配置。
