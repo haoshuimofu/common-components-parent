@@ -1,9 +1,6 @@
 package test.collection;
 
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 
 public class MapTest {
 
@@ -29,6 +26,8 @@ public class MapTest {
         for (Map.Entry<String, String> entry : map.entrySet()) {
             System.out.println(entry.getKey()+" ---> " + entry.getValue());
         }
+
+        Collections.synchronizedMap(map);
     }
 
     /**

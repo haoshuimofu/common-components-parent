@@ -11,7 +11,7 @@ import java.util.concurrent.TimeUnit;
  * @version 1.0.0
  * @create 2018-12-13 13:00
  */
-public class ScheduleThreadPoolTest {
+public class ExecutorsTest {
 
     public static void main(String[] args) {
         ScheduledExecutorService executorService = Executors.newScheduledThreadPool(1);
@@ -33,6 +33,7 @@ public class ScheduleThreadPoolTest {
 //            e.printStackTrace();
 //        }
 //        executorService.shutdown();
+
 
     }
 
