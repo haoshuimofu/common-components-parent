@@ -14,7 +14,7 @@ public class BubbleSort {
     public static void main(String[] args) {
 
         int[] nums = {5, 9, 3, 1, 7, 6, 8, 2, 4};
-        sort(nums);
+        sort1(nums);
         System.out.println(JSON.toJSONString(nums));
 
     }
@@ -28,6 +28,22 @@ public class BubbleSort {
             // 内循环，相邻元素交换，大的交换到后面
             // 循环结束，内循环区间最大值就被交换到了区间尾部
             for (int j = 0; j < nums.length - i - 1; j++) {
+                if (nums[j] > nums[j + 1]) {
+                    int temp = nums[j];
+                    nums[j] = nums[j + 1];
+                    nums[j + 1] = temp;
+                }
+            }
+        }
+    }
+
+
+    public static void sort1(int[] nums) {
+        if (nums == null || nums.length < 2) {
+            return;
+        }
+        for (int i = 0; i < nums.length - 1; i++) {
+            for (int j = 0; j < nums.length - 1 - i; j++) {
                 if (nums[j] > nums[j + 1]) {
                     int temp = nums[j];
                     nums[j] = nums[j + 1];

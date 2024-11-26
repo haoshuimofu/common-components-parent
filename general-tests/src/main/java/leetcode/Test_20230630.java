@@ -74,8 +74,8 @@ public class Test_20230630 {
 
     private void postorder(TreeNode node, List<Integer> vals) {
         if (node != null) {
-            preorder(node.right, vals);
-            preorder(node.left, vals);
+            postorder(node.left, vals);
+            postorder(node.right, vals);
             vals.add(node.val);
         }
     }
